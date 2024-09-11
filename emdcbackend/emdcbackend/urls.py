@@ -16,13 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import RedirectView
-from django.conf import settings
-from django.conf.urls.static import static
+from rest_framework import routers
+from emdcbackend.emdcbackend import views
 
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
+# admin user password temporarily set to: emdc1234
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('catalog/', include('catalog.urls')),
-    # path('', RedirectView.as_view(url='catalog/', permanent=True)),  # Add URL maps to redirect the base URL to our application
-    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),  # Use static() to add URL mapping to serve static files during development (only)
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
