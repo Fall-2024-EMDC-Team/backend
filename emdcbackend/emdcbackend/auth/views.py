@@ -10,13 +10,13 @@ from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 # Rather than write multiple views we're grouping together all the common behavior into classes called ViewSets.
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.IsAuthenticated]
 
 
 # class GroupViewSet(viewsets.ModelViewSet):
@@ -29,8 +29,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, email=request.data['email'])
-    if not user.check_password(request.data['password']):
+    user = get_object_or_404(User, username=request.data['username'])   # check if user id exists
+    if not user.check_password(request.data['password']):   # if password is incorrect
         return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
@@ -40,8 +40,8 @@ def login(request):
 def signup(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        user = User.objects.get(email=request.data['email'])
+        serializer.save()   # add user to DB
+        user = User.objects.get(username=request.data['username'])
         user.set_password(request.data['password'])
         user.save()
         token = Token.objects.create(user=user)
