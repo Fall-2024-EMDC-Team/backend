@@ -9,6 +9,7 @@ from .serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
+# OLD
 # Rather than write multiple views we're grouping together all the common behavior into classes called ViewSets.
 # class UserViewSet(viewsets.ModelViewSet):
 #     """
@@ -26,6 +27,7 @@ from django.shortcuts import get_object_or_404
 #     queryset = Group.objects.all().order_by('name')
 #     serializer_class = GroupSerializer
 #     permission_classes = [permissions.IsAuthenticated]
+# OLD
 
 @api_view(['POST'])
 def login(request):
