@@ -29,9 +29,9 @@ from .auth import views
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('login', views.login),
-    re_path('signup', views.signup),
-    re_path('test_token', views.test_token),
+    re_path('login/', views.login),
+    re_path('signup/', views.signup),
+    re_path('test_token/', views.test_token),
     # path('', include(router.urls)),
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
