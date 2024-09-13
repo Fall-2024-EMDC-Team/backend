@@ -1,0 +1,22 @@
+# Test REST API for emdcbackend
+# Requires Extension: "REST Client" by Huachao Mao
+
+# LOGIN
+POST http://127.0.0.1:8000/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "12345678" }
+
+###
+
+# SIGNUP
+POST http://127.0.0.1:8000/signup
+Content-Type: application/json
+
+{ "username": "admin", "password": "12345678", "email": "admin@gmail.com" }
+
+###
+
+# TEST TOKEN
+GET http://127.0.0.1:8000/test_token
+Content-Type: application/json
