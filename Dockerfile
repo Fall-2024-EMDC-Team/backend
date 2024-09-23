@@ -11,12 +11,13 @@ RUN pip install mysqlclient
 RUN pip install django-autoreload
 RUN pip install python-dotenv
 RUN pip install django-cors-headers
+RUN pip install djangorestframework
 
 # Copy the backend code into the container at /backend
 COPY /emdcbackend/ /backend/
 
 # Expose port 7012 to allow external access
-EXPOSE 7012
+EXPOSE 7004
 
 # Run the Django application with auto-reload
 CMD ["python", "manage.py", "runserver", "0.0.0.0:7004"]
