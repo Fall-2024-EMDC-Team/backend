@@ -2,30 +2,131 @@ from django.db import models
 
 # this is where tables get made for the data.
 
+class Contest(models.Model):
+  id = models.IntegerField(unique=True)
+  name = models.CharField(max_length=99)
+
+class MapContestToRegion(models.Model):
+  id = models.IntegerField(unique=True)
+  contestid = models.IntegerField()
+  regionid = models.IntegerField()
+
+class Region(models.Model):
+  id = models.IntegerField(unique=True)
+  name = models.CharField(max_length=99)
+
+
 class Judge(models.Model):
-  jid = models.IntegerField(max_length=4, unique=True)
-  uid = models.IntegerField(max_length=4)
-  clusterid = models.IntegerField(max_length=4)
+  id = models.IntegerField(unique=True)
+  first_name = models.CharField()
+  last_name = models.CharField()
+  contestid = models.IntegerField()
+
+class MapJudgeToCluster(models.Model):
+  id = models.IntegerField(unique=True)
+  judegeid = models.IntegerField()
+  clusterid = models.IntegerField()
 
 class JudgeClusters(models.Model):
-  clusterid = models.IntegerField(max_length=4, unique=True)
-  cid = models.IntegerField(max_length=4)
+  id = models.IntegerField(unique=True)
+  cluster_name = models.CharField()
+
+class MapClusterToTeam(models.Model):
+  id = models.IntegerField(unique=True)
+  clusterid = models.IntegerField()
+  teamid = models.IntegerField()
 
 class Teams(models.Model):
-  tid = models.IntegerField(max_length=4, unique=True)
+  id = models.IntegerField(unique=True)
   team_name = models.CharField(max_length=99)
   school_name = models.CharField(max_length=99)
-  cid = models.IntegerField(max_length=4) # used as a secondary key for the contest
   journal_score = models.FloatField()
   presentation_score = models.FloatField()
   machinedesign_score = models.FloatField()
   score_penalties =models.FloatField()
-  judge_cluster = models.IntegerField(max_length=4)
+  judge_cluster = models.IntegerField()
 
+class MapUsertoJudge(models.Model):
+  id = models.IntegerField(unique=True)
+  judgeid = models.IntegerField()
+  uuid = models.IntegerField()
 
-class Contest(models.Model):
-  cid = models.IntegerField(max_length=4, unique=True)
-  name = models.CharField(max_length=99)
-  region = models.IntegerField(max_length=2)
-  grade_level = models.IntegerField(max_length=1)
- 
+class User(models.Model):
+  id = models.IntegerField(unique=True)
+  email = CharField()
+  password = CharField()
+  user_type = IntegerField()
+
+class MapUserToOrganizer(models.Model):
+  id = models.IntegerField(unique=True)
+  uuid = IntegerField()
+  organizerid = IntegerField()
+
+class Organizer(models.Model):
+  id = models.IntegerField(unique=True)
+  first_name = models.CharField()
+  last_name = models.CharField()
+
+class MapJudgeToPresentationScores(models.Model):
+  id = models.IntegerField(unique=True)
+  judgeid = models.IntegerField()
+  scoresheetid = models.IntegerField()
+
+class MapJudgeToJournalScores(models.Model):
+  id = models.IntegerField(unique=True)
+  judgeid = models.IntegerField()
+  scoresheetid = models.IntegerField()
+
+class MapJudgeToMachineDesignScores(models.Model):
+  id = models.IntegerField(unique=True)
+  judgeid = models.IntegerField()
+  scoresheetid = models.IntegerField()
+
+class PresentationScores(models.Model):
+  id = models.IntegerField(unique=True)
+  field1 = models.IntegerField()
+  field2 = models.IntegerField()
+  field3 = models.IntegerField()
+  field4 = models.IntegerField()
+  field5 = models.IntegerField()
+  field6 = models.IntegerField()
+  field7 = models.IntegerField()
+  field8 = models.IntegerField()
+  penalty = models.IntegerField()
+
+class JournalScores(models.Model):
+  id = models.IntegerField(unique=True)
+  field1 = models.IntegerField()
+  field2 = models.IntegerField()
+  field3 = models.IntegerField()
+  field4 = models.IntegerField()
+  field5 = models.IntegerField()
+  field6 = models.IntegerField()
+  field7 = models.IntegerField()
+  field8 = models.IntegerField()
+
+class MachineDesignScores(models.Model):
+  id = models.IntegerField(unique=True)
+  field1 = models.IntegerField()
+  field2 = models.IntegerField()
+  field3 = models.IntegerField()
+  field4 = models.IntegerField()
+  field5 = models.IntegerField()
+  field6 = models.IntegerField()
+  field7 = models.IntegerField()
+  field8 = models.IntegerField()
+
+class MapTeamToPresentationScores(models.Model):
+  id = models.IntegerField(unique=True)
+  teamid = models.IntegerField()
+  scoresheetid = models.IntegerField()
+
+class MapTeamToJournalScores(models.Model):
+  id = models.IntegerField(unique=True)
+  teamid = models.IntegerField()
+  scoresheetid = models.IntegerField()
+
+class MapTeamToMachineDesignScores(models.Model):
+  id = models.IntegerField(unique=True)
+  teamid = models.IntegerField()
+  scoresheetid = models.IntegerField()
