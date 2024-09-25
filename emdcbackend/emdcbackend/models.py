@@ -18,6 +18,11 @@ class MapContestToTeam(models.Model):
   contestid = models.IntegerField()
   teamid = models.IntegerField()
 
+class MapContestToOrganizer(models.Model):
+  id = models.IntegerField(unique=True)
+  contestid = models.IntegerField()
+  organizerid = models.IntegerField()
+
 class MapContestToRegion(models.Model):
   id = models.IntegerField(unique=True)
   contestid = models.IntegerField()
