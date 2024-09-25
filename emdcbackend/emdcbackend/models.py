@@ -5,6 +5,18 @@ from django.db import models
 class Contest(models.Model):
   id = models.IntegerField(unique=True)
   name = models.CharField(max_length=99)
+  is_open = models.BooleanField()
+  is_tabulated = models.BooleanField()
+
+class MapContestToJudge(models.Model):
+  id = models.IntegerField(unique=True)
+  contestid = models.IntegerField()
+  judegeid = models.IntegerField()
+
+class MapContestToTeam(models.Model):
+  id = models.IntegerField(unique=True)
+  contestid = models.IntegerField()
+  teamid = models.IntegerField()
 
 class MapContestToRegion(models.Model):
   id = models.IntegerField(unique=True)
@@ -14,7 +26,6 @@ class MapContestToRegion(models.Model):
 class Region(models.Model):
   id = models.IntegerField(unique=True)
   name = models.CharField(max_length=99)
-
 
 class Judge(models.Model):
   id = models.IntegerField(unique=True)
@@ -46,21 +57,34 @@ class Teams(models.Model):
   score_penalties =models.FloatField()
   judge_cluster = models.IntegerField()
 
-class MapUsertoJudge(models.Model):
-  id = models.IntegerField(unique=True)
-  judgeid = models.IntegerField()
-  uuid = models.IntegerField()
-
 class User(models.Model):
   id = models.IntegerField(unique=True)
-  email = CharField()
-  password = CharField()
-  user_type = IntegerField()
+  email = models.CharField()
+  password = models.CharField()
+  user_type = models.IntegerField()
 
-class MapUserToOrganizer(models.Model):
+class MapUserToRole(models.Model):
+  class RoleEnum(models.IntegerChoices):
+        ADMIN = 1
+        ORGANIZER = 2
+        JUDGE = 3
+        COACH = 4
+  
   id = models.IntegerField(unique=True)
-  uuid = IntegerField()
-  organizerid = IntegerField()
+  role = models.IntegerField(choices=RoleEnum)
+  uuid = models.IntegerField()
+  relatedid = models.IntegerField()
+
+class Coach(models.Model):
+  id = models.IntegerField(unique=True)
+  first_name = models.CharField()
+  last_name = models.CharField()
+  school_name = models.CharField()
+
+class MapCoachToTeam(models.Model):
+  id = models.IntegerField(unique=true)
+  teamid = models.IntegerField()
+  uuid = models.IntegerField()
 
 class Organizer(models.Model):
   id = models.IntegerField(unique=True)
