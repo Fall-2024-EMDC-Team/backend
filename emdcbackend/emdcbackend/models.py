@@ -62,12 +62,6 @@ class Teams(models.Model):
   score_penalties =models.FloatField()
   judge_cluster = models.IntegerField()
 
-class User(models.Model):
-  id = models.IntegerField(unique=True)
-  email = models.CharField()
-  password = models.CharField()
-  user_type = models.IntegerField()
-
 class MapUserToRole(models.Model):
   class RoleEnum(models.IntegerChoices):
         ADMIN = 1
