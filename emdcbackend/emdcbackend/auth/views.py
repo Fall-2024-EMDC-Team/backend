@@ -67,17 +67,19 @@ def edit_user(request):
     user = get_object_or_404(User, id=request.data["id"])
 
     try:
-        if User.objects.filter(username=request.data["username"]).exists():
-            return Response(
-                {"detail": "Username already taken."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        user.username = request.data["username"]
+        if request.data["username"] != user.username:
+            if User.objects.filter(username=request.data["username"]).exists():
+                return Response(
+                    {"detail": "Email already taken."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.username = request.data["username"]
     except:
         pass
 
     try:
-        user.set_password(request.data["password"])
+        if request.data["password"] != user.password:
+            user.set_password(request.data["password"])
     except:
         pass
 
