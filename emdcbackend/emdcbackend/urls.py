@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from .auth import views
+from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,9 @@ urlpatterns = [
     path('testToken/', views.test_token),
     path('getUser/<int:user_id>/', views.user_by_id),
     path('deleteUser/<int:user_id>/', views.delete_user_by_id),
-    path('editUser/', views.edit_user)
+    path('editUser/', views.edit_user),
+    path('createJudge/', create_judge),
+    path('getJudge/<int:judge_id>/', judge_by_id),
+    path('editJudge/', edit_judge),
+    path('deleteJudge/<int:judge_id>/', delete_judge)
 ]
