@@ -21,9 +21,6 @@ class MapContestToRegion(models.Model):
     contestid = models.IntegerField()
     regionid = models.IntegerField()
 
-class Region(models.Model):
-    name = models.CharField(max_length=99)
-
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length

@@ -25,7 +25,7 @@ def create_judge(request):
     serializer = JudgeSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()  # add user to DB
-        return Response({"judge": serializer.data})
+        return Response({"judge": serializer.data},status=status.HTTP_200_OK)
     return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST
     )
@@ -44,7 +44,7 @@ def edit_judge(request):
     judge.save()
 
     serializer = JudgeSerializer(instance=judge)
-    return Response({"judge": serializer.data})
+    return Response({"judge": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
