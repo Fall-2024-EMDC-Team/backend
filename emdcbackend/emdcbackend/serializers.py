@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Judge
-from .models import Contest
+from .models import Judge, Organizer, Contest
 
 class JudgeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,3 +10,9 @@ class ContestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contest
         fields = '__all__'
+
+
+class OrganizerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organizer
+        fields = '__all__'  
