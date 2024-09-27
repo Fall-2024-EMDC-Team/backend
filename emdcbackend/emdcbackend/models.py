@@ -113,6 +113,11 @@ class MachineDesignScores(models.Model):
     field7 = models.IntegerField()
     field8 = models.IntegerField()
 
+class Penalties(models.Model):
+    PresentationPenalties = models.IntegerField()
+    MachinePenalties = models.IntegerField()
+
+
 class MapTeamToPresentationScores(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
@@ -122,5 +127,9 @@ class MapTeamToJournalScores(models.Model):
     scoresheetid = models.IntegerField()
 
 class MapTeamToMachineDesignScores(models.Model):
+    teamid = models.IntegerField()
+    scoresheetid = models.IntegerField()
+
+class MapeTeamToPenalties(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
