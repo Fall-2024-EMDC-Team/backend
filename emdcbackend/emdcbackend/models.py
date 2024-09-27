@@ -130,6 +130,6 @@ class MapTeamToMachineDesignScores(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
 
-class MapeTeamToPenalties(models.Model):
+class MapTeamToPenalties(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
