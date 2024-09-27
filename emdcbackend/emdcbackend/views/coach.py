@@ -12,12 +12,16 @@ from ..models import Coach
 from ..serializers import CoachSerializer
 
 @api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def coach_by_id(request, coach_id):
-  contest = get_object_or_404(Coach, id = coach_id)
-  serializer = CoachSerializer(instance=contest)
+  coach = get_object_or_404(Coach, id = coach_id)
+  serializer = CoachSerializer(instance=coach)
   return Response({"Coach": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def coach_get_all(request):
   coaches = Coach.objects.all()
   serializer = CoachSerializer(coaches, many=True)
