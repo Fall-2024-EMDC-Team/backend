@@ -12,6 +12,13 @@ from ..serializers import TeamSerializer
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
+# get team
+@api_view(["GET"])
+def team_by_id(request, team_id):
+    team = get_object_or_404(Teams, id=team_id)
+    serializer = TeamSerializer(instance=team)
+    return Response({"Team": serializer.data}, status=status.HTTP_200_OK)
+
 # create team
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -29,7 +36,7 @@ def create_team(request):
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def edit_user(request):
+def edit_team(request):
     team = get_object_or_404(Teams, id=request.data["teamid"])
     team.team_name = request.data=["team_name"]
     team.school_name = request.data=["school_name"]
