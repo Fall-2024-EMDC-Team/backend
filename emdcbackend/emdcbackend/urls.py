@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 from .auth import views
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
+from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +31,9 @@ urlpatterns = [
     path('createJudge/', create_judge),
     path('getJudge/<int:judge_id>/', judge_by_id),
     path('editJudge/', edit_judge),
-    path('deleteJudge/<int:judge_id>/', delete_judge)
+    path('deleteJudge/<int:judge_id>/', delete_judge),
+    path('createOrganizer/', create_organizer),
+    path('getOrganizer/<int:organizer_id>/', organizer_by_id),
+    path('editOrganizer', edit_organizer),
+    path('deleteOrganizer/<int:organizer_id>/', delete_organizer)
 ]
