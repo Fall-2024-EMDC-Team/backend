@@ -50,3 +50,11 @@ def edit_contest(request):
   contest.save()
   serializer = ContestSerializer(instance = contest)
   return Response({"Contest":serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_contest(request,contest_id):
+  contest = get_object_or_404(Contest, contest_id)
+  contest.delete()
+  return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
