@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404
 from ...models import MapCoachToTeam, Coach, Teams
 from ...serializers import CoachToTeamSerializer, CoachSerializer
 
-
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
