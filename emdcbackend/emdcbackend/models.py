@@ -64,7 +64,7 @@ class Coach(models.Model):
 
 class MapCoachToTeam(models.Model):
     teamid = models.IntegerField()
-    uuid = models.IntegerField()
+    coachid = models.IntegerField()
 
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
@@ -130,6 +130,6 @@ class MapTeamToMachineDesignScores(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
 
-class MapeTeamToPenalties(models.Model):
+class MapTeamToPenalties(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()

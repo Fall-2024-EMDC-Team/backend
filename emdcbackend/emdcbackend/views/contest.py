@@ -7,15 +7,13 @@ from rest_framework.decorators import (
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer
-from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 from ..models import Contest
 from ..serializers import ContestSerializer
 
 @api_view(["GET"])
-def contest_by_id(request,contest_id):
+def contest_by_id(request, contest_id):
   contest = get_object_or_404(Contest, id = contest_id)
   serializer = ContestSerializer(instance=contest)
   return Response({"Contest": serializer.data}, status=status.HTTP_200_OK)
@@ -23,7 +21,7 @@ def contest_by_id(request,contest_id):
 @api_view(["GET"])
 def contest_get_all(request):
   contests = Contest.objects.all()
-  serializer = ContestSerializer(instance=contests)
+  serializer = ContestSerializer(instance=contests, many=True)
   return Response({"Contests":serializer.data}, status=status.HTTP_200_OK)
 
 
