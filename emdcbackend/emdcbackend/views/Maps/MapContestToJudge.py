@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
 from ...models import MapContestToJudge, Judge, Contest
-from ...serializers import MapContestToJudgeSerializer, ContestSerializer
+from ...serializers import MapContestToJudgeSerializer, ContestSerializer, JudgeSerializer
 
 
 @api_view(["POST"])
@@ -31,7 +31,8 @@ def create_contest_judge_mapping(request):
 def get_all_judges_by_contest_id(request, contest_id):
   judge_ids = MapContestToJudge.objects.filter(request.data["id"])
   judges = Judge.objects.filter(id__in=judge_ids)
-  return Response({"Judges": list(judges.values())}, status=status.HTTP_200_OK)
+  serializer = JudgeSerializer(judges, many=True)
+  return Response({"Judges":serializer.data()}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

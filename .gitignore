@@ -1,2 +1,6 @@
 emdcbackend/.env
 sqlite3.db
+emdcbackend/emdcbackend/views/__pycache__/
+emdcbackend/emdcbackend/__pycache__/
+emdcbackend/emdcbackend/auth/__pycache__/
+emdcbackend/emdcbackend/views/Maps/__pycache__/
