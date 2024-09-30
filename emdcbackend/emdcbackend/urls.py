@@ -21,6 +21,7 @@ from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
+from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,5 +45,10 @@ urlpatterns = [
     path('deleteCoach/<int:coach_id>/', delete_coach),
     path('getAllCoaches/', coach_get_all),
     path('mapCoachToTeam/', create_coach_team_mapping),
-    path('getCoachByTeam/<int:team_id>/', coach_by_team_id)
+    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('getCluster/<int:cluster_id>/', cluster_by_id),
+    path('getAllClusters/', clusters_get_all),
+    path('createCluster/', create_cluster),
+    path('editCluster/', edit_cluster),
+    path('deleteCluster/<int:cluster_id>/', delete_cluster)
 ]
