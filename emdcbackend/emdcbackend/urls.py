@@ -21,6 +21,9 @@ from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
+from .views.machinedesignscores import create_machine_design_scores, machine_design_scores_by_id, edit_machine_design_scores, delete_machine_design_scores
+from views.journalscores import create_journal_scores, journal_scores_by_id, edit_journal_scores, delete_journal_scores
+from views.presentationscores import create_presentation_scores, presentation_scores_by_id, edit_presentation_scores, delete_presentation_scores
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,5 +47,17 @@ urlpatterns = [
     path('deleteCoach/<int:coach_id>/', delete_coach),
     path('getAllCoaches/', coach_get_all),
     path('mapCoachToTeam/', create_coach_team_mapping),
-    path('getCoachByTeam/<int:team_id>/', coach_by_team_id)
+    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('createMachineDesignScores/', create_machine_design_scores),
+    path('getMachineDesignScores/<int:machine_design_scores_id>/', machine_design_scores_by_id),
+    path('editMachineDesignScores/', edit_machine_design_scores),
+    path('deleteMachineDesignScores/<int:machine_design_scores_id>/', delete_machine_design_scores),
+    path('createJournalScores/', create_journal_scores),
+    path('getJournalScores/<int:journal_scores_id>/', journal_scores_by_id),
+    path('editJournalScores/', edit_journal_scores),
+    path('deleteJournalScores/<int:journal_scores_id>/', delete_journal_scores),
+    path('createPresentationScores/', create_presentation_scores),
+    path('getPresentationScores/<int:presentation_scores_id>/', presentation_scores_by_id),
+    path('editPresentationScores/', edit_presentation_scores),
+    path('deletePresentationScores/<int:presentation_scores_id>/', delete_presentation_scores)
 ]
