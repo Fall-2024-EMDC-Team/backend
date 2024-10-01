@@ -72,7 +72,7 @@ urlpatterns = [
     path('getContestbyTeam/<int:team_id>/',get_contest_id_by_team_id),
     path('mapContestToOrganizer/',create_contest_organizer_mapping),
     path('getOrganizerByContest/<int:contest_id>/',get_organizers_by_contest_id),
-    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id)
+    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id),
     path('createMachineDesignScores/', create_machine_design_scores),
     path('getMachineDesignScores/<int:machine_design_scores_id>/', machine_design_scores_by_id),
     path('editMachineDesignScores/', edit_machine_design_scores),

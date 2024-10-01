@@ -27,12 +27,12 @@ class CoachToTeamSerializer(serializers.ModelSerializer):
         model = MapCoachToTeam
         fields = '__all__'
 
-class MapContestToOrganizerSerializer(serializer.ModelSerializer):
+class MapContestToOrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = MapContestToOrganizer
         fields = '__all__'
 
-class MapContestToTeamSerializer(serializer.ModelSerializer):
+class MapContestToTeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = MapContestToTeam
         fields = '__all__'
