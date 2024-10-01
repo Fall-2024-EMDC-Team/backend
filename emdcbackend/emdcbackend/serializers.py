@@ -11,7 +11,6 @@ class ContestSerializer(serializers.ModelSerializer):
         model = Contest
         fields = '__all__'
 
-
 class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organizer

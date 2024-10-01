@@ -27,8 +27,8 @@ from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
 from .views.machinedesignscores import create_machine_design_scores, machine_design_scores_by_id, edit_machine_design_scores, delete_machine_design_scores
-from views.journalscores import create_journal_scores, journal_scores_by_id, edit_journal_scores, delete_journal_scores
-from views.presentationscores import create_presentation_scores, presentation_scores_by_id, edit_presentation_scores, delete_presentation_scores
+from .views.journalscores import create_journal_scores, journal_scores_by_id, edit_journal_scores, delete_journal_scores
+from .views.presentationscores import create_presentation_scores, presentation_scores_by_id, edit_presentation_scores, delete_presentation_scores
 
 urlpatterns = [
     path('admin/', admin.site.urls),
