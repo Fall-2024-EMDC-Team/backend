@@ -22,6 +22,7 @@ from .views.organizer import create_organizer, organizer_by_id, edit_organizer, 
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
+from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
@@ -47,6 +48,12 @@ urlpatterns = [
     path('deleteCoach/<int:coach_id>/', delete_coach),
     path('getAllCoaches/', coach_get_all),
     path('mapCoachToTeam/', create_coach_team_mapping),
+    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('getCluster/<int:cluster_id>/', cluster_by_id),
+    path('getAllClusters/', clusters_get_all),
+    path('createCluster/', create_cluster),
+    path('editCluster/', edit_cluster),
+    path('deleteCluster/<int:cluster_id>/', delete_cluster)
     path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
     path('contestByID/<int:contest_id>/', contest_by_id),
     path('contestGetAll/',contest_get_all),
