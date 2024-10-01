@@ -53,7 +53,7 @@ urlpatterns = [
     path('getAllClusters/', clusters_get_all),
     path('createCluster/', create_cluster),
     path('editCluster/', edit_cluster),
-    path('deleteCluster/<int:cluster_id>/', delete_cluster)
+    path('deleteCluster/<int:cluster_id>/', delete_cluster),
     path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
     path('contestByID/<int:contest_id>/', contest_by_id),
     path('contestGetAll/',contest_get_all),
