@@ -20,7 +20,12 @@ from .auth import views
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
+from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
+from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
+from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
+from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
+from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
 from .views.machinedesignscores import create_machine_design_scores, machine_design_scores_by_id, edit_machine_design_scores, delete_machine_design_scores
 from views.journalscores import create_journal_scores, journal_scores_by_id, edit_journal_scores, delete_journal_scores
 from views.presentationscores import create_presentation_scores, presentation_scores_by_id, edit_presentation_scores, delete_presentation_scores
@@ -48,6 +53,26 @@ urlpatterns = [
     path('getAllCoaches/', coach_get_all),
     path('mapCoachToTeam/', create_coach_team_mapping),
     path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('getCluster/<int:cluster_id>/', cluster_by_id),
+    path('getAllClusters/', clusters_get_all),
+    path('createCluster/', create_cluster),
+    path('editCluster/', edit_cluster),
+    path('deleteCluster/<int:cluster_id>/', delete_cluster),
+    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('contestByID/<int:contest_id>/', contest_by_id),
+    path('contestGetAll/',contest_get_all),
+    path('createContest/',create_contest),
+    path('editContest/',edit_contest),
+    path('deleteContest/<int:contest_id>/',delete_contest),
+    path('mapContestToJudge/',create_contest_judge_mapping),
+    path('getJudgesByContest/<int:contest_id>/',get_all_judges_by_contest_id),
+    path('getContestByJudge/<int:judge_id>/',get_contest_id_by_judge_id),
+    path('mapContestToTeam/',create_contest_team_mapping),
+    path('getTeamsByContest/<int:contest_id>/',get_teams_by_contest_id),
+    path('getContestbyTeam/<int:team_id>/',get_contest_id_by_team_id),
+    path('mapContestToOrganizer/',create_contest_organizer_mapping),
+    path('getOrganizerByContest/<int:contest_id>/',get_organizers_by_contest_id),
+    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id)
     path('createMachineDesignScores/', create_machine_design_scores),
     path('getMachineDesignScores/<int:machine_design_scores_id>/', machine_design_scores_by_id),
     path('editMachineDesignScores/', edit_machine_design_scores),
