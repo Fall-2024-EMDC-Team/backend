@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, Scoresheet, JudgeClusters, MapContestToJudge, MapContestToOrganizer, MapContestToTeam
+from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, Scoresheet, JudgeClusters, MapContestToJudge, \
+    MapContestToOrganizer, MapContestToTeam, Penalties
 from .models import Teams, Admin
 
 class JudgeSerializer(serializers.ModelSerializer):
