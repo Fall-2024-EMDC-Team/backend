@@ -81,7 +81,12 @@ class MapJudgeToMachineDesignScores(models.Model):
     judgeid = models.IntegerField()
     scoresheetid = models.IntegerField()
 
-class PresentationScores(models.Model):
+class Scoresheet(models.Model):
+    class ScoresheetEnum(models.IntegerChoices):
+        PRESENTATION = 1
+        JOURNAL = 2
+        MACHINEDESIGN = 3
+    sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
     field1 = models.IntegerField()
     field2 = models.IntegerField()
     field3 = models.IntegerField()
@@ -90,28 +95,7 @@ class PresentationScores(models.Model):
     field6 = models.IntegerField()
     field7 = models.IntegerField()
     field8 = models.IntegerField()
-    penalty = models.IntegerField()
-
-class JournalScores(models.Model):
-    field1 = models.IntegerField()
-    field2 = models.IntegerField()
-    field3 = models.IntegerField()
-    field4 = models.IntegerField()
-    field5 = models.IntegerField()
-    field6 = models.IntegerField()
-    field7 = models.IntegerField()
-    field8 = models.IntegerField()
-
-class MachineDesignScores(models.Model):
-    field1 = models.IntegerField()
-    field2 = models.IntegerField()
-    field3 = models.IntegerField()
-    field4 = models.IntegerField()
-    field5 = models.IntegerField()
-    field6 = models.IntegerField()
-    field7 = models.IntegerField()
-    field8 = models.IntegerField()
-
+    
 class Penalties(models.Model):
     PresentationPenalties = models.IntegerField()
     MachinePenalties = models.IntegerField()
