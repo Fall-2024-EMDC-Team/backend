@@ -1,4 +1,4 @@
-from models import Teams
+from ..models import Teams
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from ..serializers import TeamSerializer
-from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 # get team
@@ -26,8 +25,8 @@ def team_by_id(request, team_id):
 def create_team(request):
     serializer = TeamSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()  # add user to DB
-        return Response({"team": serializer.data})
+        serializer.save()  # add team to DB
+        return Response({"Team": serializer.data}, status=status.HTTP_200_OK)
     return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST
     )
@@ -37,14 +36,13 @@ def create_team(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_team(request):
-    team = get_object_or_404(Teams, id=request.data["teamid"])
+    team = get_object_or_404(Teams, id=request.data["id"])
     team.team_name = request.data=["team_name"]
-    team.school_name = request.data=["school_name"]
     team.journal_score = request.data=["journal_score"]
-    team.presentation_score = request.data=["team_name"]
+    team.presentation_score = request.data=["presentation_score"]
     team.machinedesign_score = request.data=["machinedesign_score"]
     team.score_penalties = request.data=["score_penalties"]
-    team.judge_cluster = request.data=["team_name"]
+    team.judge_cluster = request.data=["judge_cluster"]
     team.save()
 
     serializer = TeamSerializer(instance=team)
