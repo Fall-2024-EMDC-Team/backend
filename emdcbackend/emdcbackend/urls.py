@@ -21,6 +21,7 @@ from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
+from .views.team import create_team, team_by_id, edit_team, delete_team_by_id
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
@@ -28,6 +29,7 @@ from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, 
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
 from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
+from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
 
 urlpatterns = [
     # Admin
@@ -61,6 +63,12 @@ urlpatterns = [
     path('editCoach/', edit_coach),
     path('deleteCoach/<int:coach_id>/', delete_coach),
     path('getAllCoaches/', coach_get_all),
+  
+    # Teams
+    path('getTeam/<int:team_id>/', team_by_id),
+    path('createTeam/', create_team),
+    path('editTeam/', edit_team),
+    path('deleteTeam/<int:team_id>/', delete_team_by_id),
 
     # Maps
     path('mapCoachToTeam/', create_coach_team_mapping),
@@ -101,4 +109,10 @@ urlpatterns = [
     path('allAdmins/', admins_get_all),
     path('deleteAdmin/<int:admin_id>/', delete_admin),
     path('editAdmin/', edit_admin),
+  
+    # Penalties
+    path('createPenalties/',create_penalties),
+    path('editPenalties/',edit_penalties),
+    path('getPenalties/<int:penalties_id>/',penalties_by_id),
+    path('deletePenalties/<int:penalties_id>/',delete_penalties)
 ]
