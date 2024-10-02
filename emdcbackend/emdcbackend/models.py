@@ -90,7 +90,6 @@ class PresentationScores(models.Model):
     field6 = models.IntegerField()
     field7 = models.IntegerField()
     field8 = models.IntegerField()
-    penalty = models.IntegerField()
 
 class JournalScores(models.Model):
     field1 = models.IntegerField()

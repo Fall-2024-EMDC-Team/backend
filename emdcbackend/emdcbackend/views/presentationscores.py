@@ -43,7 +43,6 @@ def edit_presentation_scores(request):
     presentation_scores.field6 = request.data["field6"]
     presentation_scores.field7 = request.data["field7"]
     presentation_scores.field8 = request.data["field8"]
-    presentation_scores.penalty = request.data["penalty"]
     presentation_scores.save()
 
     serializer = PresentationScoresSerializer(instance=presentation_scores)
