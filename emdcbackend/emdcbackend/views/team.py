@@ -37,12 +37,12 @@ def create_team(request):
 @permission_classes([IsAuthenticated])
 def edit_team(request):
     team = get_object_or_404(Teams, id=request.data["id"])
-    team.team_name = request.data=["team_name"]
-    team.journal_score = request.data=["journal_score"]
-    team.presentation_score = request.data=["presentation_score"]
-    team.machinedesign_score = request.data=["machinedesign_score"]
-    team.score_penalties = request.data=["score_penalties"]
-    team.judge_cluster = request.data=["judge_cluster"]
+    team.team_name = request.data["team_name"]
+    team.journal_score = request.data["journal_score"]
+    team.presentation_score = request.data["presentation_score"]
+    team.machinedesign_score = request.data["machinedesign_score"]
+    team.score_penalties = request.data["score_penalties"]
+    team.judge_cluster = request.data["judge_cluster"]
     team.save()
 
     serializer = TeamSerializer(instance=team)
