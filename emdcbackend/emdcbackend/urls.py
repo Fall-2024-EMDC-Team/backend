@@ -66,7 +66,7 @@ urlpatterns = [
     path('getTeam/<int:team_id>/', team_by_id),
     path('createTeam/', create_team),
     path('editTeam/', edit_team),
-    path('deleteTeam/<int:team_id>/', delete_team_by_id)
+    path('deleteTeam/<int:team_id>/', delete_team_by_id),
 
     # Maps
     path('mapCoachToTeam/', create_coach_team_mapping),
