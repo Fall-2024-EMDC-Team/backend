@@ -11,7 +11,6 @@ class ContestSerializer(serializers.ModelSerializer):
         model = Contest
         fields = '__all__'
 
-
 class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organizer
@@ -20,6 +19,11 @@ class OrganizerSerializer(serializers.ModelSerializer):
 class CoachSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coach
+        fields = '__all__'
+        
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teams
         fields = '__all__'
 
 class CoachToTeamSerializer(serializers.ModelSerializer):
@@ -46,8 +50,8 @@ class JudgeClustersSerializer(serializers.ModelSerializer):
     class Meta:
         model = JudgeClusters
         fields = '__all__'
-
-class TeamSerializer(serializers.ModelSerializer):
+        
+class ScoresheetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Teams
+        model = Scoresheet
         fields = '__all__'
