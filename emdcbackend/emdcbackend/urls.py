@@ -26,7 +26,7 @@ from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, del
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
-from .views.scoresheets import create_journal_scores, journal_scores_by_id, edit_journal_scores, delete_journal_scores
+from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -71,8 +71,8 @@ urlpatterns = [
     path('mapContestToOrganizer/',create_contest_organizer_mapping),
     path('getOrganizerByContest/<int:contest_id>/',get_organizers_by_contest_id),
     path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id),
-    path('createJournalScores/', create_journal_scores),
-    path('getJournalScores/<int:journal_scores_id>/', journal_scores_by_id),
-    path('editJournalScores/', edit_journal_scores),
-    path('deleteJournalScores/<int:journal_scores_id>/', delete_journal_scores)
+    path('createScoreSheet/',create_score_sheets),
+    path('editScoreSheet/',edit_score_sheets),
+    path('getScoreSheet/<int:scores_id>/',scores_by_id),
+    path('deleteScoreSheet/<int:scores_id>/',delete_score_sheets)
 ]
