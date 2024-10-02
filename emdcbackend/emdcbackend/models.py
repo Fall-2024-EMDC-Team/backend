@@ -17,13 +17,6 @@ class MapContestToOrganizer(models.Model):
     contestid = models.IntegerField()
     organizerid = models.IntegerField()
 
-class MapContestToRegion(models.Model):
-    contestid = models.IntegerField()
-    regionid = models.IntegerField()
-
-class Region(models.Model):
-    name = models.CharField(max_length=99)
-
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
@@ -46,7 +39,6 @@ class MapClusterToTeam(models.Model):
 
 class Teams(models.Model):
     team_name = models.CharField(max_length=99)
-    school_name = models.CharField(max_length=99)
     journal_score = models.FloatField()
     presentation_score = models.FloatField()
     machinedesign_score = models.FloatField()
@@ -71,7 +63,7 @@ class Coach(models.Model):
 
 class MapCoachToTeam(models.Model):
     teamid = models.IntegerField()
-    uuid = models.IntegerField()
+    coachid = models.IntegerField()
 
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
@@ -120,6 +112,11 @@ class MachineDesignScores(models.Model):
     field7 = models.IntegerField()
     field8 = models.IntegerField()
 
+class Penalties(models.Model):
+    PresentationPenalties = models.IntegerField()
+    MachinePenalties = models.IntegerField()
+
+
 class MapTeamToPresentationScores(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
@@ -129,5 +126,9 @@ class MapTeamToJournalScores(models.Model):
     scoresheetid = models.IntegerField()
 
 class MapTeamToMachineDesignScores(models.Model):
+    teamid = models.IntegerField()
+    scoresheetid = models.IntegerField()
+
+class MapTeamToPenalties(models.Model):
     teamid = models.IntegerField()
     scoresheetid = models.IntegerField()
