@@ -96,6 +96,7 @@ class Scoresheet(models.Model):
     field7 = models.IntegerField()
     field8 = models.IntegerField()
 
+
 class Penalties(models.Model):
     PresentationPenalties = models.IntegerField()
     MachinePenalties = models.IntegerField()
