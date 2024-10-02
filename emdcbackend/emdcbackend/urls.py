@@ -26,40 +26,44 @@ from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, del
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
+from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
+
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
+
+    # Authentication
     path('login/', views.login),
     path('signup/', views.signup),
     path('testToken/', views.test_token),
+
+    # Users
     path('getUser/<int:user_id>/', views.user_by_id),
     path('deleteUser/<int:user_id>/', views.delete_user_by_id),
     path('editUser/', views.edit_user),
+
+    # Judges
     path('createJudge/', create_judge),
     path('getJudge/<int:judge_id>/', judge_by_id),
     path('editJudge/', edit_judge),
     path('deleteJudge/<int:judge_id>/', delete_judge),
+
+    # Organizers
     path('createOrganizer/', create_organizer),
     path('getOrganizer/<int:organizer_id>/', organizer_by_id),
     path('editOrganizer', edit_organizer),
     path('deleteOrganizer/<int:organizer_id>/', delete_organizer),
+
+    # Coaches
     path('getCoach/<int:coach_id>/', coach_by_id),
     path('createCoach/', create_coach),
     path('editCoach/', edit_coach),
     path('deleteCoach/<int:coach_id>/', delete_coach),
     path('getAllCoaches/', coach_get_all),
+
+    # Maps
     path('mapCoachToTeam/', create_coach_team_mapping),
     path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
-    path('getCluster/<int:cluster_id>/', cluster_by_id),
-    path('getAllClusters/', clusters_get_all),
-    path('createCluster/', create_cluster),
-    path('editCluster/', edit_cluster),
-    path('deleteCluster/<int:cluster_id>/', delete_cluster),
-    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
-    path('contestByID/<int:contest_id>/', contest_by_id),
-    path('contestGetAll/',contest_get_all),
-    path('createContest/',create_contest),
-    path('editContest/',edit_contest),
-    path('deleteContest/<int:contest_id>/',delete_contest),
     path('mapContestToJudge/',create_contest_judge_mapping),
     path('getJudgesByContest/<int:contest_id>/',get_all_judges_by_contest_id),
     path('getContestByJudge/<int:judge_id>/',get_contest_id_by_judge_id),
@@ -68,6 +72,25 @@ urlpatterns = [
     path('getContestbyTeam/<int:team_id>/',get_contest_id_by_team_id),
     path('mapContestToOrganizer/',create_contest_organizer_mapping),
     path('getOrganizerByContest/<int:contest_id>/',get_organizers_by_contest_id),
-    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id)
+    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id),
 
+    # Clusters
+    path('getCluster/<int:cluster_id>/', cluster_by_id),
+    path('getAllClusters/', clusters_get_all),
+    path('createCluster/', create_cluster),
+    path('editCluster/', edit_cluster),
+    path('deleteCluster/<int:cluster_id>/', delete_cluster),
+    
+    # Contests
+    path('contestByID/<int:contest_id>/', contest_by_id),
+    path('contestGetAll/',contest_get_all),
+    path('createContest/',create_contest),
+    path('editContest/',edit_contest),
+    path('deleteContest/<int:contest_id>/',delete_contest),
+
+    # Scoresheets
+    path('createScoreSheet/',create_score_sheets),
+    path('editScoreSheet/',edit_score_sheets),
+    path('getScoreSheet/<int:scores_id>/',scores_by_id),
+    path('deleteScoreSheet/<int:scores_id>/',delete_score_sheets)
 ]
