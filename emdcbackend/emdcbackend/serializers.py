@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, JudgeClusters, MapContestToJudge, MapContestToOrganizer, MapContestToTeam
+from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, JudgeClusters, MapContestToJudge, MapContestToOrganizer, MapContestToTeam, MapUserToRole
 
 class JudgeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,4 +40,8 @@ class MapContestToTeamSerializer(serializer.ModelSerializer):
 class JudgeClustersSerializer(serializers.ModelSerializer):
     class Meta:
         model = JudgeClusters
+        fields = '__all__'
+class MapUserToRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapUserToRole
         fields = '__all__'

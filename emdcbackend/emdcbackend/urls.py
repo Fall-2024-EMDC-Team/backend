@@ -26,6 +26,7 @@ from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, del
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
+# feedback: 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login),

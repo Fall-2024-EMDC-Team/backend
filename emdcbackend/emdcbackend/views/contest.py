@@ -12,19 +12,23 @@ from django.shortcuts import get_object_or_404
 from ..models import Contest
 from ..serializers import ContestSerializer
 
+# TO-DO: Add Get Contest by Date/Time
+
+# get a contest by a certain id:
 @api_view(["GET"])
 def contest_by_id(request, contest_id):
   contest = get_object_or_404(Contest, id = contest_id)
   serializer = ContestSerializer(instance=contest)
   return Response({"Contest": serializer.data}, status=status.HTTP_200_OK)
 
+# get all contests
 @api_view(["GET"])
 def contest_get_all(request):
   contests = Contest.objects.all()
   serializer = ContestSerializer(instance=contests, many=True)
   return Response({"Contests":serializer.data}, status=status.HTTP_200_OK)
 
-
+# ge
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -48,6 +52,7 @@ def edit_contest(request):
   contest.save()
   serializer = ContestSerializer(instance = contest)
   return Response({"Contest":serializer.data}, status=status.HTTP_200_OK)
+
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
