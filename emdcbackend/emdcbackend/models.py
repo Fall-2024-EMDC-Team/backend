@@ -61,6 +61,11 @@ class Coach(models.Model):
     last_name = models.CharField(max_length=50)   # Add max_length
     school_name = models.CharField(max_length=99) # Add max_length
 
+class Admin(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    region = models.CharField(max_length=50)
+
 class MapCoachToTeam(models.Model):
     teamid = models.IntegerField()
     coachid = models.IntegerField()

@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import MapContestToTeam, Contest, Teams
-from ...serializers import MapContestToTeamSerializer, ContestSerializer, TeamsSerializer
+from ...serializers import MapContestToTeamSerializer, ContestSerializer, TeamSerializer
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -42,7 +42,7 @@ def get_contest_id_by_team_id(request,team_id):
   try:
     map = MapContestToTeam.objects.get(teamid=team_id)
     contest_id=map.contestid
-    contest=COntest.objects.get(id=contest_id)
+    contest=Contest.objects.get(id=contest_id)
     serializer = ContestSerializer(instance=contest)
     return Response({"Contest":serializer.data},status=status.HTTP_200_OK)
   except MapContestToTeam.DoesNotExist:
