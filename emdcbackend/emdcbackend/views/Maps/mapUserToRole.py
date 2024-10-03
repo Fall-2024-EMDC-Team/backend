@@ -9,8 +9,8 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from ...models import MapUserToRole, Coach, Organizer, Judge
-from ...serializers import MapUserToRoleSerializer, CoachSerializer, OrganizerSerializer, JudgeSerializer
+from ...models import MapUserToRole, Coach, Organizer, Judge, Admin
+from ...serializers import MapUserToRoleSerializer, CoachSerializer, OrganizerSerializer, JudgeSerializer, AdminSerializer
 
 # TO-DO: Add Admin to This
 
@@ -28,15 +28,13 @@ def create_user_role_mapping(request):
   )
   
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def login_return(request,userid):
   mapping = MapUserToRole.objects.get(uuid=userid)
   if mapping.role == 1:
-    #admin = Admin.objects.get(id=mapping.relatedid)
-    #serializer = AdminSerializer(instance=admin)
-    #return Response({"User Type":mapping.role,"Admin":serializer.data},status=status.HTTP_200_OK)
-    return Response({"Error: No Admin yet"},status=status.HTTP_404_NOT_FOUND)
+    admin = Admin.objects.get(id=mapping.relatedid)
+    serializer = AdminSerializer(instance=admin)
+    return Response({"User Type":mapping.role,"Admin":serializer.data},status=status.HTTP_200_OK)
+    
   elif mapping.role == 2:
     organizer = Organizer.objects.get(id=mapping.relatedid)
     serializer = OrganizerSerializer(instance=organizer)
@@ -71,7 +69,7 @@ def get_coach_by_user(request,userid):
 def get_organizer_by_user(request,userid):
     mapping = MapUserToRole.objects.get(uuid=userid)
     if mapping.role != 2:
-        return Request("Error: Given User is Not an organizer",status=status.HTTP_404_NOT_FOUND)
+        return Request("Error: Given User is Not a Coach",status=status.HTTP_404_NOT_FOUND)
     else:
       organizerid = mapping.relatedid
       organizer = Organizer.objects.get(id=organizerid)
@@ -84,12 +82,26 @@ def get_organizer_by_user(request,userid):
 def get_judge_by_user(request,userid):
     mapping = MapUserToRole.objects.get(uuid=userid)
     if mapping.role != 3:
-        return Request("Error: Given User is Not an organizer",status=status.HTTP_404_NOT_FOUND)
+        return Request("Error: Given User is Not a Judge",status=status.HTTP_404_NOT_FOUND)
     else:
       judgeid = mapping.relatedid
       judge = Judge.objects.get(id=organizerid)
       serializer = JudgeSerializer(instance=organizer)
       return Response({"Judge": serializer.data},status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_admin_by_user(request,userid):
+    mapping = MapUserToRole.objects.get(uuid=userid)
+    if mapping.role != 1:
+        return Request("Error: Given User is Not an Admin",status=status.HTTP_404_NOT_FOUND)
+    else:
+      adminid = mapping.relatedid
+      admin = Admin.objects.get(id=organizerid)
+      serializer = AdminSerializer(instance=organizer)
+      return Response({"Admin": serializer.data},status=status.HTTP_200_OK)
+
 
 
 
