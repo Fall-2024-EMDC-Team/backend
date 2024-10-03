@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import MapCoachToTeam, Coach, Teams
-from ...serializers import CoachToTeamSerializer, CoachSerializer
+from ...serializers import CoachToTeamSerializer, CoachSerializer, TeamSerializer
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -27,14 +27,11 @@ def create_coach_team_mapping(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def teams_by_coach_id(request, coach_id):
-    mappings = MapCoachToTeam.objects.filter(coach_id=coach_id)
+    mappings = MapCoachToTeam.objects.filter(coachid=coach_id)
     team_ids = mappings.values_list('teamid', flat=True)
     teams = Teams.objects.filter(id__in=team_ids)
-
-    #TODO: uncomment when team is implemented
-    # serializer = TeamsSerializer(teams, many=True)
-
-    return Response({"Teams": list(teams.values())}, status=status.HTTP_200_OK)
+    serializer = TeamSerializer(instance=teams, many=True)
+    return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
