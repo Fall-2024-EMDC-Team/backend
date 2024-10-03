@@ -27,7 +27,7 @@ from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
 from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
-
+from .views.Maps.mapUserToRole import create_user_role_mapping, login_return
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
@@ -92,5 +92,7 @@ urlpatterns = [
     path('createScoreSheet/',create_score_sheets),
     path('editScoreSheet/',edit_score_sheets),
     path('getScoreSheet/<int:scores_id>/',scores_by_id),
-    path('deleteScoreSheet/<int:scores_id>/',delete_score_sheets)
+    path('deleteScoreSheet/<int:scores_id>/',delete_score_sheets),
+    path('mapUserRole/',create_user_role_mapping),
+    path('getLoginUser/',login_return)
 ]
