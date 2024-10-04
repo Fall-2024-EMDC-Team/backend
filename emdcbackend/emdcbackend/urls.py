@@ -36,7 +36,7 @@ urlpatterns = [
     # Admins
     path('admin/', admin.site.urls),
     path('admin/get/<int:admin_id>/', admin_by_id),
-    path('admin/getall/', admins_get_all),
+    path('admin/getAll/', admins_get_all),
     path('admin/create/', create_admin),
     path('admin/edit/', edit_admin),
     path('admin/delete/<int:admin_id>/', delete_admin),
