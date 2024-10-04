@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
 from .auth import views
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
@@ -32,8 +32,13 @@ from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin
 from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
 
 urlpatterns = [
-    # Admin
+    # Admins
     path('admin/', admin.site.urls),
+    path('admin/get/<int:admin_id>/', admin_by_id),
+    path('admin/getall/', admins_get_all),
+    path('admin/create/', create_admin),
+    path('admin/edit/', edit_admin),
+    path('admin/delete/<int:admin_id>/', delete_admin),
 
     # Authentication
     path('login/', views.login),
@@ -41,78 +46,71 @@ urlpatterns = [
     path('testToken/', views.test_token),
 
     # Users
-    path('getUser/<int:user_id>/', views.user_by_id),
-    path('deleteUser/<int:user_id>/', views.delete_user_by_id),
-    path('editUser/', views.edit_user),
+    path('user/get/<int:user_id>/', views.user_by_id),
+    path('user/edit/', views.edit_user),
+    path('user/delete/<int:user_id>/', views.delete_user_by_id),
 
     # Judges
-    path('createJudge/', create_judge),
-    path('getJudge/<int:judge_id>/', judge_by_id),
-    path('editJudge/', edit_judge),
-    path('deleteJudge/<int:judge_id>/', delete_judge),
+    path('judge/get/<int:judge_id>/', judge_by_id),
+    path('judge/create/', create_judge),
+    path('judge/edit/', edit_judge),
+    path('judge/delete/<int:judge_id>/', delete_judge),
 
     # Organizers
-    path('createOrganizer/', create_organizer),
-    path('getOrganizer/<int:organizer_id>/', organizer_by_id),
-    path('editOrganizer', edit_organizer),
-    path('deleteOrganizer/<int:organizer_id>/', delete_organizer),
+    path('organizer/get/<int:organizer_id>/', organizer_by_id),
+    path('organizer/create/', create_organizer),
+    path('organizer/edit/', edit_organizer),
+    path('organizer/delete/<int:organizer_id>/', delete_organizer),
 
     # Coaches
-    path('getCoach/<int:coach_id>/', coach_by_id),
-    path('createCoach/', create_coach),
-    path('editCoach/', edit_coach),
-    path('deleteCoach/<int:coach_id>/', delete_coach),
-    path('getAllCoaches/', coach_get_all),
+    path('coach/get/<int:coach_id>/', coach_by_id),
+    path('coach/getall/', coach_get_all),
+    path('coach/create/', create_coach),
+    path('coach/edit/', edit_coach),
+    path('coach/delete/<int:coach_id>/', delete_coach),
   
     # Teams
-    path('getTeam/<int:team_id>/', team_by_id),
-    path('createTeam/', create_team),
-    path('editTeam/', edit_team),
-    path('deleteTeam/<int:team_id>/', delete_team_by_id),
+    path('team/get/<int:team_id>/', team_by_id),
+    path('team/create/', create_team),
+    path('team/edit/', edit_team),
+    path('team/delete/<int:team_id>/', delete_team_by_id),
 
     # Maps
-    path('mapCoachToTeam/', create_coach_team_mapping),
-    path('getCoachByTeam/<int:team_id>/', coach_by_team_id),
-    path('mapContestToJudge/',create_contest_judge_mapping),
-    path('getJudgesByContest/<int:contest_id>/',get_all_judges_by_contest_id),
-    path('getContestByJudge/<int:judge_id>/',get_contest_id_by_judge_id),
-    path('mapContestToTeam/',create_contest_team_mapping),
-    path('getTeamsByContest/<int:contest_id>/',get_teams_by_contest_id),
-    path('getContestbyTeam/<int:team_id>/',get_contest_id_by_team_id),
-    path('mapContestToOrganizer/',create_contest_organizer_mapping),
-    path('getOrganizerByContest/<int:contest_id>/',get_organizers_by_contest_id),
-    path('getContestsByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id),
+    path('coach/toTeam/map/', create_coach_team_mapping),
+    path('coach/toTeam/get/<int:team_id>/', coach_by_team_id),
+    path('contest/toJudge/map/',create_contest_judge_mapping),
+    path('contest/toTeam/get/<int:team_id>/',get_contest_id_by_team_id),
+    path('contest/toOrganizer/map/',create_contest_organizer_mapping),
+    path('contest/toJudge/get/<int:judge_id>/',get_contest_id_by_judge_id),
+    path('contest/toTeam/map/',create_contest_team_mapping),
+    path('contest/toOrganizer/get/<int:organizer_id>/',get_contests_by_organizer_id),
+    path('judge/toContest/get/<int:contest_id>/',get_all_judges_by_contest_id),
+    path('team/toContest/get/<int:contest_id>/',get_teams_by_contest_id),
+    path('organizer/toContest/get/<int:contest_id>/',get_organizers_by_contest_id),
 
     # Clusters
-    path('getCluster/<int:cluster_id>/', cluster_by_id),
-    path('getAllClusters/', clusters_get_all),
-    path('createCluster/', create_cluster),
-    path('editCluster/', edit_cluster),
-    path('deleteCluster/<int:cluster_id>/', delete_cluster),
+    path('cluster/get/<int:cluster_id>/', cluster_by_id),
+    path('cluster/getall/', clusters_get_all),
+    path('cluster/create/', create_cluster),
+    path('cluster/edit/', edit_cluster),
+    path('cluster/delete/<int:cluster_id>/', delete_cluster),
     
     # Contests
-    path('contestByID/<int:contest_id>/', contest_by_id),
-    path('contestGetAll/',contest_get_all),
-    path('createContest/',create_contest),
-    path('editContest/',edit_contest),
-    path('deleteContest/<int:contest_id>/',delete_contest),
+    path('contest/get/<int:contest_id>/', contest_by_id),
+    path('contest/getall/',contest_get_all),
+    path('contest/create/',create_contest),
+    path('contest/edit/',edit_contest),
+    path('contet/delete/<int:contest_id>/',delete_contest),
 
     # Scoresheets
-    path('createScoreSheet/',create_score_sheets),
-    path('editScoreSheet/',edit_score_sheets),
-    path('getScoreSheet/<int:scores_id>/',scores_by_id),
-    path('deleteScoreSheet/<int:scores_id>/',delete_score_sheets),
-
-    #Admins
-    path('createAdmin/', create_admin),
-    path('adminById/<int:admin_id>/', admin_by_id),
-    path('allAdmins/', admins_get_all),
-    path('deleteAdmin/<int:admin_id>/', delete_admin),
-    path('editAdmin/', edit_admin),
+    path('schoresheet/get/<int:scores_id>/',scores_by_id),
+    path('scoresheet/create/',create_score_sheets),
+    path('scoresheet/edit/',edit_score_sheets),
+    path('schoresheet/delete/<int:scores_id>/',delete_score_sheets),
   
     # Penalties
-    path('createPenalties/',create_penalties),
-    path('editPenalties/',edit_penalties),
-    path('getPenalties/<int:penalties_id>/',penalties_by_id),
-    path('deletePenalties/<int:penalties_id>/',delete_penalties)
+    path('penalties/get/<int:penalties_id>/',penalties_by_id),
+    path('penalites/create/',create_penalties),
+    path('penalties/edit/',edit_penalties),
+    path('penalties/delete/<int:penalties_id>/',delete_penalties)
 ]
