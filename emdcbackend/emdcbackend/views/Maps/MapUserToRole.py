@@ -23,20 +23,17 @@ from django.shortcuts import get_object_or_404
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_user_role_mapping(request):
-    # Call the mapping function and store the result
     mapping = create_user_role_map(request.data)
 
-    # Handle the response based on the returned result
     if isinstance(mapping, dict) and "errors" in mapping:
         return Response(mapping["errors"], status=status.HTTP_400_BAD_REQUEST)
 
-    return Response(mapping, status=status.HTTP_201_CREATED)  # Return the serialized data
+    return Response(mapping, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def login_return(request, userid):
     return Response(get_role(userid), status=status.HTTP_200_OK)
 
-# The other 'get_' functions remain unchanged...
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -83,7 +80,6 @@ def get_role(user_id):
         return {"user_type": mapping.role, "user": roleSerializer.data}
 
 def create_user_role_map(mapData):
-    print("Received mapData:", mapData)  # Log the received data
 
     existing_mapping = MapUserToRole.objects.filter(uuid=mapData.get("uuid")).first()
     if existing_mapping:
@@ -92,6 +88,6 @@ def create_user_role_map(mapData):
     serializer = MapUserToRoleSerializer(data=mapData)
     if serializer.is_valid():
         serializer.save()
-        return serializer.data  # Just return the serialized data
+        return serializer.data
 
-    return {"errors": serializer.errors}  # Return errors in a dict format
+    return {"errors": serializer.errors}

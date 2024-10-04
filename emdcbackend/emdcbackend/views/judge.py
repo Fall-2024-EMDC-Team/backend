@@ -25,17 +25,16 @@ def judge_by_id(request, judge_id):  # Consistent parameter name
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_judge(request):
-    # Attempt to create user and judge in a single transaction
     try:
-        with transaction.atomic():  # Start a transaction
+        with transaction.atomic():
             # Create user
             user_data = {
                 "username":request.data["username"],
                 "password":request.data["password"]
             }
             user_response = create_user(user_data)
-            if isinstance(user_response, Response):  # Check if the response is an error response
-                return user_response  # Return the error response if user creation failed
+            if isinstance(user_response, Response):
+                return user_response
 
             # Create judge
             judge_data = {
@@ -48,21 +47,23 @@ def create_judge(request):
                 "penalties": request.data["penalties"],
             }
             judge_response = create_judge_instance(judge_data)
-            if isinstance(judge_response, Response):  # Check if the response is an error response
-                return judge_response  # Return the error response if judge creation failed
+            if isinstance(judge_response, Response):
+                return judge_response
 
+
+            #map judge to user
             judge_to_user_data = {
-                "uuid": user_response.get("user").get("id"),  # Get the UUID from the request
+                "uuid": user_response.get("user").get("id"),
                 "role": 3,
                 "relatedid": judge_response.get("id")
             }
             judge_to_user_response = create_user_role_map(judge_to_user_data)
-            if isinstance(judge_to_user_response, Response):  # Check if the response is an error response
-                return judge_to_user_data  # Return the error response if judge creation failed
+            if isinstance(judge_to_user_response, Response):
+                return judge_to_user_data
 
             return Response({"user": user_response, "judge": judge_response, "map": judge_to_user_response}, status=status.HTTP_201_CREATED)
 
-    except Exception as e:  # Catch any exception that occurs
+    except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -92,8 +93,7 @@ def delete_judge(request, judge_id):
 
 def create_judge_instance(judge_data):
     serializer = JudgeSerializer(data=judge_data)
-    print(serializer)
     if serializer.is_valid():
-        serializer.save()  # Save the judge to DB
+        serializer.save()
         return serializer.data
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -41,7 +41,7 @@ def signup(request):
     user_data = request.data
     result = create_user(user_data)
     if "errors" in result:
-        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)  # If data is invalid
+        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)
     return Response(result, status=status.HTTP_201_CREATED)
 
 
@@ -103,12 +103,11 @@ def create_user(user_data):
 
     serializer = UserSerializer(data=user_data)
     if serializer.is_valid():
-        with transaction.atomic():  # Ensure atomic transaction
+        with transaction.atomic():
             user = serializer.save()
             user.set_password(user_data["password"])
             user.save()
             token = Token.objects.create(user=user)
             return {"token": token.key, "user": serializer.data}
-    # Return an error message as a dictionary instead of Response
     return {"errors": serializer.errors}
 
