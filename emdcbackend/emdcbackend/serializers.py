@@ -66,3 +66,9 @@ class MapUserToRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = MapUserToRole
         fields = '__all__'
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teams
+        fields = '__all__'
