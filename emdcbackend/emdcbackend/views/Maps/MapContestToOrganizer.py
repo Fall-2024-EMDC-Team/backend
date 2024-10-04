@@ -31,7 +31,7 @@ def create_contest_organizer_mapping(request):
 def get_organizers_by_contest_id(request, contest_id):
   organizer_ids = MapContestToOrganizer.objects.filter(request.data["id"])
   organizers = Organizer.objects.filter(id__in=organizer_ids)
-  serializer = OrganizerSerializer(organizers, many=true)
+  serializer = OrganizerSerializer(organizers, many=True)
   return Response({"Judges":serializer.data()},status=status.HTTP_200_OK)
 
 @api_view(["GET"])
@@ -39,7 +39,7 @@ def get_organizers_by_contest_id(request, contest_id):
 @permission_classes([IsAuthenticated])
 def get_contests_by_organizer_id(request,organizer_id):
   mappings = MapContestToOrganizer.objects.filter(organizerid=organizer_id)
-  organizer_ids = mappings.values_list('organizerid',flat=true)
+  organizer_ids = mappings.values_list('organizerid',flat=True)
   organizers = Organizer.objects.fiter(id__in=organizer_ids)
   serializer = OrganizerSerializer({"Organizers":serializer.data},status=status.HTTP_200_OK)
 
