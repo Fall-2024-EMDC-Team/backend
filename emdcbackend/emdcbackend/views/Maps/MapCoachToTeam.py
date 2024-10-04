@@ -48,3 +48,11 @@ def coach_by_team_id(request, team_id):
         return Response({"Coach": serializer.data}, status=status.HTTP_200_OK)
     except MapCoachToTeam.DoesNotExist:
         return Response({"error": "No coach found for the given team"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_coach_team_mapping_by_id(request, map_id):
+    map_to_delete = get_object_or_404(MapCoachToTeam, id=map_id)
+    map_to_delete.delete()
+    return Response({"detail": "Coach To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)

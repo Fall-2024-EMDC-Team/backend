@@ -43,3 +43,10 @@ def get_contests_by_organizer_id(request,organizer_id):
   organizers = Organizer.objects.fiter(id__in=organizer_ids)
   serializer = OrganizerSerializer({"Organizers":serializer.data},status=status.HTTP_200_OK)
 
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_contest_organizer_mapping_by_id(request, map_id):
+    map_to_delete = get_object_or_404(MapContestToOrganizer, id=map_id)
+    map_to_delete.delete()
+    return Response({"detail": "Contest To Organizer Mapping deleted successfully."}, status=status.HTTP_200_OK)

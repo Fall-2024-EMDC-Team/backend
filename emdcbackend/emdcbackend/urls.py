@@ -22,11 +22,11 @@ from .views.organizer import create_organizer, organizer_by_id, edit_organizer, 
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
 from .views.team import create_team, team_by_id, edit_team, delete_team_by_id
-from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id
+from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id, delete_coach_team_mapping_by_id
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
-from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id
-from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id
-from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id
+from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id
+from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id, delete_contest_organizer_mapping_by_id
+from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id, delete_contest_team_mapping_by_id
 from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
 from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
@@ -78,12 +78,20 @@ urlpatterns = [
     # Maps
     path('coach/toTeam/map/', create_coach_team_mapping),
     path('coach/toTeam/get/<int:team_id>/', coach_by_team_id),
+    path('coach/toTeam/delete/<int:map_id>/', delete_coach_team_mapping_by_id),
+
     path('contest/toJudge/map/',create_contest_judge_mapping),
-    path('contest/toTeam/get/<int:team_id>/',get_contest_id_by_team_id),
-    path('contest/toOrganizer/map/',create_contest_organizer_mapping),
     path('contest/toJudge/get/<int:judge_id>/',get_contest_id_by_judge_id),
+    path('contest/toJudge/delete/<int:map_id>/',delete_contest_judge_mapping_by_id),
+
     path('contest/toTeam/map/',create_contest_team_mapping),
+    path('contest/toTeam/get/<int:team_id>/',get_contest_id_by_team_id),
+    path('contest/toTeam/delete/<int:map_id>/',delete_contest_team_mapping_by_id),
+
+    path('contest/toOrganizer/map/',create_contest_organizer_mapping),
     path('contest/toOrganizer/get/<int:organizer_id>/',get_contests_by_organizer_id),
+    path('contest/toOrganizer/delete/<int:map_id>/',delete_contest_organizer_mapping_by_id),
+
     path('judge/toContest/get/<int:contest_id>/',get_all_judges_by_contest_id),
     path('team/toContest/get/<int:contest_id>/',get_teams_by_contest_id),
     path('organizer/toContest/get/<int:contest_id>/',get_organizers_by_contest_id),
