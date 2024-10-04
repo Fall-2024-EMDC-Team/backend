@@ -32,8 +32,13 @@ from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin
 from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
 
 urlpatterns = [
-    # Admin
+    # Admins
     path('admin/', admin.site.urls),
+    path('admin/get/<int:admin_id>/', admin_by_id),
+    path('admin/getall/', admins_get_all),
+    path('admin/create/', create_admin),
+    path('admin/edit/', edit_admin),
+    path('admin/delete/<int:admin_id>/', delete_admin),
 
     # Authentication
     path('login/', views.login),
@@ -102,13 +107,6 @@ urlpatterns = [
     path('scoresheet/create/',create_score_sheets),
     path('scoresheet/edit/',edit_score_sheets),
     path('schoresheet/delete/<int:scores_id>/',delete_score_sheets),
-
-    #Admins
-    path('admin/get/<int:admin_id>/', admin_by_id),
-    path('admin/getall/', admins_get_all),
-    path('admin/create/', create_admin),
-    path('admin/edit/', edit_admin),
-    path('admin/delete/<int:admin_id>/', delete_admin),
   
     # Penalties
     path('penalties/get/<int:penalties_id>/',penalties_by_id),
