@@ -38,8 +38,12 @@ def login(request):
 # signup endpoint
 @api_view(["POST"])
 def signup(request):
-    user = UserSerializer(create_user(request))
-    return Response(user)
+    user_data = request.data
+    result = create_user(user_data)
+    if "errors" in result:
+        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)  # If data is invalid
+    return Response(result, status=status.HTTP_201_CREATED)
+
 
 
 # delete user by id
@@ -91,12 +95,20 @@ def test_token(request):
 
 
 def create_user(user_data):
+    if User.objects.filter(username=user_data["username"]).exists():
+        return Response(
+            {"detail": "Username already exists."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     serializer = UserSerializer(data=user_data)
     if serializer.is_valid():
-        serializer.save()  # add user to DB
-        user = User.objects.get(username=user_data["username"])
-        user.set_password(user_data["password"])
-        user.save()
-        token = Token.objects.create(user=user)
-        return {"token": token.key, "user": serializer.data}
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # If data is bad
+        with transaction.atomic():  # Ensure atomic transaction
+            user = serializer.save()
+            user.set_password(user_data["password"])
+            user.save()
+            token = Token.objects.create(user=user)
+            return {"token": token.key, "user": serializer.data}
+    # Return an error message as a dictionary instead of Response
+    return {"errors": serializer.errors}
+
