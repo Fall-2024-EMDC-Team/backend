@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -13,7 +14,6 @@ from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 from ..views.Maps.MapUserToRole import get_role
-
 
 @api_view(["GET"])
 def user_by_id(request, user_id):  # Consistent parameter name
@@ -38,17 +38,8 @@ def login(request):
 # signup endpoint
 @api_view(["POST"])
 def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()  # add user to DB
-        user = User.objects.get(username=request.data["username"])
-        user.set_password(request.data["password"])
-        user.save()
-        token = Token.objects.create(user=user)
-        return Response({"token": token.key, "user": serializer.data})
-    return Response(
-        serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    )  # If data is bad
+    user = UserSerializer(create_user(request))
+    return Response(user)
 
 
 # delete user by id
@@ -99,3 +90,13 @@ def test_token(request):
     return Response({"passed for {}".format(request.user.username)})
 
 
+def create_user(user_data):
+    serializer = UserSerializer(data=user_data)
+    if serializer.is_valid():
+        serializer.save()  # add user to DB
+        user = User.objects.get(username=user_data["username"])
+        user.set_password(user_data["password"])
+        user.save()
+        token = Token.objects.create(user=user)
+        return {"token": token.key, "user": serializer.data}
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # If data is bad

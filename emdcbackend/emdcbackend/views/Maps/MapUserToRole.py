@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -22,11 +23,14 @@ from django.shortcuts import get_object_or_404
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_user_role_mapping(request):
-    user_uuid = request.data.get('uuid')  # Assuming uuid is passed in the request data
-    role = request.data.get('role')
-    relatedid = request.data.get('relatedid')
+    # Call the mapping function and store the result
+    mapping = create_user_role_map(request.data)
 
-    return create_user_role_map(user_uuid, role, relatedid)  # Return the response from this function
+    # Handle the response based on the returned result
+    if isinstance(mapping, dict) and "errors" in mapping:
+        return Response(mapping["errors"], status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(mapping, status=status.HTTP_201_CREATED)  # Return the serialized data
 
 @api_view(['GET'])
 def login_return(request, userid):
@@ -78,21 +82,16 @@ def get_role(user_id):
         roleSerializer = CoachSerializer(instance=coach)
         return {"user_type": mapping.role, "user": roleSerializer.data}
 
-def create_user_role_map(uuid, role, roleObjectId):
-    # Check if the uuid is already mapped to a role
-    existing_mapping = MapUserToRole.objects.filter(uuid=uuid).first()
+def create_user_role_map(mapData):
+    print("Received mapData:", mapData)  # Log the received data
 
+    existing_mapping = MapUserToRole.objects.filter(uuid=mapData.get("uuid")).first()
     if existing_mapping:
-        return Response(
-            {"detail": "This user is already mapped to a role."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return {"errors": {"detail": "This user is already mapped to a role."}}
 
-    # Create the serializer with the data keyword argument
-    serializer = MapUserToRoleSerializer(data={"uuid": uuid, "role": role, "relatedid": roleObjectId})
-
+    serializer = MapUserToRoleSerializer(data=mapData)
     if serializer.is_valid():
         serializer.save()
-        return Response({"mapping": serializer.data}, status=status.HTTP_200_OK)
+        return serializer.data  # Just return the serialized data
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return {"errors": serializer.errors}  # Return errors in a dict format
