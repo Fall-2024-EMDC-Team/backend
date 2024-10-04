@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -13,7 +14,6 @@ from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 from ..views.Maps.MapUserToRole import get_role
-
 
 @api_view(["GET"])
 def user_by_id(request, user_id):  # Consistent parameter name
@@ -38,17 +38,12 @@ def login(request):
 # signup endpoint
 @api_view(["POST"])
 def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()  # add user to DB
-        user = User.objects.get(username=request.data["username"])
-        user.set_password(request.data["password"])
-        user.save()
-        token = Token.objects.create(user=user)
-        return Response({"token": token.key, "user": serializer.data})
-    return Response(
-        serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    )  # If data is bad
+    user_data = request.data
+    result = create_user(user_data)
+    if "errors" in result:
+        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)
+    return Response(result, status=status.HTTP_201_CREATED)
+
 
 
 # delete user by id
@@ -98,4 +93,21 @@ def edit_user(request):
 def test_token(request):
     return Response({"passed for {}".format(request.user.username)})
 
+
+def create_user(user_data):
+    if User.objects.filter(username=user_data["username"]).exists():
+        return Response(
+            {"detail": "Username already exists."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    serializer = UserSerializer(data=user_data)
+    if serializer.is_valid():
+        with transaction.atomic():
+            user = serializer.save()
+            user.set_password(user_data["password"])
+            user.save()
+            token = Token.objects.create(user=user)
+            return {"token": token.key, "user": serializer.data}
+    return {"errors": serializer.errors}
 
