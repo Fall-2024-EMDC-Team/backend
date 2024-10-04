@@ -28,7 +28,7 @@ def contest_get_all(request):
   serializer = ContestSerializer(instance=contests, many=True)
   return Response({"Contests":serializer.data}, status=status.HTTP_200_OK)
 
-# ge
+# create contest
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
