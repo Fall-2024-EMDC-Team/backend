@@ -64,7 +64,7 @@ urlpatterns = [
 
     # Coaches
     path('coach/get/<int:coach_id>/', coach_by_id),
-    path('coach/getall/', coach_get_all),
+    path('coach/getAll/', coach_get_all),
     path('coach/create/', create_coach),
     path('coach/edit/', edit_coach),
     path('coach/delete/<int:coach_id>/', delete_coach),
@@ -76,49 +76,49 @@ urlpatterns = [
     path('team/delete/<int:team_id>/', delete_team_by_id),
 
     # Maps
-    path('coach/toTeam/map/', create_coach_team_mapping),
-    path('coach/toTeam/get/<int:team_id>/', coach_by_team_id),
-    path('coach/toTeam/delete/<int:map_id>/', delete_coach_team_mapping_by_id),
+    path('mapping/coachToTeam/create/', create_coach_team_mapping),
+    path('mapping/coachToTeam/getCoachByTeam/<int:team_id>/', coach_by_team_id),
+    path('mapping/coachToTeam/delete/<int:map_id>/', delete_coach_team_mapping_by_id),
 
-    path('contest/toJudge/map/',create_contest_judge_mapping),
-    path('contest/toJudge/get/<int:judge_id>/',get_contest_id_by_judge_id),
-    path('contest/toJudge/delete/<int:map_id>/',delete_contest_judge_mapping_by_id),
+    path('mapping/contestToJudge/create/',create_contest_judge_mapping),
+    path('mapping/contestToJudge/getContestByJudge/<int:judge_id>/',get_contest_id_by_judge_id),
+    path('mapping/contestToJudge/delete/<int:map_id>/',delete_contest_judge_mapping_by_id),
 
-    path('contest/toTeam/map/',create_contest_team_mapping),
-    path('contest/toTeam/get/<int:team_id>/',get_contest_id_by_team_id),
-    path('contest/toTeam/delete/<int:map_id>/',delete_contest_team_mapping_by_id),
+    path('mapping/contestToTeam/create/',create_contest_team_mapping),
+    path('mapping/contestToTeam/getContestByTeam/<int:team_id>/',get_contest_id_by_team_id),
+    path('mapping/contestToTeam/delete/<int:map_id>/',delete_contest_team_mapping_by_id),
 
-    path('contest/toOrganizer/map/',create_contest_organizer_mapping),
-    path('contest/toOrganizer/get/<int:organizer_id>/',get_contests_by_organizer_id),
-    path('contest/toOrganizer/delete/<int:map_id>/',delete_contest_organizer_mapping_by_id),
+    path('mapping/contestToOrganizer/create/',create_contest_organizer_mapping),
+    path('mapping/contestToOrganizer/getByOrganizer/<int:organizer_id>/',get_contests_by_organizer_id),
+    path('mapping/contestToOrganizer/delete/<int:map_id>/',delete_contest_organizer_mapping_by_id),
 
-    path('judge/toContest/get/<int:contest_id>/',get_all_judges_by_contest_id),
-    path('team/toContest/get/<int:contest_id>/',get_teams_by_contest_id),
-    path('organizer/toContest/get/<int:contest_id>/',get_organizers_by_contest_id),
+    path('mapping/judgeToContest/getAllJudges/<int:contest_id>/',get_all_judges_by_contest_id),
+    path('mapping/teamToContest/getTeamsByContest/<int:contest_id>/',get_teams_by_contest_id),
+    path('mapping/organizerToContest/getOrganizersByContest/<int:contest_id>/',get_organizers_by_contest_id),
 
     # Clusters
     path('cluster/get/<int:cluster_id>/', cluster_by_id),
-    path('cluster/getall/', clusters_get_all),
+    path('cluster/getAll/', clusters_get_all),
     path('cluster/create/', create_cluster),
     path('cluster/edit/', edit_cluster),
     path('cluster/delete/<int:cluster_id>/', delete_cluster),
     
     # Contests
     path('contest/get/<int:contest_id>/', contest_by_id),
-    path('contest/getall/',contest_get_all),
+    path('contest/getAll/',contest_get_all),
     path('contest/create/',create_contest),
     path('contest/edit/',edit_contest),
-    path('contet/delete/<int:contest_id>/',delete_contest),
+    path('contest/delete/<int:contest_id>/',delete_contest),
 
-    # Scoresheets
-    path('schoresheet/get/<int:scores_id>/',scores_by_id),
-    path('scoresheet/create/',create_score_sheets),
-    path('scoresheet/edit/',edit_score_sheets),
-    path('schoresheet/delete/<int:scores_id>/',delete_score_sheets),
+    # ScoreSheets
+    path('scoreSheet/get/<int:scores_id>/',scores_by_id),
+    path('scoreSheet/create/',create_score_sheets),
+    path('scoreSheet/edit/',edit_score_sheets),
+    path('scoreSheet/delete/<int:scores_id>/',delete_score_sheets),
   
     # Penalties
     path('penalties/get/<int:penalties_id>/',penalties_by_id),
-    path('penalites/create/',create_penalties),
+    path('penalties/create/',create_penalties),
     path('penalties/edit/',edit_penalties),
     path('penalties/delete/<int:penalties_id>/',delete_penalties)
 ]
