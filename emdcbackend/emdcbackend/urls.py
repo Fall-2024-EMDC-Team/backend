@@ -108,7 +108,7 @@ urlpatterns = [
     path('contest/getAll/',contest_get_all),
     path('contest/create/',create_contest),
     path('contest/edit/',edit_contest),
-    path('contet/delete/<int:contest_id>/',delete_contest),
+    path('contest/delete/<int:contest_id>/',delete_contest),
 
     # ScoreSheets
     path('scoreSheet/get/<int:scores_id>/',scores_by_id),
