@@ -51,7 +51,7 @@ class MapUserToRole(models.Model):
         ORGANIZER = 2
         JUDGE = 3
         COACH = 4
-
+    
     role = models.IntegerField(choices=RoleEnum.choices)
     uuid = models.IntegerField()
     relatedid = models.IntegerField()

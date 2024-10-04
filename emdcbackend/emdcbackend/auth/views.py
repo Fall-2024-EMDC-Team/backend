@@ -12,6 +12,8 @@ from .serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
+from ..views.Maps.MapUserToRole import get_role
+
 
 @api_view(["GET"])
 def user_by_id(request, user_id):  # Consistent parameter name
@@ -29,8 +31,8 @@ def login(request):
     if not user.check_password(request.data["password"]):  # if password is incorrect
         return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)
-    serializer = UserSerializer(instance=user)
-    return Response({"token": token.key, "user": serializer.data})
+    userSerializer = UserSerializer(instance=user)
+    return Response({"token": token.key, "user": userSerializer.data, "role":get_role(user.id)})
 
 
 # signup endpoint
@@ -95,3 +97,5 @@ def edit_user(request):
 @permission_classes([IsAuthenticated])
 def test_token(request):
     return Response({"passed for {}".format(request.user.username)})
+
+

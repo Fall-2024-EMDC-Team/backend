@@ -30,6 +30,7 @@ from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_
 from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
 from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
+from .views.Maps.MapUserToRole import create_user_role_mapping, delete_user_role_mapping
 
 urlpatterns = [
     # Admins
@@ -95,6 +96,9 @@ urlpatterns = [
     path('mapping/judgeToContest/getAllJudges/<int:contest_id>/',get_all_judges_by_contest_id),
     path('mapping/teamToContest/getTeamsByContest/<int:contest_id>/',get_teams_by_contest_id),
     path('mapping/organizerToContest/getOrganizersByContest/<int:contest_id>/',get_organizers_by_contest_id),
+
+    path('mapping/userToRole/create/', create_user_role_mapping),
+    path('mapping/userToRole/delete/<int:mapping_id>/', delete_user_role_mapping),
 
     # Clusters
     path('cluster/get/<int:cluster_id>/', cluster_by_id),
