@@ -1,3 +1,5 @@
+from random import choices
+
 from django.db import models
 
 class Contest(models.Model):
@@ -7,7 +9,7 @@ class Contest(models.Model):
 
 class MapContestToJudge(models.Model):
     contestid = models.IntegerField()
-    judegeid = models.IntegerField()
+    judgeid = models.IntegerField()
 
 class MapContestToTeam(models.Model):
     contestid = models.IntegerField()
@@ -27,7 +29,7 @@ class Judge(models.Model):
     penalties=models.BooleanField()
 
 class MapJudgeToCluster(models.Model):
-    judegeid = models.IntegerField()
+    judgeid = models.IntegerField()
     clusterid = models.IntegerField()
 
 class JudgeClusters(models.Model):
@@ -59,12 +61,10 @@ class MapUserToRole(models.Model):
 class Coach(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    school_name = models.CharField(max_length=99) # Add max_length
 
 class Admin(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    region = models.CharField(max_length=50)
 
 class MapCoachToTeam(models.Model):
     teamid = models.IntegerField()
@@ -73,24 +73,14 @@ class MapCoachToTeam(models.Model):
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
+    region = models.CharField(max_length=50)
 
-class MapJudgeToPresentationScores(models.Model):
-    judgeid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class MapJudgeToJournalScores(models.Model):
-    judgeid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class MapJudgeToMachineDesignScores(models.Model):
-    judgeid = models.IntegerField()
-    scoresheetid = models.IntegerField()
+class ScoresheetEnum(models.IntegerChoices):
+    PRESENTATION = 1
+    JOURNAL = 2
+    MACHINEDESIGN = 3
 
 class Scoresheet(models.Model):
-    class ScoresheetEnum(models.IntegerChoices):
-        PRESENTATION = 1
-        JOURNAL = 2
-        MACHINEDESIGN = 3
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
     field1 = models.IntegerField()
     field2 = models.IntegerField()
@@ -100,24 +90,18 @@ class Scoresheet(models.Model):
     field6 = models.IntegerField()
     field7 = models.IntegerField()
     field8 = models.IntegerField()
-    
+
+class MapScoresheetToTeamJudge():
+    teamid = models.IntegerField()
+    judgeid = models.IntegerField()
+    scoresheetid = models.IntegerField()
+    sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
+
+class MapPenaltiesToTeamJudge():
+    teamid = models.IntegerField()
+    judgeid = models.IntegerField()
+    scoresheetid = models.IntegerField()
+
 class Penalties(models.Model):
     PresentationPenalties = models.IntegerField()
     MachinePenalties = models.IntegerField()
-
-
-class MapTeamToPresentationScores(models.Model):
-    teamid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class MapTeamToJournalScores(models.Model):
-    teamid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class MapTeamToMachineDesignScores(models.Model):
-    teamid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class MapTeamToPenalties(models.Model):
-    teamid = models.IntegerField()
-    scoresheetid = models.IntegerField()

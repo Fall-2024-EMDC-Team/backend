@@ -10,7 +10,9 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-from .Maps.MapUserToRole import create_user_role_mapping, create_user_role_map
+from .Maps.MapUserToRole import create_user_role_map
+from .Maps.MapContestToJudge import create_contest_to_judge_map
+from .Maps.MapClusterToJudge import map_cluster_to_judge
 from ..auth.views import create_user
 from ..models import Judge
 from ..serializers import JudgeSerializer
@@ -61,7 +63,28 @@ def create_judge(request):
             if isinstance(judge_to_user_response, Response):
                 return judge_to_user_data
 
-            return Response({"user": user_response, "judge": judge_response, "map": judge_to_user_response}, status=status.HTTP_201_CREATED)
+            # map judge to contest
+            judge_to_contest_data = {
+                "contestid": request.data["contestid"],
+                "judgeid": judge_response.get("id")
+            }
+            judge_to_contest_response = create_contest_to_judge_map(judge_to_contest_data)
+            if isinstance(judge_to_contest_response, Response):
+                return judge_to_contest_data
+
+            # map judge to cluster
+            judge_to_cluster_data = {
+                "judgeid": judge_response.get("id"),
+                "clusterid": request.data["clusterid"]
+            }
+            judge_to_cluster_response = map_cluster_to_judge(judge_to_cluster_data)
+            if isinstance(judge_to_cluster_response, Response):
+                return judge_to_cluster_data
+
+
+            return Response({"user": user_response, "judge": judge_response, "user_map": judge_to_user_response,
+                             "contest_map": judge_to_contest_response, "cluster_map": judge_to_cluster_response},
+                            status=status.HTTP_201_CREATED)
 
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
