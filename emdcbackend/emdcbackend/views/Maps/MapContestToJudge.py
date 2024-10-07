@@ -4,6 +4,7 @@ from rest_framework.decorators import (
   authentication_classes,
   permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -17,11 +18,16 @@ from ...serializers import MapContestToJudgeSerializer, ContestSerializer, Judge
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_contest_judge_mapping(request):
-    map_data = request.data
-    result = create_contest_to_judge_map(map_data)
-    if "errors" in result:
-        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)
-    return Response(result, status=status.HTTP_201_CREATED)
+    try:
+        map_data = request.data
+        result = create_contest_to_judge_map(map_data)
+        return Response(result, status=status.HTTP_201_CREATED)
+
+    except ValidationError as e:
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -53,9 +59,9 @@ def delete_contest_judge_mapping_by_id(request, map_id):
 
 
 def create_contest_to_judge_map(map_data):
-  serializer = MapContestToJudgeSerializer(data=map_data)
-  if serializer.is_valid():
-    serializer.save()
-    return serializer.data  # Just return the data here
-  else:
-    return {"errors": serializer.errors}  # Return errors as a dictionary
+    serializer = MapContestToJudgeSerializer(data=map_data)
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    else:
+        raise ValidationError(serializer.errors)

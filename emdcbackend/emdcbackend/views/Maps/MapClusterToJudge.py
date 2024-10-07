@@ -4,6 +4,7 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -16,11 +17,16 @@ from ...serializers import JudgeClustersSerializer, JudgeSerializer, ClusterToJu
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_cluster_judge_mapping(request):
-    map_data = request.data
-    result = map_cluster_to_judge(map_data)
-    if "errors" in result:
-        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)
-    return Response(result, status=status.HTTP_201_CREATED)
+    try:
+        map_data = request.data
+        result = map_cluster_to_judge(map_data)
+        return Response(result, status=status.HTTP_201_CREATED)
+
+    except ValidationError as e:
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -64,4 +70,4 @@ def map_cluster_to_judge(map_data):
         serializer.save()
         return serializer.data
     else:
-        return {"errors": serializer.errors}
+        raise ValidationError(serializer.errors)

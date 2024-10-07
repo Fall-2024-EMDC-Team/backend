@@ -2,6 +2,8 @@ from django.urls import path
 from .auth import views
 from .views.Maps.MapClusterToTeam import create_cluster_team_mapping, delete_cluster_team_mapping_by_id, \
     teams_by_cluster_id, cluster_by_team_id
+from .views.Maps.MapScoreSheet import create_score_sheet_mapping, score_sheets_by_judge_team, \
+    delete_score_sheet_mapping_by_id
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
@@ -12,9 +14,8 @@ from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, del
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id, delete_contest_organizer_mapping_by_id
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id, delete_contest_team_mapping_by_id
-from .views.scoresheets import create_score_sheets, edit_score_sheets, scores_by_id, delete_score_sheets
+from .views.scoresheets import create_score_sheet, edit_score_sheet, scores_by_id, delete_score_sheet
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
-from .views.penalties import penalties_by_id, create_penalties, edit_penalties, delete_penalties
 from .views.Maps.MapUserToRole import create_user_role_mapping, delete_user_role_mapping
 from .views.Maps.MapClusterToJudge import create_cluster_judge_mapping, delete_cluster_judge_mapping_by_id, cluster_by_judge_id, judges_by_cluster_id
 
@@ -95,6 +96,10 @@ urlpatterns = [
     path('mapping/clusterToJudge/getAllJudgesByCluster/<int:cluster_id>/', judges_by_cluster_id, name='judges_by_cluster'),
     path('mapping/clusterToJudge/getClusterByJudge/<int:judge_id>/', cluster_by_judge_id, name='cluster_by_judge'),
 
+    path('mapping/scoreSheet/create/', create_score_sheet_mapping, name='create_score_sheet_mapping'),
+    path('mapping/scoreSheet/getByTeamJudge/<int:judge_id>/<int:team_id>/', score_sheets_by_judge_team, name='score_sheets_by_judge_team'),
+    path('mapping/scoreSheet/delete/', delete_score_sheet_mapping_by_id, name='delete_score_sheet_mapping_by_id'),
+
     # Clusters
     path('cluster/get/<int:cluster_id>/', cluster_by_id, name='cluster_by_id'),
     path('cluster/getAll/', clusters_get_all, name='clusters_get_all'),
@@ -111,13 +116,8 @@ urlpatterns = [
 
     # ScoreSheets
     path('scoreSheet/get/<int:scores_id>/', scores_by_id, name='scores_by_id'),
-    path('scoreSheet/create/', create_score_sheets, name='create_score_sheets'),
-    path('scoreSheet/edit/', edit_score_sheets, name='edit_score_sheets'),
-    path('scoreSheet/delete/<int:scores_id>/', delete_score_sheets, name='delete_score_sheets'),
+    path('scoreSheet/create/', create_score_sheet, name='create_score_sheets'),
+    path('scoreSheet/edit/', edit_score_sheet, name='edit_score_sheets'),
+    path('scoreSheet/delete/<int:scores_id>/', delete_score_sheet, name='delete_score_sheets'),
 
-    # Penalties
-    path('penalties/get/<int:penalties_id>/', penalties_by_id, name='penalties_by_id'),
-    path('penalties/create/', create_penalties, name='create_penalties'),
-    path('penalties/edit/', edit_penalties, name='edit_penalties'),
-    path('penalties/delete/<int:penalties_id>/', delete_penalties, name='delete_penalties'),
 ]

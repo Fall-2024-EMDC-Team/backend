@@ -1,6 +1,8 @@
 from random import choices
 
 from django.db import models
+from rest_framework.exceptions import ValidationError
+
 
 class Contest(models.Model):
     name = models.CharField(max_length=99)
@@ -79,29 +81,43 @@ class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
     JOURNAL = 2
     MACHINEDESIGN = 3
+    PENALTIES = 4
 
 class Scoresheet(models.Model):
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
-    field1 = models.IntegerField()
-    field2 = models.IntegerField()
-    field3 = models.IntegerField()
-    field4 = models.IntegerField()
-    field5 = models.IntegerField()
-    field6 = models.IntegerField()
-    field7 = models.IntegerField()
-    field8 = models.IntegerField()
+    isSubmitted = models.BooleanField()
+    field1 = models.FloatField(null=True, blank=True)
+    field2 = models.FloatField(null=True, blank=True)
+    field3 = models.FloatField(null=True, blank=True)
+    field4 = models.FloatField(null=True, blank=True)
+    field5 = models.FloatField(null=True, blank=True)
+    field6 = models.FloatField(null=True, blank=True)
+    field7 = models.FloatField(null=True, blank=True)
+    field8 = models.FloatField(null=True, blank=True)
 
-class MapScoresheetToTeamJudge():
+    def clean(self):
+        # Custom validation logic
+        if self.sheetType == ScoresheetEnum.PENALTIES:
+            # For PENALTIES, only field1 and field2 are required
+            if self.field1 is None:
+                raise ValidationError({'field1': 'Field 1 is required for PENALTIES.'})
+            if self.field2 is None:
+                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+        else:
+            # For other types (Presentation, Journal, Machine Design), all fields must be filled
+            required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8']
+            for field in required_fields:
+                if getattr(self, field) is None:
+                    raise ValidationError({field: f'{field.capitalize()} is required.'})
+
+    def save(self, *args, **kwargs):
+        # Call the clean method before saving to trigger validation
+        self.clean()
+        super().save(*args, **kwargs)
+
+class MapScoresheetToTeamJudge(models.Model):
     teamid = models.IntegerField()
     judgeid = models.IntegerField()
     scoresheetid = models.IntegerField()
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
 
-class MapPenaltiesToTeamJudge():
-    teamid = models.IntegerField()
-    judgeid = models.IntegerField()
-    scoresheetid = models.IntegerField()
-
-class Penalties(models.Model):
-    PresentationPenalties = models.IntegerField()
-    MachinePenalties = models.IntegerField()
