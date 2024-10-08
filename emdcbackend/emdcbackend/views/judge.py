@@ -5,12 +5,16 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-from .Maps.MapUserToRole import create_user_role_mapping, create_user_role_map
+from .Maps.MapUserToRole import create_user_role_map
+from .Maps.MapContestToJudge import create_contest_to_judge_map
+from .Maps.MapClusterToJudge import map_cluster_to_judge
+from .scoresheets import create_sheets_for_teams_in_cluster
 from ..auth.views import create_user
 from ..models import Judge
 from ..serializers import JudgeSerializer
@@ -21,50 +25,60 @@ def judge_by_id(request, judge_id):  # Consistent parameter name
     serializer = JudgeSerializer(instance=judge)
     return Response({"Judge": serializer.data}, status=status.HTTP_200_OK)
 
+
+# Create Judge API View
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_judge(request):
     try:
         with transaction.atomic():
-            # Create user
-            user_data = {
-                "username":request.data["username"],
-                "password":request.data["password"]
-            }
-            user_response = create_user(user_data)
-            if isinstance(user_response, Response):
-                return user_response
+            user_response, judge_response = create_user_and_judge(request.data)
 
-            # Create judge
-            judge_data = {
-                "first_name": request.data["first_name"],
-                "last_name": request.data["last_name"],
-                "contestid": request.data["contestid"],
-                "presentation": request.data["presentation"],
-                "mdo": request.data["mdo"],
-                "journal": request.data["journal"],
-                "penalties": request.data["penalties"],
-            }
-            judge_response = create_judge_instance(judge_data)
-            if isinstance(judge_response, Response):
-                return judge_response
+            # Map judge to user and contest, create sheets
+            responses = [
+                create_user_role_map({
+                    "uuid": user_response.get("user").get("id"),
+                    "role": 3,
+                    "relatedid": judge_response.get("id")
+                }),
+                create_contest_to_judge_map({
+                    "contestid": request.data["contestid"],
+                    "judgeid": judge_response.get("id")
+                }),
+                map_cluster_to_judge({
+                    "judgeid": judge_response.get("id"),
+                    "clusterid": request.data["clusterid"]
+                }),
+                create_sheets_for_teams_in_cluster(
+                    judge_response.get("id"),
+                    request.data["clusterid"],
+                    request.data["penalties"],
+                    request.data["presentation"],
+                    request.data["journal"],
+                    request.data["mdo"]
+                )
+            ]
 
+            # Check for any errors in mapping responses
+            for response in responses:
+                if isinstance(response, Response):
+                    return response
 
-            #map judge to user
-            judge_to_user_data = {
-                "uuid": user_response.get("user").get("id"),
-                "role": 3,
-                "relatedid": judge_response.get("id")
-            }
-            judge_to_user_response = create_user_role_map(judge_to_user_data)
-            if isinstance(judge_to_user_response, Response):
-                return judge_to_user_data
+            return Response({
+                "user": user_response,
+                "judge": judge_response,
+                "user_map": responses[0],
+                "contest_map": responses[1],
+                "cluster_map": responses[2],
+                "score_sheets": responses[3]
+            }, status=status.HTTP_201_CREATED)
 
-            return Response({"user": user_response, "judge": judge_response, "map": judge_to_user_response}, status=status.HTTP_201_CREATED)
-
+    except ValidationError as e:  # Catching ValidationErrors specifically
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @api_view(["POST"])
@@ -96,4 +110,25 @@ def create_judge_instance(judge_data):
     if serializer.is_valid():
         serializer.save()
         return serializer.data
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    raise ValidationError(serializer.errors)
+
+
+def create_user_and_judge(data):
+    user_data = {"username": data["username"], "password": data["password"]}
+    user_response = create_user(user_data)
+    if not user_response.get('user'):
+        raise ValidationError('User creation failed.')
+
+    judge_data = {
+        "first_name": data["first_name"],
+        "last_name": data["last_name"],
+        "contestid": data["contestid"],
+        "presentation": data["presentation"],
+        "mdo": data["mdo"],
+        "journal": data["journal"],
+        "penalties": data["penalties"]
+    }
+    judge_response = create_judge_instance(judge_data)
+    if not judge_response.get('id'):  # If judge creation fails, raise an exception
+        raise ValidationError('Judge creation failed.')
+    return user_response, judge_response

@@ -5,6 +5,7 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -23,12 +24,18 @@ from django.shortcuts import get_object_or_404
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_user_role_mapping(request):
-    mapping = create_user_role_map(request.data)
+    try:
+        # Call the function that creates the user-role mapping
+        mapping = create_user_role_map(request.data)  # This function can raise ValidationError
+        return Response(mapping, status=status.HTTP_201_CREATED)  # If successful, return the mapping
 
-    if isinstance(mapping, dict) and "errors" in mapping:
-        return Response(mapping["errors"], status=status.HTTP_400_BAD_REQUEST)
+    except ValidationError as e:
+        # Handle validation errors and return a 400 response
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response(mapping, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        # Handle any other exceptions
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 def login_return(request, userid):
@@ -80,14 +87,13 @@ def get_role(user_id):
         return {"user_type": mapping.role, "user": roleSerializer.data}
 
 def create_user_role_map(mapData):
-
     existing_mapping = MapUserToRole.objects.filter(uuid=mapData.get("uuid")).first()
     if existing_mapping:
-        return {"errors": {"detail": "This user is already mapped to a role."}}
+        raise ValidationError({"detail": "This user is already mapped to a role."})
 
     serializer = MapUserToRoleSerializer(data=mapData)
     if serializer.is_valid():
         serializer.save()
         return serializer.data
 
-    return {"errors": serializer.errors}
+    raise ValidationError(serializer.errors)

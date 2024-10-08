@@ -6,6 +6,7 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -38,11 +39,16 @@ def login(request):
 # signup endpoint
 @api_view(["POST"])
 def signup(request):
-    user_data = request.data
-    result = create_user(user_data)
-    if "errors" in result:
-        return Response(result["errors"], status=status.HTTP_400_BAD_REQUEST)
-    return Response(result, status=status.HTTP_201_CREATED)
+    try:
+        user_data = request.data
+        result = create_user(user_data)
+        return Response(result, status=status.HTTP_201_CREATED)
+
+    except ValidationError as e:
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -96,10 +102,7 @@ def test_token(request):
 
 def create_user(user_data):
     if User.objects.filter(username=user_data["username"]).exists():
-        return Response(
-            {"detail": "Username already exists."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        raise ValidationError("Username already exists.")
 
     serializer = UserSerializer(data=user_data)
     if serializer.is_valid():
@@ -109,5 +112,6 @@ def create_user(user_data):
             user.save()
             token = Token.objects.create(user=user)
             return {"token": token.key, "user": serializer.data}
-    return {"errors": serializer.errors}
+
+    raise ValidationError(serializer.errors)
 

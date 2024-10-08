@@ -39,9 +39,10 @@ def get_organizers_by_contest_id(request, contest_id):
 @permission_classes([IsAuthenticated])
 def get_contests_by_organizer_id(request,organizer_id):
   mappings = MapContestToOrganizer.objects.filter(organizerid=organizer_id)
-  organizer_ids = mappings.values_list('organizerid',flat=True)
-  organizers = Organizer.objects.fiter(id__in=organizer_ids)
-  serializer = OrganizerSerializer({"Organizers":serializer.data},status=status.HTTP_200_OK)
+  contest_ids = mappings.values_list('contestid',flat=True)
+  contests = Contest.objects.filter(id__in=contest_ids)
+  serializer = ContestSerializer(contests, many=True)
+  return Response({"Contests":serializer.data},status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])

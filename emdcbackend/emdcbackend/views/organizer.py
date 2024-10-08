@@ -25,7 +25,7 @@ def create_organizer(request):
     serializer = OrganizerSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({"organizer": serializer.data})
+        return Response({"organizer": serializer.data}, status=status.HTTP_201_CREATED)
     return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST
     )
@@ -37,10 +37,11 @@ def edit_organizer(request):
     organizer = get_object_or_404(Organizer, id=request.data["id"])
     organizer.first_name = request.data["first_name"]
     organizer.last_name = request.data["last_name"]
+    organizer.region = request.data["region"]
     organizer.save()
 
     serializer = OrganizerSerializer(instance=organizer)
-    return Response({"organizer": serializer.data})
+    return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -54,4 +55,4 @@ def delete_organizer(request, organizer_id):
 def organizers(request):
     organizers = Organizer.objects.all()
     serializer = OrganizerSerializer(organizers, many=True)
-    return Response({"organizers": serializer.data}, status=status.HTTP_200_OK)
+    return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)

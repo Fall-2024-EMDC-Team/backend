@@ -45,12 +45,12 @@ def create_contest(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_contest(request):
-  contest = get_object_or_404(request, id = request.data["id"])
+  contest = get_object_or_404(Contest, id=request.data["id"])
   contest.name = request.data["name"]
   contest.is_open = request.data["is_open"]
   contest.is_tabulated = request.data["is_tabulated"]
   contest.save()
-  serializer = ContestSerializer(instance = contest)
+  serializer = ContestSerializer(instance=contest)
   return Response({"Contest":serializer.data}, status=status.HTTP_200_OK)
 
 
