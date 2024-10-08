@@ -47,7 +47,6 @@ class Teams(models.Model):
     presentation_score = models.FloatField()
     machinedesign_score = models.FloatField()
     score_penalties = models.FloatField()
-    judge_cluster = models.IntegerField()
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):
