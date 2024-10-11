@@ -21,6 +21,10 @@ class MapContestToOrganizer(models.Model):
     contestid = models.IntegerField()
     organizerid = models.IntegerField()
 
+class MapContestToCluster(models.Model):
+    contestid = models.IntegerField()
+    clusterid = models.IntegerField()
+
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
