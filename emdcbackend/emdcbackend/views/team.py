@@ -61,9 +61,8 @@ def edit_team(request):
                 MapScoreSheet.objects.filter(team=team).delete()
 
                 judges = JudgeClusters.objects.get(id=new_cluster).judges.all()
-                for judge in judges:
-                    score_sheet = Scoresheet.objects.create(judge=judge, team=team)
-                    MapScoreSheet.objects.create(score_sheet=score_sheet, judge=judge, team=team)
+                Scoresheet.create_score_sheets_for_team(team, judges)
+                team.judge_cluster = new_cluster
                 
             if team.journal_score != new_journal_score:
                 team.journal_score = new_journal_score

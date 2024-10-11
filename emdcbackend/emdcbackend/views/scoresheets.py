@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
-from ..models import Scoresheet, Teams, MapClusterToTeam
+from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoreSheet
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
 
@@ -183,4 +183,11 @@ def create_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
     except Exception as e:
         raise ValidationError({"detail": str(e)})
 
-
+# Scoresheet for team
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_score_sheets_for_team(team, judges):
+    for judge in judges:
+        score_sheet = Scoresheet.objects.create(judge=judge, team=team)
+        MapScoreSheet.objects.create(score_sheet=score_sheet, judge=judge, team=team)
