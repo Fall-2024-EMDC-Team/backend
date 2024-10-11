@@ -1,5 +1,6 @@
-from ..models import Teams, Scoresheet, JudgeClusters, Judge
+from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge
 from .Maps import MapScoreSheet
+from .scoresheets import create_score_sheets_for_team
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -56,14 +57,16 @@ def edit_team(request):
             if old_team_name != new_team_name:
                 team.team_name = new_team_name
 
-            if old_cluster != new_cluster: 
-                Scoresheet.objects.filter(team=team).delete()
-                MapScoreSheet.objects.filter(team=team).delete()
+            if old_cluster != new_cluster:
+                Scoresheet.objects.filter(id__in=MapScoresheetToTeamJudge.objects.filter(teamid=team.id).values_list('scoresheetid', flat=True)).delete()
+                MapScoresheetToTeamJudge.objects.filter(teamid=team.id).delete()
 
                 judges = JudgeClusters.objects.get(id=new_cluster).judges.all()
-                Scoresheet.create_score_sheets_for_team(team, judges)
-                team.judge_cluster = new_cluster
                 
+                create_score_sheets_for_team(team, judges)
+
+                team.judge_cluster = new_cluster
+
             if team.journal_score != new_journal_score:
                 team.journal_score = new_journal_score
             if team.presentation_score != new_presentation_score:

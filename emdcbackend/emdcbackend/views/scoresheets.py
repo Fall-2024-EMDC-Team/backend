@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
-from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoreSheet
+from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
 
@@ -189,5 +189,24 @@ def create_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
 @permission_classes([IsAuthenticated])
 def create_score_sheets_for_team(team, judges):
     for judge in judges:
-        score_sheet = Scoresheet.objects.create(judge=judge, team=team)
-        MapScoreSheet.objects.create(score_sheet=score_sheet, judge=judge, team=team)
+        # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
+        if judge.presentation:
+            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
+            MapScoresheetToTeamJudge.objects.create(
+                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
+            )
+        if judge.journal:
+            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
+            MapScoresheetToTeamJudge.objects.create(
+                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
+            )
+        if judge.mdo:
+            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
+            MapScoresheetToTeamJudge.objects.create(
+                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
+            )
+        if judge.penalties:
+            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
+            MapScoresheetToTeamJudge.objects.create(
+                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
+            )
