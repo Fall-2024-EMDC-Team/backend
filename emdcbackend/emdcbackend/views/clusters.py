@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from ..models import JudgeClusters
 from ..serializers import JudgeClustersSerializer
-from .Maps.MapClusterToTeam import  create_cluster_team_mapping
+from .Maps.MapClusterToContest import  create_cluster_contest_mapping
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -47,8 +47,8 @@ def create_cluster(request):
                 serializer.save()
                 # map team to cluster
                 responses = [
-                    create_cluster_team_mapping({
-                    "teamid": request.data["teamid"],
+                    create_cluster_contest_mapping({
+                    "contestid": request.data["contestid"],
                     "clusterid": request.data["clusterid"]
                     })
                 ]
@@ -65,6 +65,7 @@ def create_cluster(request):
 
     except ValidationError as e:  # Catching ValidationErrors specifically
         return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
