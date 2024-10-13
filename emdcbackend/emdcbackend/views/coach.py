@@ -59,3 +59,44 @@ def delete_coach(request, coach_id):
     coach = get_object_or_404(Coach, id=coach_id)
     coach.delete()
     return Response({"detail": "Coach deleted successfully."}, status=status.HTTP_200_OK)
+
+def create_coach_instance(coach_data):
+    serializer = CoachSerializer(data=judge_data)
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    raise ValidationError(serializer.errors)
+
+def create_coach(data):
+    coach_data = {
+        "first_name": data["first_name"],
+        "last_name": data["last_name"]
+    }
+    coach_response = create_coach_instance(coach_data)
+    if not coach_response.get('id'):  # If judge creation fails, raise an exception
+        raise ValidationError('Coach creation failed.')
+    return coach_response
+
+def create_user_and_coach(data):
+    user_data = {"username": data["username"], "password": data["password"]}
+    user_response = create_user(user_data)
+    if not user_response.get('user'):
+        raise ValidationError('User creation failed.')
+    coach_data = {
+        "first_name": data["first_name"],
+        "last_name": data["last_name"],
+    }
+    coach_response = create_coach_instance(coach_data)
+    if not coach_response.get('id'): 
+        raise ValidationError('Coach creation failed.')
+    return user_response, coach_response
+
+def get_coach(coach_id):
+    coach = Coach.objects.get(id=coach_id)
+    serializer = CoachSerializer(data=coach)
+    if serializer.is_valid():
+      serializer.save
+      return serializer.data
+
+    raise ValidationError(serializer.error)
+
