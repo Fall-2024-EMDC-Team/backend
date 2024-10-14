@@ -16,7 +16,7 @@ from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge
 from .scoresheets import create_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge
+from ..models import Judge, Scoresheet
 from ..serializers import JudgeSerializer
 
 @api_view(["GET"])
@@ -132,3 +132,26 @@ def create_user_and_judge(data):
     if not judge_response.get('id'):  # If judge creation fails, raise an exception
         raise ValidationError('Judge creation failed.')
     return user_response, judge_response
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def are_all_score_sheets_submitted(request, judge_id):
+    """
+    Check if all score sheets for a given judge are submitted.
+    """
+    judge = get_object_or_404(Judge, id=judge_id)
+    score_sheets = Scoresheet.objects.filter(judge=judge)
+    
+    if not score_sheets.exists():
+        return Response(
+            {"detail": "No score sheets found for this judge."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    all_submitted = score_sheets.filter(isSubmitted=False).count() == 0
+
+    return Response(
+        {"all_submitted": all_submitted},
+        status=status.HTTP_200_OK
+    )
