@@ -100,9 +100,7 @@ def create_user_role_map(mapData):
 
 def get_role_mapping(uuid):
     existing_mapping = MapUserToRole.objects.filter(uuid=uuid).first()
-    serializer = MapUserToRoleSerializer(data=existing_mapping)
-    if serializer.is_valid():
-        serializer.save()
-        return serializer.data
-    
-    raise ValidationError(serializer.error)
+    serializer = MapUserToRoleSerializer(instance=existing_mapping)
+    return serializer.data
+
+    raise ValidationError(serializer.errors)

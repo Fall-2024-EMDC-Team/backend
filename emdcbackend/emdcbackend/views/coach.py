@@ -61,7 +61,7 @@ def delete_coach(request, coach_id):
     return Response({"detail": "Coach deleted successfully."}, status=status.HTTP_200_OK)
 
 def create_coach_instance(coach_data):
-    serializer = CoachSerializer(data=judge_data)
+    serializer = CoachSerializer(data=coach_data)
     if serializer.is_valid():
         serializer.save()
         return serializer.data

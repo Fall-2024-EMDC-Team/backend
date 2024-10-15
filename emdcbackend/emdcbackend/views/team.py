@@ -37,12 +37,14 @@ def create_team(request):
       team_response = make_team(request.data)
       
       # check if a user relating to the email passed in through the request exists, if it does exist, check if it has a role on it.
-      user = User.objects.get(email__exact=request.data["email"])
+      user = User.objects.get(username=request.data["username"])
       # if a user exists with said email, we go to check the user's role
+      
       if user:
         # check if mapping exists, 
+        
         role_mapping_response = get_role_mapping(user.id)
-        if role_mapping_response:
+        if role_mapping_response.get("id"):
           # if we have the mapping and it matches, we get the coach from the mapping
           if role_mapping_response.get("role") == 4:
             coach_response = get_coach(userMapping.get("relatedid"))
@@ -51,18 +53,18 @@ def create_team(request):
         else:
           coach_response = create_coach(request.data)
           role_mapping_response = create_user_role_map({
-            "uuid": user.get("id"),
+            "uuid": user.id,
             "role": 4,
-            "relatedid": judge_response.get("id")
+            "relatedid": coach_response.get("id")
             })
       else:
         user_response, coach_response = create_user_and_coach(request.data)
         role_mapping_response = create_user_role_map({
             "uuid": user_response.get("user").get("id"),
             "role": 4,
-            "relatedid": judge_response.get("id")
+            "relatedid": coach_response.get("id")
             })
-      
+
       responses = [
         # map team to coach, map team to contest, map team to cluster
         create_coach_to_team_map({
