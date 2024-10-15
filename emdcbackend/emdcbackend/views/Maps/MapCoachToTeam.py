@@ -56,3 +56,11 @@ def delete_coach_team_mapping_by_id(request, map_id):
     map_to_delete = get_object_or_404(MapCoachToTeam, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Coach To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+def create_coach_to_team_map(map_data):
+    serializer = CoachToTeamSerializer(data=map_data)
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    else:
+        raise ValidationError(serializer.errors)
