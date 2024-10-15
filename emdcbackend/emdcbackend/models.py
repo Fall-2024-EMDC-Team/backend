@@ -93,6 +93,7 @@ class Scoresheet(models.Model):
     field6 = models.FloatField(null=True, blank=True)
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
+    field9 = models.CharField(null=True, blank=True, max_length=500)
 
     def clean(self):
         # Custom validation logic
