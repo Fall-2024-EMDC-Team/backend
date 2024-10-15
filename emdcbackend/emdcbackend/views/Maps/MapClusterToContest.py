@@ -77,7 +77,8 @@ def all_clusters_by_contest_id(request, contest_id):
     
     except MapContestToCluster.DoesNotExist:
         return Response({"error": "No clusters found for the given contest"}, status=status.HTTP_404_NOT_FOUND)
-    
+
+        
 def map_cluster_to_contest(map_data):
     serializer = ClusterToContestSerializer(data=map_data)
     if serializer.is_valid():

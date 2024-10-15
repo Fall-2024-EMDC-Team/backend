@@ -34,40 +34,37 @@ def clusters_get_all(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_cluster(request):
-    try:
-        with transaction.atomic():
-          
-            if JudgeClusters.objects.filter(cluster_name=request.data["cluster_name"]).exists():
-                return Response(
-                    {"detail": "A cluster with this name already exists."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            cluster_response = create_cluster(request.data)
-            if serializer.is_valid():
-                serializer.save()
-                # map team to cluster
-                responses = [
-                    map_cluster_to_contest({
-                    "contestid": request.data["contestid"],
-                    "clusterid": cluster_response.get("id")
-                    })
-                ]
-                # Check for any errors in mapping responses
-                for response in responses:
-                    if isinstance(response, Response):
-                        return response
+  try:
+    with transaction.atomic():
+      if JudgeClusters.objects.filter(cluster_name=request.data["cluster_name"]).exists():
+        return Response(
+          {"detail": "A cluster with this name already exists."},
+          status=status.HTTP_400_BAD_REQUEST
+        )
+      
+      cluster_response = make_cluster(request.data)
+      responses = [
+        map_cluster_to_contest({
+          "contestid": request.data["contestid"],
+          "clusterid": cluster_response.get("id")
+        })
+      ]
+      
+      # Check for any errors in mapping responses
+      for response in responses:
+        if isinstance(response, Response):
+          return response
 
-                return Response({
-                  "cluster": cluster_response,
-                  "cluster to contest map:":responses[0]
-                },status=status.HTTP_201_CREATED)
+      return Response({
+        "cluster": cluster_response,
+        "cluster to contest map:": responses[0]
+      }, status=status.HTTP_201_CREATED)
 
-    except ValidationError as e:  # Catching ValidationErrors specifically
-        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
-    
-    except Exception as e:
-        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+  except ValidationError as e:  # Catching ValidationErrors specifically
+    return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+  
+  except Exception as e:
+    return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
