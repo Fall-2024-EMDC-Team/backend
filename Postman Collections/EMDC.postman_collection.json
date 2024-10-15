@@ -928,7 +928,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"team_name\":\"meme machine\", \"journal_score\":0, \r\n\"presentation_score\":0, \"machinedesign_score\":0, \"score_penalties\":0, \"judge_cluster\":0}",
+              "raw": "{\"team_name\":\"meme machine\", \"username\":\"example@judge.com\", \"first_name\":\"testcoachfirstname\", \"last_name\":\"testcoachlastname\", \"journal_score\":0, \"presentation_score\":0, \"machinedesign_score\":0, \"score_penalties\":0, \"contestid\":1, \"clusterid\":1}",
 							"options": {
 								"raw": {
 									"language": "json"
