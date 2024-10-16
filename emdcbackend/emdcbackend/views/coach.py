@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ..models import Coach
 from ..serializers import CoachSerializer
+from rest_framework.exceptions import ValidationError
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
