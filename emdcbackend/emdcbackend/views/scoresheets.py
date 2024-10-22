@@ -52,6 +52,24 @@ def edit_score_sheet(request):
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
+def update_scores(request):
+    scores = get_object_or_404(Scoresheet, id=request.data["id"])
+    scores.field1 = request.data["field1"]
+    scores.field2 = request.data["field2"]
+    scores.field3 = request.data["field3"]
+    scores.field4 = request.data["field4"]
+    scores.field5 = request.data["field5"]
+    scores.field6 = request.data["field6"]
+    scores.field7 = request.data["field7"]
+    scores.field8 = request.data["field8"]
+    scores.field9 = request.data["field9"]
+    scores.save()
+    serializer = ScoresheetSerializer(instance=scores)
+    return Response({"updated_sheet": serializer.data})
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def edit_score_sheet_field(request):
     sheet = get_object_or_404(Scoresheet, id=request.data["id"])
 
