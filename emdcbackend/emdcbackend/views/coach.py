@@ -4,10 +4,13 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+
+from ..auth.views import create_user
 from ..models import Coach
 from ..serializers import CoachSerializer
 from rest_framework.exceptions import ValidationError
@@ -66,9 +69,9 @@ def create_coach_instance(coach_data):
     if serializer.is_valid():
         serializer.save()
         return serializer.data
-    raise ValidationError(serializer.errors)
+    raise ValidationError("Coach creation failed")
 
-def create_coach(data):
+def create_coach_only(data):
     coach_data = {
         "first_name": data["first_name"],
         "last_name": data["last_name"]
@@ -93,11 +96,7 @@ def create_user_and_coach(data):
     return user_response, coach_response
 
 def get_coach(coach_id):
-    coach = Coach.objects.get(id=coach_id)
-    serializer = CoachSerializer(data=coach)
-    if serializer.is_valid():
-      serializer.save
-      return serializer.data
-
-    raise ValidationError(serializer.error)
+    coach = get_object_or_404(Coach, id = coach_id)
+    serializer = CoachSerializer(instance=coach)
+    return serializer.data
 

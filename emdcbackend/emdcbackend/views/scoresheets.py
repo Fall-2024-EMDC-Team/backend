@@ -18,7 +18,7 @@ from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializ
 def scores_by_id(request, scores_id):
     scores = get_object_or_404(Scoresheet, id=scores_id)
     serializer = ScoresheetSerializer(instance=scores)
-    return Response({"Scores": serializer.data}, status=status.HTTP_200_OK)
+    return Response({"ScoreSheet": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -49,6 +49,27 @@ def edit_score_sheet(request):
     serializer = ScoresheetSerializer(instance=scores)
     return Response({"edit_score_sheets": serializer.data})
 
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def edit_score_sheet_field(request):
+    sheet = get_object_or_404(Scoresheet, id=request.data["id"])
+
+    field_name = ""
+    if isinstance(request.data["field"], int):
+        field_name = "field"+str(request.data["field"])
+    else:
+        field_name = request.data["field"]
+
+    if hasattr(sheet, field_name):
+        setattr(sheet, field_name, request.data["new_value"])
+        sheet.save()
+        serializer = ScoresheetSerializer(instance=sheet)
+        return Response({"score_sheet": serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Invalid field"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -78,6 +99,7 @@ def create_base_score_sheet(sheet_type):
         "field6": 0.0,
         "field7": 0.0,
         "field8": 0.0,
+        "field9": "",
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)

@@ -36,12 +36,6 @@ def clusters_get_all(request):
 def create_cluster(request):
   try:
     with transaction.atomic():
-      if JudgeClusters.objects.filter(cluster_name=request.data["cluster_name"]).exists():
-        return Response(
-          {"detail": "A cluster with this name already exists."},
-          status=status.HTTP_400_BAD_REQUEST
-        )
-      
       cluster_response = make_cluster(request.data)
       responses = [
         map_cluster_to_contest({
