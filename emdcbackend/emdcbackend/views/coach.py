@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from ..auth.views import create_user
 from ..models import Coach
 from ..serializers import CoachSerializer
+from rest_framework.exceptions import ValidationError
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])

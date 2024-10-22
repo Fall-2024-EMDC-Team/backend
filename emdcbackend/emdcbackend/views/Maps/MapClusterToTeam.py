@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import JudgeClusters, Teams, MapClusterToTeam
 from ...serializers import TeamSerializer, ClusterToTeamSerializer, JudgeClustersSerializer
+from rest_framework.exceptions import ValidationError
 
 
 @api_view(["POST"])
