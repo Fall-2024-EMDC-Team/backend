@@ -46,7 +46,6 @@ def edit_admin(request):
     admin = get_object_or_404(Admin, id=request.data["id"])
     admin.first_name = request.data["first_name"]
     admin.last_name = request.data["last_name"]
-    admin.region = request.data["region"]
     admin.save()
 
     serializer = AdminSerializer(instance=admin)

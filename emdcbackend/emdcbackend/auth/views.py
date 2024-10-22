@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -12,6 +14,7 @@ from .serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
+from ..views.Maps.MapUserToRole import get_role
 
 @api_view(["GET"])
 def user_by_id(request, user_id):  # Consistent parameter name
@@ -29,24 +32,24 @@ def login(request):
     if not user.check_password(request.data["password"]):  # if password is incorrect
         return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)
-    serializer = UserSerializer(instance=user)
-    return Response({"token": token.key, "user": serializer.data})
+    userSerializer = UserSerializer(instance=user)
+    return Response({"token": token.key, "user": userSerializer.data, "role":get_role(user.id)})
 
 
 # signup endpoint
 @api_view(["POST"])
 def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()  # add user to DB
-        user = User.objects.get(username=request.data["username"])
-        user.set_password(request.data["password"])
-        user.save()
-        token = Token.objects.create(user=user)
-        return Response({"token": token.key, "user": serializer.data})
-    return Response(
-        serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    )  # If data is bad
+    try:
+        user_data = request.data
+        result = create_user(user_data)
+        return Response(result, status=status.HTTP_201_CREATED)
+
+    except ValidationError as e:
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 # delete user by id
@@ -95,3 +98,20 @@ def edit_user(request):
 @permission_classes([IsAuthenticated])
 def test_token(request):
     return Response({"passed for {}".format(request.user.username)})
+
+
+def create_user(user_data):
+    if User.objects.filter(username=user_data["username"]).exists():
+        raise ValidationError("Username already exists.")
+
+    serializer = UserSerializer(data=user_data)
+    if serializer.is_valid():
+        with transaction.atomic():
+            user = serializer.save()
+            user.set_password(user_data["password"])
+            user.save()
+            token = Token.objects.create(user=user)
+            return {"token": token.key, "user": serializer.data}
+
+    raise ValidationError(serializer.errors)
+

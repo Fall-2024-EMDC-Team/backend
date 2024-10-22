@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, Scoresheet, JudgeClusters, MapContestToJudge, \
-    MapContestToOrganizer, MapContestToTeam, Penalties
-from .models import Teams, Admin
+    MapContestToOrganizer, MapContestToTeam, MapUserToRole, MapJudgeToCluster, MapContestToCluster
+from .models import Teams, Admin, MapClusterToTeam, MapScoresheetToTeamJudge
 
 class JudgeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,11 +21,6 @@ class OrganizerSerializer(serializers.ModelSerializer):
 class CoachSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coach
-        fields = '__all__'
-        
-class TeamSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Teams
         fields = '__all__'
 
 class CoachToTeamSerializer(serializers.ModelSerializer):
@@ -58,12 +53,37 @@ class ScoresheetSerializer(serializers.ModelSerializer):
         model = Scoresheet
         fields = '__all__'
 
-class PenaltiesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Penalties
-        fields = '__all__'
-
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Admin
+        fields = '__all__'
+
+class MapUserToRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapUserToRole
+        fields = '__all__'
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teams
+        fields = '__all__'
+
+class ClusterToTeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapClusterToTeam
+        fields = '__all__'
+
+class ClusterToJudgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapJudgeToCluster
+        fields = '__all__'
+
+class ClusterToContestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapContestToCluster
+        fields = '__all__'
+
+class MapScoreSheetToTeamJudgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapScoresheetToTeamJudge
         fields = '__all__'
