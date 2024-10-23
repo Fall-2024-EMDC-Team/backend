@@ -44,7 +44,7 @@ urlpatterns = [
     path('api/judge/create/', create_judge, name='create_judge'),
     path('api/judge/edit/', edit_judge, name='edit_judge'),
     path('api/judge/delete/<int:judge_id>/', delete_judge, name='delete_judge'),
-    path('api/judge/allScoreSheetsSubmitted/<int:judge_id>/', are_all_score_sheets_submitted, name='are_all_score_sheets_submitted'),
+    path('api/judge/allScoreSheetsSubmitted/', are_all_score_sheets_submitted, name='are_all_score_sheets_submitted'),
 
     # Organizers
     path('api/organizer/get/<int:organizer_id>/', organizer_by_id, name='organizer_by_id'),

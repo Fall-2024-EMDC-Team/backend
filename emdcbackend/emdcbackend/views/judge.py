@@ -133,37 +133,42 @@ def create_user_and_judge(data):
         raise ValidationError('Judge creation failed.')
     return user_response, judge_response
 
-@api_view(["GET"])
+
+@api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def are_all_score_sheets_submitted(request, judge_id):
+def are_all_score_sheets_submitted(request):
     """
-    Check if all score sheets for a given judge are submitted.
+    Check if all score sheets assigned to a list of judges are submitted.
+    Expects a JSON body with a list of judge objects.
     """
-    # Filter to get all mappings for the judge
-    mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+    judges = request.data
 
-    if not mappings.exists():
+    if not judges:
         return Response(
-            {"detail": "No score sheet mappings found for this judge."},
-            status=status.HTTP_404_NOT_FOUND
+            {"detail": "No judges provided."},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Check all score sheets for the retrieved mappings
-    all_submitted = True  # Assume all are submitted until proven otherwise
-    for mapping in mappings:
-        sheets = Scoresheet.objects.filter(id=mapping.scoresheetid)
-        if not sheets.exists():
-            return Response(
-                {"detail": f"No score sheets found for mapping {mapping.id}."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+    results = {}
 
-        if sheets.filter(isSubmitted=False).exists():
-            all_submitted = False
-            break  # If any score sheet is not submitted, stop checking further
+    # Iterate over each judge object in the list
+    for judge in judges:
+        judge_id = judge.get('id')
+        # Retrieve all mappings for the judge
+        mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
 
-    return Response(
-        {"all_submitted": all_submitted},
-        status=status.HTTP_200_OK
-    )
+        if not mappings.exists():
+            results[judge_id] = False
+            continue
+
+        # Check if all score sheets for the retrieved mappings are submitted
+        all_submitted = not Scoresheet.objects.filter(
+            id__in=[m.scoresheetid for m in mappings],
+            isSubmitted=False
+        ).exists()
+
+        # Store the result for this judge
+        results[judge_id] = all_submitted
+
+    return Response(results, status=status.HTTP_200_OK)
