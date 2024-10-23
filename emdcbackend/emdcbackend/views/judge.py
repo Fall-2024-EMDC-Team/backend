@@ -16,8 +16,9 @@ from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge
 from .scoresheets import create_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge
-from ..serializers import JudgeSerializer
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge
+from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
+
 
 @api_view(["GET"])
 def judge_by_id(request, judge_id):  # Consistent parameter name
@@ -131,3 +132,43 @@ def create_user_and_judge(data):
     if not judge_response.get('id'):  # If judge creation fails, raise an exception
         raise ValidationError('Judge creation failed.')
     return user_response, judge_response
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def are_all_score_sheets_submitted(request):
+    """
+    Check if all score sheets assigned to a list of judges are submitted.
+    Expects a JSON body with a list of judge objects.
+    """
+    judges = request.data
+
+    if not judges:
+        return Response(
+            {"detail": "No judges provided."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    results = {}
+
+    # Iterate over each judge object in the list
+    for judge in judges:
+        judge_id = judge.get('id')
+        # Retrieve all mappings for the judge
+        mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+
+        if not mappings.exists():
+            results[judge_id] = False
+            continue
+
+        # Check if all score sheets for the retrieved mappings are submitted
+        all_submitted = not Scoresheet.objects.filter(
+            id__in=[m.scoresheetid for m in mappings],
+            isSubmitted=False
+        ).exists()
+
+        # Store the result for this judge
+        results[judge_id] = all_submitted
+
+    return Response(results, status=status.HTTP_200_OK)
