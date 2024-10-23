@@ -133,6 +133,10 @@ def create_base_score_sheet_penalties():
         "isSubmitted": False,
         "field1": 0.0,
         "field2": 0.0,
+        "field3": 0.0,
+        "field4": 0.0,
+        "field5": 0.0,
+        "field6": 0.0
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)

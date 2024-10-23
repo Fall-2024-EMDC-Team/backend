@@ -46,6 +46,60 @@ def score_sheet_by_judge_team(request, judge_id, team_id, sheetType):
         return Response({"error": "Scoresheet not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def score_sheets_by_judge(request, judge_id):
+    try:
+        # Fetch mappings for the given judge
+        mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+
+        if not mappings.exists():
+            return Response({"error": "No mappings found for the provided judge."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        # Prepare data to return mappings with scoresheets
+        results = []
+        for mapping in mappings:
+            # Fetch the scoresheet by its ID
+            try:
+                score_sheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+                serializer = ScoresheetSerializer(score_sheet).data
+                total_score = 0
+                if mapping.sheetType == 4:
+                    total_score = (serializer.get("field1") + serializer.get("field2") + serializer.get("field3") +
+                                   serializer.get("field4") + serializer.get("field5") + serializer.get("field6"))
+                else:
+                    total_score = (serializer.get("field1")+serializer.get("field2")+serializer.get("field3")+
+                                  serializer.get("field4")+serializer.get("field5")+serializer.get("field6")+
+                                  serializer.get("field7")+serializer.get("field8"))
+                results.append({
+                    "mapping": {
+                        "teamid": mapping.teamid,
+                        "judgeid": mapping.judgeid,
+                        "scoresheetid": mapping.scoresheetid,
+                        "sheetType": mapping.sheetType,
+                    },
+                    "scoresheet": serializer,  # Serialize the scoresheet
+                    "total": total_score
+                })
+            except Scoresheet.DoesNotExist:
+                results.append({
+                    "mapping": {
+                        "teamid": mapping.teamid,
+                        "judgeid": mapping.judgeid,
+                        "scoresheetid": mapping.scoresheetid,
+                        "sheetType": mapping.sheetType,
+                    },
+                    "scoresheet": None  # Or handle this case as needed
+                })
+
+        return Response({"ScoreSheets": results}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])

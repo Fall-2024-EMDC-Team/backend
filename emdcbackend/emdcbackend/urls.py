@@ -4,7 +4,7 @@ from .views.Maps.MapClusterToContest import all_clusters_by_contest_id
 from .views.Maps.MapClusterToTeam import create_cluster_team_mapping, delete_cluster_team_mapping_by_id, \
     teams_by_cluster_id, cluster_by_team_id
 from .views.Maps.MapScoreSheet import create_score_sheet_mapping, score_sheet_by_judge_team, \
-    delete_score_sheet_mapping_by_id
+    delete_score_sheet_mapping_by_id, score_sheets_by_judge
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
@@ -107,6 +107,7 @@ urlpatterns = [
     path('api/mapping/scoreSheet/create/', create_score_sheet_mapping, name='create_score_sheet_mapping'),
     path('api/mapping/scoreSheet/getByTeamJudge/<int:sheetType>/<int:judge_id>/<int:team_id>/', score_sheet_by_judge_team, name='score_sheets_by_judge_team'),
     path('api/mapping/scoreSheet/delete/', delete_score_sheet_mapping_by_id, name='delete_score_sheet_mapping_by_id'),
+    path('api/mapping/scoreSheet/getSheetsByJudge/<int:judge_id>/', score_sheets_by_judge, name='score_sheets_by_judge'),
 
     # Clusters
     path('api/cluster/get/<int:cluster_id>/', cluster_by_id, name='cluster_by_id'),
