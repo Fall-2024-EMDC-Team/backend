@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import MapCoachToTeam, Coach, Teams
-from ...serializers import CoachToTeamSerializer, CoachSerializer
+from ...serializers import CoachToTeamSerializer, CoachSerializer, TeamSerializer
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -27,14 +27,11 @@ def create_coach_team_mapping(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def teams_by_coach_id(request, coach_id):
-    mappings = MapCoachToTeam.objects.filter(coach_id=coach_id)
+    mappings = MapCoachToTeam.objects.filter(coachid=coach_id)
     team_ids = mappings.values_list('teamid', flat=True)
     teams = Teams.objects.filter(id__in=team_ids)
-
-    #TODO: uncomment when team is implemented
-    # serializer = TeamsSerializer(teams, many=True)
-
-    return Response({"Teams": list(teams.values())}, status=status.HTTP_200_OK)
+    serializer = TeamSerializer(instance=teams, many=True)
+    return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -56,3 +53,11 @@ def delete_coach_team_mapping_by_id(request, map_id):
     map_to_delete = get_object_or_404(MapCoachToTeam, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Coach To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+def create_coach_to_team_map(map_data):
+    serializer = CoachToTeamSerializer(data=map_data)
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    else:
+        raise ValidationError(serializer.errors)

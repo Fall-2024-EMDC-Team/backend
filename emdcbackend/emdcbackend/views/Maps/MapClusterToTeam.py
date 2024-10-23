@@ -4,12 +4,14 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import JudgeClusters, Teams, MapClusterToTeam
 from ...serializers import TeamSerializer, ClusterToTeamSerializer, JudgeClustersSerializer
+from rest_framework.exceptions import ValidationError
 
 
 @api_view(["POST"])
@@ -59,3 +61,13 @@ def delete_cluster_team_mapping_by_id(request, map_id):
     map_to_delete = get_object_or_404(MapClusterToTeam, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Cluster To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+
+def create_team_to_cluster_map(map_data):
+  serializer = ClusterToTeamSerializer(data=map_data)
+  if serializer.is_valid():
+    serializer.save()
+    return serializer.data
+  else:
+    return ValidationError(serializer.errors)
+

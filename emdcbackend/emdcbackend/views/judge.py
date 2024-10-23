@@ -16,8 +16,9 @@ from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge
 from .scoresheets import create_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet
-from ..serializers import JudgeSerializer
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge
+from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
+
 
 @api_view(["GET"])
 def judge_by_id(request, judge_id):  # Consistent parameter name
@@ -118,7 +119,6 @@ def create_user_and_judge(data):
     user_response = create_user(user_data)
     if not user_response.get('user'):
         raise ValidationError('User creation failed.')
-
     judge_data = {
         "first_name": data["first_name"],
         "last_name": data["last_name"],
@@ -140,16 +140,28 @@ def are_all_score_sheets_submitted(request, judge_id):
     """
     Check if all score sheets for a given judge are submitted.
     """
-    judge = get_object_or_404(Judge, id=judge_id)
-    score_sheets = Scoresheet.objects.filter(judge=judge)
-    
-    if not score_sheets.exists():
+    # Filter to get all mappings for the judge
+    mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+
+    if not mappings.exists():
         return Response(
-            {"detail": "No score sheets found for this judge."},
+            {"detail": "No score sheet mappings found for this judge."},
             status=status.HTTP_404_NOT_FOUND
         )
 
-    all_submitted = score_sheets.filter(isSubmitted=False).count() == 0
+    # Check all score sheets for the retrieved mappings
+    all_submitted = True  # Assume all are submitted until proven otherwise
+    for mapping in mappings:
+        sheets = Scoresheet.objects.filter(id=mapping.scoresheetid)
+        if not sheets.exists():
+            return Response(
+                {"detail": f"No score sheets found for mapping {mapping.id}."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if sheets.filter(isSubmitted=False).exists():
+            all_submitted = False
+            break  # If any score sheet is not submitted, stop checking further
 
     return Response(
         {"all_submitted": all_submitted},

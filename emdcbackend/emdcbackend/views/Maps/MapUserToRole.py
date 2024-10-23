@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import (
@@ -10,6 +11,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+from ...auth.serializers import UserSerializer
 from ...models import MapUserToRole, Coach, Organizer, Judge, Admin
 from ...serializers import MapUserToRoleSerializer, CoachSerializer, OrganizerSerializer, JudgeSerializer, AdminSerializer
 from django.shortcuts import get_object_or_404
@@ -41,6 +44,15 @@ def create_user_role_mapping(request):
 def login_return(request, userid):
     return Response(get_role(userid), status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_by_role(request, relatedid, roleType):
+    mapping = MapUserToRole.objects.get(relatedid=relatedid, role=roleType)
+    uuid = mapping.uuid
+    user = get_object_or_404(User, id=uuid)
+    serializer = UserSerializer(instance=user)
+    return Response({"User": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -95,5 +107,12 @@ def create_user_role_map(mapData):
     if serializer.is_valid():
         serializer.save()
         return serializer.data
+
+    raise ValidationError(serializer.errors)
+
+def get_role_mapping(uuid):
+    existing_mapping = MapUserToRole.objects.filter(uuid=uuid).first()
+    serializer = MapUserToRoleSerializer(instance=existing_mapping)
+    return serializer.data
 
     raise ValidationError(serializer.errors)

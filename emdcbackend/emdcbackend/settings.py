@@ -25,10 +25,12 @@ SECRET_KEY = 'django-insecure-xi*-m4zr5fvi=wak_&a%o(7ti@v_)q4a^zh+!hx^t8+jv_#eq0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", 'localhost', "*"]
+ALLOWED_HOSTS = ["0.0.0.0", 'localhost', "*", "emdc-django-api"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:7001",
+"http://192.168.1.101:7001",
+"http://emdc-web:7001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

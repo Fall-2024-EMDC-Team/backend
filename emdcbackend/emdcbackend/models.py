@@ -21,6 +21,10 @@ class MapContestToOrganizer(models.Model):
     contestid = models.IntegerField()
     organizerid = models.IntegerField()
 
+class MapContestToCluster(models.Model):
+    contestid = models.IntegerField()
+    clusterid = models.IntegerField()
+
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
@@ -74,7 +78,7 @@ class MapCoachToTeam(models.Model):
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    region = models.CharField(max_length=50)
+    
 
 class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
@@ -93,6 +97,7 @@ class Scoresheet(models.Model):
     field6 = models.FloatField(null=True, blank=True)
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
+    field9 = models.CharField(null=True, blank=True, max_length=500)
 
     def clean(self):
         # Custom validation logic

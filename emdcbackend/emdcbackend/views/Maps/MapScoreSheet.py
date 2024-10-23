@@ -10,7 +10,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ...models import MapScoresheetToTeamJudge, Scoresheet
-from ...serializers import MapScoreSheetToTeamJudgeSerializer
+from ...serializers import MapScoreSheetToTeamJudgeSerializer, ScoresheetSerializer
 
 
 @api_view(["POST"])
@@ -27,17 +27,24 @@ def create_score_sheet_mapping(request):
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def score_sheets_by_judge_team(request, judge_id, team_id):
-    mappings = MapScoresheetToTeamJudge.objects.filter(judgeid = judge_id , teamid = team_id)
-    sheet_ids = mappings.values_list('scoresheetid', flat=True)
-    sheets = Scoresheet.objects.filter(id__in=sheet_ids)
+def score_sheet_by_judge_team(request, judge_id, team_id, sheetType):
+    try:
+        mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team_id, sheetType=sheetType)
+        sheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+        serializer = ScoresheetSerializer(instance=sheet)
+        return Response({"ScoreSheet": serializer.data}, status=status.HTTP_200_OK)
 
-    serializer = MapScoreSheetToTeamJudgeSerializer(sheets, many=True)
+    except MapScoresheetToTeamJudge.DoesNotExist:
+        return Response({"error": "No mapping found for the provided judge, team, and sheet type."},
+                        status=status.HTTP_404_NOT_FOUND)
 
-    return Response({"ScoreSheets": serializer.data}, status=status.HTTP_200_OK)
+    except Scoresheet.DoesNotExist:
+        return Response({"error": "Scoresheet not found."}, status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
