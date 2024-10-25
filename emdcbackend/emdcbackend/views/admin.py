@@ -83,7 +83,7 @@ def make_admin(data):
     if serializer.is_valid():
         serializer.save()
         return serializer.data
-    return Response(serializer.errors)
+    raise ValidationError(serializer.errors)
 
 # edit an admin
 @api_view(["POST"])
