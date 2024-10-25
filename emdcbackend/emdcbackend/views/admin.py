@@ -10,11 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.contrib.auth.models import User
 from ..serializers import AdminSerializer
 from ..models import Admin
 from ..auth.views import create_user
-from .Maps.MapUserToRole import create_user_role_map, get_role_mapping
+from .Maps.MapUserToRole import create_user_role_map
 
 # get an admin by a certain id
 @api_view(["GET"])
@@ -63,7 +62,7 @@ def create_admin(request):
         return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
   
     except Exception as e:
-        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def create_user_and_admin(data):
     user_data = {"username": data["username"], "password": data["password"]}
