@@ -2,6 +2,11 @@ from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge
 from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
 from .scoresheets import create_score_sheets_for_team
+from ..serializers import TeamSerializer
+from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
+from .Maps.MapCoachToTeam import create_coach_to_team_map
+from .Maps.MapContestToTeam import create_team_to_contest_map
+from .Maps.MapClusterToTeam import create_team_to_cluster_map
 
 from rest_framework import status
 from rest_framework.decorators import (
@@ -9,18 +14,11 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
-
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
-
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from ..serializers import TeamSerializer
-from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
-from .Maps.MapCoachToTeam import create_coach_to_team_map
-from .Maps.MapContestToTeam import create_team_to_contest_map
-from .Maps.MapClusterToTeam import create_team_to_cluster_map
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
@@ -44,7 +42,6 @@ def create_team(request):
       # check if a user relating to the email passed in through the request exists, if it does exist, check if it has a role on it.
       user = User.objects.get(username=request.data["username"])
       # if a user exists with said email, we go to check the user's role
-      
       if user:
         # check if mapping exists, 
         

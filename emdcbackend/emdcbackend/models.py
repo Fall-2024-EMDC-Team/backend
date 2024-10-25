@@ -51,6 +51,7 @@ class Teams(models.Model):
     presentation_score = models.FloatField()
     machinedesign_score = models.FloatField()
     score_penalties = models.FloatField()
+    total_score = models.FloatField()
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):
@@ -98,7 +99,7 @@ class Scoresheet(models.Model):
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
     field9 = models.CharField(null=True, blank=True, max_length=500)
-
+    
     def clean(self):
         # Custom validation logic
         if self.sheetType == ScoresheetEnum.PENALTIES:
