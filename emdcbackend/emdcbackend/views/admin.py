@@ -13,6 +13,7 @@ from django.db import transaction
 from django.contrib.auth.models import User
 from ..serializers import AdminSerializer
 from ..models import Admin
+from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map, get_role_mapping
 
 # get an admin by a certain id
@@ -40,10 +41,10 @@ def admins_get_all(request):
 def create_admin(request):
     try:
         with transaction.atomic():
-            admin_response = make_admin(request.data)
+            user_response, admin_response = create_user_and_admin(request.data)
             responses = [
                 create_user_role_map({
-                    "uuid": admin_response.get("id"),
+                    "uuid": user_response.get("user").get("id"),
                     "role": 1,
                     "relatedid": admin_response.get("id")
                 })
@@ -51,29 +52,31 @@ def create_admin(request):
             for response in responses:
                 if isinstance(response, Response):
                     return response
-
-            # user = User.objects.get(username=request.data["username"])
-            # if user:
-            #     role_mapping_response = get_role_mapping(user.id)
                 
-            #     if role_mapping_response.get("id"):
-            #         if role_mapping_response.get("role") == 1:
-            #             admin_response = get_admin(userMapping.get("relatedid"))
-            #         else:
-            #             raise ValidationError({"detail": "This user is already mapped to a role."})
-            #     else:
-            #         admin_response = create_admin(request.data)
-            #         role_mapping_response = create_user_role_map({
-            #             "uuid": user.id,
-            #             "role": 1,
-            #             "relatedid": admin_response.get("id")
-            #         })
+            return Response({
+                "user": user_response,
+                "admin": admin_response,
+                "user_map": responses[0],
+            }, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:  # Catching ValidationErrors specifically
         return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
   
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
+
+def create_user_and_admin(data):
+    user_data = {"username": data["username"], "password": data["password"]}
+    user_response = create_user(user_data)
+    if not user_response.get('user'):
+        raise ValidationError('User creation failed.')
+    
+    admin_data = {"first_name": data["first_name"], "last_name": data["last_name"]}
+    admin_response = make_admin(admin_data)
+    if not admin_response.get('id'):
+        raise ValidationError('Admin creation failed.')
+    
+    return user_response, admin_response
 
 def make_admin(data):
     serializer = AdminSerializer(data=data)
