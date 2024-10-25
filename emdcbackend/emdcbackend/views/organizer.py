@@ -14,6 +14,7 @@ from ..models import Organizer
 from ..serializers import OrganizerSerializer
 from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map
+from .Maps.MapContestToOrganizer import create_contest_organizer_mapping
 
 # get organizer by id
 @api_view(["GET"])
@@ -35,6 +36,10 @@ def create_organizer(request):
                     "uuid": user_response.get("user").get("id"),
                     "role": 2,
                     "relatedid": organizer_response.get("id")
+                }),
+                create_contest_organizer_mapping({
+                    "contestid": request.data["contestid"],
+                    "organizerid": organizer_response.get("id")
                 })
             ]
             for response in responses:
@@ -45,6 +50,7 @@ def create_organizer(request):
                 "user": user_response,
                 "organizer": organizer_response,
                 "user_map": responses[0],
+                "organizer to contest map": responses[1]
             }, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:  # Catching ValidationErrors specifically

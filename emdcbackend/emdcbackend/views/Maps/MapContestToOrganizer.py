@@ -7,8 +7,8 @@ from rest_framework.decorators import (
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-
 from ...models import MapContestToOrganizer, Organizer, Contest
 from ...serializers import MapContestToOrganizerSerializer, ContestSerializer, OrganizerSerializer
 
@@ -16,14 +16,24 @@ from ...serializers import MapContestToOrganizerSerializer, ContestSerializer, O
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_contest_organizer_mapping(request):
-  serializer = MapContestToOrganizerSerializer(data=request.data)
+  try:
+    map_data = request.data
+    response = create_contest_to_organizer_map(map_data)
+    return Response(response, status=status.HTTP_201_CREATED)
+  
+  except ValidationError as e:
+    return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+  except Exception as e:
+    return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def create_contest_to_organizer_map(map_data):
+  serializer = MapContestToOrganizerSerializer(data=map_data)
   if serializer.is_valid():
     serializer.save()
-    return Response({"mapping": serializer.data}, status=status.HTTP_201_CREATED)
+    return serializer.data
   else:
-    return Response(
-      serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    )
+    raise ValidationError(serializer.errors)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
