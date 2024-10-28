@@ -30,14 +30,14 @@ def organizer_by_id(request, organizer_id):
 def create_organizer(request):
     try:
         with transaction.atomic():
-            user_response, organizer_response = create_user_and_organizer(request.data)
+            user_response, organizer_response = create_user_and_organizer(request.data)  # creates user and organizer
             responses = [
-                create_user_role_map({
+                create_user_role_map({  # maps the newly-created user to the role of an organizer
                     "uuid": user_response.get("user").get("id"),
                     "role": 2,
                     "relatedid": organizer_response.get("id")
                 }),
-                map_contest_to_organizer({
+                map_contest_to_organizer({  # maps the newly-created organizer to a contest
                     "contestid": request.data["contestid"],
                     "organizerid": organizer_response.get("id")
                 })
