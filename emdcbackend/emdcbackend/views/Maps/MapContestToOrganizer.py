@@ -16,24 +16,24 @@ from ...serializers import MapContestToOrganizerSerializer, ContestSerializer, O
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_contest_organizer_mapping(request):
-  try:
-    map_data = request.data
-    response = create_contest_to_organizer_map(map_data)
-    return Response(response, status=status.HTTP_201_CREATED)
-  
-  except ValidationError as e:
-    return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        map_data = request.data
+        result = map_contest_to_organizer(map_data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
-  except Exception as e:
-    return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except ValidationError as e:
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
-def create_contest_to_organizer_map(map_data):
-  serializer = MapContestToOrganizerSerializer(data=map_data)
-  if serializer.is_valid():
-    serializer.save()
-    return serializer.data
-  else:
-    raise ValidationError(serializer.errors)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def map_contest_to_organizer(map_data):
+    serializer = MapContestToOrganizerSerializer(data=map_data)
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    else:
+        raise ValidationError(serializer.errors)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -42,7 +42,7 @@ def get_organizers_by_contest_id(request, contest_id):
   organizer_ids = MapContestToOrganizer.objects.filter(request.data["id"])
   organizers = Organizer.objects.filter(id__in=organizer_ids)
   serializer = OrganizerSerializer(organizers, many=True)
-  return Response({"Judges":serializer.data()},status=status.HTTP_200_OK)
+  return Response({"Judges": serializer.data()},status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
