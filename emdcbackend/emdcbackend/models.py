@@ -134,19 +134,5 @@ class MapScoresheetToTeamJudge(models.Model):
     scoresheetid = models.IntegerField()
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
 
-class MapUserToCoach(models.Model):
-    uuid = models.IntegerField()
-    coachid = models.IntegerField()
-    role = 4
-    
-class MapUserToOrganizer(models.Model):
-    uuid = models.IntegerField()
-    organizerid = models.IntegerField()
-    role = 2
-
-class User(models.Model):
-    uuid = models.IntegerField()
-    first_name = models.CharField(max_length=50)  # Add max_length
-    last_name = models.CharField(max_length=50)   # Add max_length
 
     
