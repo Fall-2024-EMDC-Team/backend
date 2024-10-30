@@ -78,7 +78,8 @@ class MapCoachToTeam(models.Model):
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    
+
+
 
 class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
@@ -133,3 +134,5 @@ class MapScoresheetToTeamJudge(models.Model):
     scoresheetid = models.IntegerField()
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
 
+
+    
