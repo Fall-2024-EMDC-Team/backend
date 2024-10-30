@@ -20,6 +20,7 @@ from .views.scoresheets import create_score_sheet, edit_score_sheet, scores_by_i
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
 from .views.Maps.MapUserToRole import create_user_role_mapping, delete_user_role_mapping, get_user_by_role
 from .views.Maps.MapClusterToJudge import create_cluster_judge_mapping, delete_cluster_judge_mapping_by_id, cluster_by_judge_id, judges_by_cluster_id
+from .views.tabulation import tabulate_scores
 
 urlpatterns = [
     # Admins
@@ -129,6 +130,9 @@ urlpatterns = [
     path('api/scoreSheet/edit/', edit_score_sheet, name='edit_score_sheets'),
     path('api/scoreSheet/delete/<int:scores_id>/', delete_score_sheet, name='delete_score_sheets'),
     path('api/scoreSheet/edit/editField/', edit_score_sheet_field, name='edit_score_sheet_field'),
-    path('api/scoreSheet/edit/updateScores/', update_scores, name='update_scores')
+    path('api/scoreSheet/edit/updateScores/', update_scores, name='update_scores'),
 
+    # Tabulation
+    path('api/tabulation/tabulateScores/',tabulate_scores, name='tabulate_scores')
+    
 ]

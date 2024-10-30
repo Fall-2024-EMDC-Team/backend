@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 class Contest(models.Model):
     name = models.CharField(max_length=99)
+    date = models.DateField()
     is_open = models.BooleanField()
     is_tabulated = models.BooleanField()
 
@@ -28,6 +29,7 @@ class MapContestToCluster(models.Model):
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
+    phone_number = models.CharField(max_length=10)
     contestid = models.IntegerField()
     presentation=models.BooleanField()
     mdo=models.BooleanField()
@@ -50,8 +52,9 @@ class Teams(models.Model):
     journal_score = models.FloatField()
     presentation_score = models.FloatField()
     machinedesign_score = models.FloatField()
-    score_penalties = models.FloatField()
+    penalties_score = models.FloatField()
     total_score = models.FloatField()
+    team_rank = models.IntegerField(null=True,blank=True)
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):
@@ -98,7 +101,20 @@ class Scoresheet(models.Model):
     field6 = models.FloatField(null=True, blank=True)
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
-    field9 = models.CharField(null=True, blank=True, max_length=500)
+    field9 = models.FloatField(null=True, blank=True)
+    field10 = models.FloatField(null=True, blank=True)
+    field11 = models.FloatField(null=True, blank=True)
+    field12 = models.FloatField(null=True, blank=True)
+    field13 = models.FloatField(null=True, blank=True)
+    field14 = models.FloatField(null=True, blank=True)
+    field15 = models.FloatField(null=True, blank=True)
+    field16 = models.FloatField(null=True, blank=True)
+    field17 = models.FloatField(null=True, blank=True)
+    field18 = models.FloatField(null=True, blank=True)
+    field19 = models.FloatField(null=True, blank=True)
+    field20 = models.FloatField(null=True, blank=True)
+    field21 = models.FloatField(null=True, blank=True)
+    fieldText = models.CharField(null=True, blank=True, max_length=500)
     
     def clean(self):
         # Custom validation logic

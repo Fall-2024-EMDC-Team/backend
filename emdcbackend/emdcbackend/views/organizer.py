@@ -39,7 +39,6 @@ def edit_organizer(request):
     organizer.last_name = request.data["last_name"]
     organizer.region = request.data["region"]
     organizer.save()
-
     serializer = OrganizerSerializer(instance=organizer)
     return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)
 
