@@ -3,6 +3,7 @@ from .models import Judge, Organizer, Contest, Coach, MapCoachToTeam, Scoresheet
     MapContestToOrganizer, MapContestToTeam, MapUserToRole, MapJudgeToCluster, MapContestToCluster
 from .models import Teams, Admin, MapClusterToTeam, MapScoresheetToTeamJudge
 
+
 class JudgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Judge

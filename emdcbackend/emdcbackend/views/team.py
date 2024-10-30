@@ -39,17 +39,14 @@ def create_team(request):
       # create team object.
       team_response = make_team(request.data)
       
-      # check if a user relating to the email passed in through the request exists, if it does exist, check if it has a role on it.
-      user = User.objects.get(username=request.data["username"])
-      # if a user exists with said email, we go to check the user's role
-      if user:
-        # check if mapping exists, 
+      try:
+        user = User.objects.get(username=request.data["username"])
         
         role_mapping_response = get_role_mapping(user.id)
         if role_mapping_response.get("id"):
           # if we have the mapping and it matches, we get the coach from the mapping
           if role_mapping_response.get("role") == 4:
-            coach_response = get_coach(userMapping.get("relatedid"))
+            coach_response = get_coach(role_mapping_response.get("relatedid"))
           else:
             raise ValidationError({"detail": "This user is already mapped to a role."})
         else:
@@ -59,7 +56,7 @@ def create_team(request):
             "role": 4,
             "relatedid": coach_response.get("id")
             })
-      else:
+      except:
         user_response, coach_response = create_user_and_coach(request.data)
         role_mapping_response = create_user_role_map({
             "uuid": user_response.get("user").get("id"),

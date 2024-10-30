@@ -4,7 +4,7 @@ from .views.Maps.MapClusterToContest import all_clusters_by_contest_id
 from .views.Maps.MapClusterToTeam import create_cluster_team_mapping, delete_cluster_team_mapping_by_id, \
     teams_by_cluster_id, cluster_by_team_id
 from .views.Maps.MapScoreSheet import create_score_sheet_mapping, score_sheet_by_judge_team, \
-    delete_score_sheet_mapping_by_id
+    delete_score_sheet_mapping_by_id, score_sheets_by_judge
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, are_all_score_sheets_submitted
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
@@ -14,7 +14,8 @@ from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id, delete_contest_organizer_mapping_by_id
-from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, get_contest_id_by_team_id, delete_contest_team_mapping_by_id
+from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, \
+    get_contest_id_by_team_id, delete_contest_team_mapping_by_id, get_contests_by_team_ids
 from .views.scoresheets import create_score_sheet, edit_score_sheet, scores_by_id, delete_score_sheet, \
     edit_score_sheet_field, update_scores
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
@@ -71,8 +72,7 @@ urlpatterns = [
     path('api/mapping/coachToTeam/create/', create_coach_team_mapping, name='create_coach_team_mapping'),
     path('api/mapping/coachToTeam/getCoachByTeam/<int:team_id>/', coach_by_team_id, name='coach_by_team_id'),
     path('api/mapping/coachToTeam/delete/<int:map_id>/', delete_coach_team_mapping_by_id, name='delete_coach_team_mapping'),
-    path('api/coachToTeam/teamsByCoach/<int:coach_id>/', teams_by_coach_id, name='teams_by_coach_id'),
-
+    path('api/mapping/coachToTeam/teamsByCoach/<int:coach_id>/', teams_by_coach_id, name='teams_by_coach_id'),
 
     path('api/mapping/contestToJudge/create/', create_contest_judge_mapping, name='create_contest_judge_mapping'),
     path('api/mapping/contestToJudge/getContestByJudge/<int:judge_id>/', get_contest_id_by_judge_id, name='get_contest_id_by_judge_id'),
@@ -81,6 +81,7 @@ urlpatterns = [
     path('api/mapping/contestToTeam/create/', create_contest_team_mapping, name='create_contest_team_mapping'),
     path('api/mapping/contestToTeam/getContestByTeam/<int:team_id>/', get_contest_id_by_team_id, name='get_contest_id_by_team_id'),
     path('api/mapping/contestToTeam/delete/<int:map_id>/', delete_contest_team_mapping_by_id, name='delete_contest_team_mapping'),
+    path('api/mapping/contestToTeam/contestsByTeams/', get_contests_by_team_ids, name='get_contests_by_team_ids'),
 
     path('api/mapping/contestToOrganizer/create/', create_contest_organizer_mapping, name='create_contest_organizer_mapping'),
     path('api/mapping/contestToOrganizer/getByOrganizer/<int:organizer_id>/', get_contests_by_organizer_id, name='get_contests_by_organizer_id'),
@@ -109,6 +110,7 @@ urlpatterns = [
     path('api/mapping/scoreSheet/create/', create_score_sheet_mapping, name='create_score_sheet_mapping'),
     path('api/mapping/scoreSheet/getByTeamJudge/<int:sheetType>/<int:judge_id>/<int:team_id>/', score_sheet_by_judge_team, name='score_sheets_by_judge_team'),
     path('api/mapping/scoreSheet/delete/', delete_score_sheet_mapping_by_id, name='delete_score_sheet_mapping_by_id'),
+    path('api/mapping/scoreSheet/getSheetsByJudge/<int:judge_id>/', score_sheets_by_judge, name='score_sheets_by_judge'),
 
     # Clusters
     path('api/cluster/get/<int:cluster_id>/', cluster_by_id, name='cluster_by_id'),

@@ -82,7 +82,8 @@ class MapCoachToTeam(models.Model):
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    
+
+
 
 class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
@@ -124,6 +125,14 @@ class Scoresheet(models.Model):
                 raise ValidationError({'field1': 'Field 1 is required for PENALTIES.'})
             if self.field2 is None:
                 raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            if self.field3 is None:
+                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            if self.field4 is None:
+                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            if self.field5 is None:
+                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            if self.field6 is None:
+                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
         else:
             # For other types (Presentation, Journal, Machine Design), all fields must be filled
             required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8']
@@ -142,3 +151,5 @@ class MapScoresheetToTeamJudge(models.Model):
     scoresheetid = models.IntegerField()
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
 
+
+    
