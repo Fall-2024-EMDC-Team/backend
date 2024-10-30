@@ -1,4 +1,3 @@
-from backend.emdcbackend.emdcbackend.views.Maps.MapClusterToContest import map_cluster_to_contest
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -14,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 from ..models import Contest
 from ..serializers import ContestSerializer
-from clusters import create_cluster, make_cluster
+from .clusters import create_cluster, make_cluster
 from .Maps.MapClusterToContest import map_cluster_to_contest,create_cluster_contest_mapping
 
 
@@ -43,7 +42,7 @@ def create_contest(request):
   try:
       with transaction.atomic():
         all_teams = make_cluster({"cluster_name": "All Teams"})
-        contest = create_contest({"name": request.data["name"], "is_open":False,"is_tabulated":False})
+        contest = create_contest_instance({"name": request.data["name"], "is_open":False,"is_tabulated":False})
         responses = [
           map_cluster_to_contest({
               "contestid": contest.get("id"),
