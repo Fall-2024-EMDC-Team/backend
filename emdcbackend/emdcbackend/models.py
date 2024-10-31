@@ -102,7 +102,7 @@ class Scoresheet(models.Model):
     field6 = models.FloatField(null=True, blank=True)
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
-    field9 = models.FloatField(null=True, blank=True)
+    field9 = models.CharField(null=True, blank=True, max_length=500)
     field10 = models.FloatField(null=True, blank=True)
     field11 = models.FloatField(null=True, blank=True)
     field12 = models.FloatField(null=True, blank=True)
@@ -115,7 +115,10 @@ class Scoresheet(models.Model):
     field19 = models.FloatField(null=True, blank=True)
     field20 = models.FloatField(null=True, blank=True)
     field21 = models.FloatField(null=True, blank=True)
-    fieldText = models.CharField(null=True, blank=True, max_length=500)
+    field22 = models.FloatField(null=True, blank=True)
+    field23 = models.FloatField(null=True, blank=True)
+    field24 = models.FloatField(null=True, blank=True)
+    
     
     def clean(self):
         # Custom validation logic

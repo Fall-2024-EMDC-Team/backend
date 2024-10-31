@@ -58,14 +58,14 @@ def tabulate_scores(request):
         totalscores[5] += 1
       elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
         # penalties are kinda tricky, so we're commenting this one out a bit.
-        # first thing we check for is the journal penalties and machine spec penalties. to my knowledge, these are not averaged and are calculated once.
-        totalscores[6] = scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5
+        # first thing we check for is the journal penalties and machine spec penalties. to my knowledge, these are not averaged and are calculated once, but if they were to be an average we take it.
+        totalscores[6] = scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5 + scoresheet.field6 + scoresheet.field7
         totalscores[7] += 1
-        # we then check for if there is penalties for run 1, and add the counter for run1 with that
-        totalscores[8] = totalscores[8] + scoresheet.field6+ scoresheet.field7+ scoresheet.field8 + scoresheet.field9 + scoresheet.field10 + scoresheet.field11 + scoresheet.field12 + scoresheet.field13
+        # we then check for if there is penalties for run 1, and increment the counter since run penalties are taken as an average
+        totalscores[8] = totalscores[8] + scoresheet.field8+ scoresheet.field10+ scoresheet.field11 + scoresheet.field12 + scoresheet.field13 + scoresheet.field14 + scoresheet.field15 + scoresheet.field16
         totalscores[9] += 1
-        # we then grab the penalties for run2
-        totalscores[10] = totalscores[10] + scoresheet.field14+ scoresheet.field15+ scoresheet.field16 + scoresheet.field17 + scoresheet.field18 + scoresheet.field19 + scoresheet.field20 + scoresheet.field21
+        # we then grab the penalties for run2 and do the calculation akin to run1
+        totalscores[10] = totalscores[10] + scoresheet.field17+ scoresheet.field18+ scoresheet.field19 + scoresheet.field20 + scoresheet.field21 + scoresheet.field22 + scoresheet.field23 + scoresheet.field24
         totalscores[11] += 1
     # scores are compiled but not averaged yet, we're going to average the scores and then save that score as the total score. 
     team.presentation_score = totalscores[0] / totalscores[1]
