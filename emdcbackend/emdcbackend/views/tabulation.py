@@ -21,7 +21,7 @@ from ..serializers import TeamSerializer, ScoresheetSerializer
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def tabulate_scores(request):
-  contest_team_ids = MapContestToTeam.objects.filter(contestid=request.data["id"])
+  contest_team_ids = MapContestToTeam.objects.filter(contestid=request.data["contestid"])
   contestteams = []
   for mapping in contest_team_ids:
     tempteam = Teams.objects.get(id=mapping.teamid)
@@ -46,6 +46,7 @@ def tabulate_scores(request):
     # tabulation time!
     totalscores = [0] * 12
     for scoresheet in scoresheets:
+        # We're going to keep track for each sheet type how many times we've seen the type, since for each of the sheets we're taking the average of the scores.
       if scoresheet.sheetType == ScoresheetEnum.PRESENTATION:
         totalscores[0] = totalscores[0] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[1] += 1
@@ -56,7 +57,7 @@ def tabulate_scores(request):
         totalscores[4] = totalscores[4] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[5] += 1
       elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
-        # penalties are kinda tricky, so we're commenting this one out a bit. 
+        # penalties are kinda tricky, so we're commenting this one out a bit.
         # first thing we check for is the journal penalties and machine spec penalties. to my knowledge, these are not averaged and are calculated once.
         totalscores[6] = scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5
         totalscores[7] += 1
@@ -66,7 +67,7 @@ def tabulate_scores(request):
         # we then grab the penalties for run2
         totalscores[10] = totalscores[10] + scoresheet.field14+ scoresheet.field15+ scoresheet.field16 + scoresheet.field17 + scoresheet.field18 + scoresheet.field19 + scoresheet.field20 + scoresheet.field21
         totalscores[11] += 1
-    # scores are compiled, time to get final scores and save it all up
+    # scores are compiled but not averaged yet, we're going to average the scores and then save that score as the total score. 
     team.presentation_score = totalscores[0] / totalscores[1]
     team.journal_score = totalscores[2] / totalscores[3]
     team.machinedesign_score = totalscores[4] / totalscores[5]
