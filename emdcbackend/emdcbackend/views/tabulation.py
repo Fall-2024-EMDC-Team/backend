@@ -76,6 +76,8 @@ def tabulate_scores(request):
 
   return Response(status=status.HTTP_200_OK)
 
+# function not tested below, need to change to assign a value to the new team rank value on team and return a team like that.
+'''
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -93,7 +95,7 @@ def get_teams_by_total_score(request):
   contestteams.sort(key=lambda x: x.total_score, reverse=True)
   serializer = TeamSerializer(instance=contestteams, many=True)
   return Response({"Teams":serializer.data},status=status.HTTP_200_OK)
-
+'''
 # to-do: FINISH THIS FUNCTION!
 '''
 @api_view(["GET"])
