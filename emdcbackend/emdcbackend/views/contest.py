@@ -16,8 +16,6 @@ from ..serializers import ContestSerializer
 from .clusters import create_cluster, make_cluster
 from .Maps.MapClusterToContest import map_cluster_to_contest,create_cluster_contest_mapping
 
-
-
 # TO-DO: Add Get Contest by Date/Time
 
 # get a contest by a certain id:
@@ -42,7 +40,7 @@ def create_contest(request):
   try:
       with transaction.atomic():
         all_teams = make_cluster({"cluster_name": "All Teams"})
-        contest = create_contest_instance({"name": request.data["name"], "is_open":False,"is_tabulated":False})
+        contest = create_contest_instance({"name": request.data["name"], "date": request.data["date"], "is_open":False,"is_tabulated":False})
         responses = [
           map_cluster_to_contest({
               "contestid": contest.get("id"),

@@ -114,7 +114,7 @@ def edit_team(request):
         new_journal_score = request.data["journal_score"]
         new_presentation_score = request.data["presentation_score"]
         new_machinedesign_score = request.data["machinedesign_score"]
-        new_score_penalties = request.data["score_penalties"]
+        new_penalties_score = request.data["penalties_score"]
         new_cluster = request.data["judge_cluster"]
         
         with transaction.atomic():
@@ -138,8 +138,8 @@ def edit_team(request):
                 team.presentation_score = new_presentation_score
             if team.machinedesign_score != new_machinedesign_score:
                 team.machinedesign_score = new_machinedesign_score
-            if team.score_penalties != new_score_penalties:
-                team.score_penalties = new_score_penalties
+            if team.penalties_score != new_penalties_score:
+                team.penalties_score = new_penalties_score
 
             team.save()
 
@@ -172,7 +172,8 @@ def make_team(data):
         "journal_score":data["journal_score"],
         "presentation_score":data["presentation_score"],
         "machinedesign_score":data["machinedesign_score"],
-        "score_penalties":data["score_penalties"]
+        "penalties_score":data["penalties_score"],
+        "total_score":data["total_score"]
     }
     team_response = make_team_instance(team_data)
     if not team_response.get('id'):

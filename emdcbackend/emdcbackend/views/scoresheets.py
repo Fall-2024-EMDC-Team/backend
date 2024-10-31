@@ -77,7 +77,7 @@ def update_scores(request):
     scores.field7 = request.data["field7"]
     scores.field8 = request.data["field8"]
     scores.fieldText = request.data["fieldText"]
-    if scores.sheet_type == ScoresheetEnum.PENALTIES:
+    if scores.sheetType == ScoresheetEnum.PENALTIES:
       scores.field9 = request.data["field9"]
       scores.field10 = request.data["field10"]
       scores.field11 = request.data["field11"]
@@ -145,7 +145,7 @@ def create_base_score_sheet(sheet_type):
         "field6": 0.0,
         "field7": 0.0,
         "field8": 0.0,
-        "field9": "",
+        "fieldText": "",
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)
@@ -164,7 +164,24 @@ def create_base_score_sheet_penalties():
         "field3": 0.0,
         "field4": 0.0,
         "field5": 0.0,
-        "field6": 0.0
+        "field6": 0.0,
+        "field7": 0.0,
+        "field8": 0.0,
+        "field9": 0.0,
+        "field10": 0.0,
+        "field11": 0.0,
+        "field12": 0.0,
+        "field13": 0.0,
+        "field14": 0.0,
+        "field15": 0.0,
+        "field16": 0.0,
+        "field17": 0.0,
+        "field18": 0.0,
+        "field19": 0.0,
+        "field20": 0.0,
+        "field21": 0.0,
+        "fieldText": ""
+
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)

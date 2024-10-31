@@ -122,6 +122,7 @@ def create_user_and_judge(data):
     judge_data = {
         "first_name": data["first_name"],
         "last_name": data["last_name"],
+        "phone_number": data["phone_number"],
         "contestid": data["contestid"],
         "presentation": data["presentation"],
         "mdo": data["mdo"],

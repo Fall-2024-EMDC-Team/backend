@@ -21,12 +21,12 @@ from ..serializers import TeamSerializer, ScoresheetSerializer
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def tabulate_scores(request):
-  contest_team_ids = MapContestToTeam.objects.filter(request.data["id"])
+  contest_team_ids = MapContestToTeam.objects.filter(contestid=request.data["id"])
   contestteams = []
   for mapping in contest_team_ids:
     tempteam = Teams.objects.get(id=mapping.teamid)
     if tempteam:
-      contesteams.append(tempteam)
+      contestteams.append(tempteam)
     else:
       return Response({"Error: Team Not Found"},status=status.HTTP_404_NOT_FOUND)
   
@@ -50,10 +50,10 @@ def tabulate_scores(request):
         totalscores[0] = totalscores[0] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[1] += 1
       elif scoresheet.sheetType == ScoresheetEnum.JOURNAL:
-        totalscores[2] = totalscores[1] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
+        totalscores[2] = totalscores[2] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[3] += 1
       elif scoresheet.sheetType == ScoresheetEnum.MACHINEDESIGN:
-        totalscores[4] = totalscores[2] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
+        totalscores[4] = totalscores[4] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[5] += 1
       elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
         # penalties are kinda tricky, so we're commenting this one out a bit. 
@@ -71,7 +71,7 @@ def tabulate_scores(request):
     team.journal_score = totalscores[2] / totalscores[3]
     team.machinedesign_score = totalscores[4] / totalscores[5]
     team.penalties_score = totalscores[6] / totalscores[7] + totalscores[8]/totalscores[9] +  totalscores[10]/totalscores[11]
-    team.total_score = (team.presentation_score + team.journal_score + team.machinedesign_score) - team.penalties
+    team.total_score = (team.presentation_score + team.journal_score + team.machinedesign_score) - team.penalties_score
     team.save()
 
   return Response(status=status.HTTP_200_OK)
@@ -94,7 +94,7 @@ def get_teams_by_total_score(request):
   serializer = TeamSerializer(instance=contestteams, many=True)
   return Response({"Teams":serializer.data},status=status.HTTP_200_OK)
 
-
+# to-do: FINISH THIS FUNCTION!
 '''
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
