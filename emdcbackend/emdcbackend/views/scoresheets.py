@@ -150,7 +150,7 @@ def create_base_score_sheet(sheet_type):
         "field6": 0.0,
         "field7": 0.0,
         "field8": 0.0,
-        "fieldText": "",
+        "field9": "",
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)
