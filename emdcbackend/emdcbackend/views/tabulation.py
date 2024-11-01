@@ -75,43 +75,39 @@ def tabulate_scores(request):
     team.total_score = (team.presentation_score + team.journal_score + team.machinedesign_score) - team.penalties_score
     team.save()
 
+  set_team_rank({"contestid":request.data["contestid"]})
+
   return Response(status=status.HTTP_200_OK)
 
-# function not tested below, need to change to assign a value to the new team rank value on team and return a team like that.
-'''
-@api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_teams_by_total_score(request):
-  contest_team_ids = MapContestToTeam.objects.filter(request.data["id"])
+# this function iterates through each team in the contest and sets the rank of the team based on the total score.
+def set_team_rank(data):
+  contest_team_ids = MapContestToTeam.objects.filter(contestid = data["contestid"])
   contestteams = []
   for mapping in contest_team_ids:
     tempteam = Teams.objects.get(id=mapping.teamid)
     if tempteam:
-      contesteams.append(tempteam)
+      contestteams.append(tempteam)
     else:
-      return Response({"Error: Team Not Found"},status=status.HTTP_404_NOT_FOUND)
-
+      raise ValidationError('Team Cannot Be Found.')
   # next goal: sort the array of teams by their total score!
   contestteams.sort(key=lambda x: x.total_score, reverse=True)
-  serializer = TeamSerializer(instance=contestteams, many=True)
-  return Response({"Teams":serializer.data},status=status.HTTP_200_OK)
-'''
-# to-do: FINISH THIS FUNCTION!
-'''
+  for x in range(len(contestteams)):
+    contestteams[x].team_rank = x+1
+    contestteams[x].save()
+  return
+
+# function to get all scoresheets that a team has submitted
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_scoresheet_comments_by_team_id(request):
   scoresheeids = MapScoresheetToTeamJudge.objects.filter(teamid=request.data["teamid"])
   scoresheets = Scoresheet.objects.filter(id__in=scoresheeids)
-''' 
-  
-  
-    
-  
-      
-
+  comments = []
+  for sheet in scoresheets:
+    if field9 != "":
+      comments.append(sheet.field9),
+  return Response({"Comments": comments}, status=status.HTTP_200_OK)
 
     
 

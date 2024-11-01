@@ -68,7 +68,13 @@ def score_sheets_by_judge(request, judge_id):
                 total_score = 0
                 if mapping.sheetType == 4:
                     total_score = (serializer.get("field1") + serializer.get("field2") + serializer.get("field3") +
-                                   serializer.get("field4") + serializer.get("field5") + serializer.get("field6"))
+                           serializer.get("field4") + serializer.get("field5") + serializer.get("field6") +
+                           serializer.get("field7") + serializer.get("field8") + serializer.get("field10") +
+                           serializer.get("field11") + serializer.get("field12") + serializer.get("field13") +
+                           serializer.get("field14") + serializer.get("field15") + serializer.get("field16") +
+                           serializer.get("field17") + serializer.get("field18") + serializer.get("field19") +
+                           serializer.get("field20") + serializer.get("field21") + serializer.get("field22") +
+                           serializer.get("field23") + serializer.get("field24"))
                 else:
                     total_score = (serializer.get("field1")+serializer.get("field2")+serializer.get("field3")+
                                   serializer.get("field4")+serializer.get("field5")+serializer.get("field6")+
