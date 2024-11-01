@@ -46,7 +46,7 @@ def edit_score_sheet(request):
     scores.field7 = request.data["field7"]
     scores.field8 = request.data["field8"]
     scores.field9 = request.data["field9"]
-    if scores.sheet_type == ScoresheetEnum.PENALTIES:
+    if scores.sheetType == ScoresheetEnum.PENALTIES:
       scores.field10 = request.data["field10"]
       scores.field11 = request.data["field11"]
       scores.field12 = request.data["field12"]
