@@ -2,6 +2,11 @@ from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge
 from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
 from .scoresheets import create_score_sheets_for_team
+from ..serializers import TeamSerializer
+from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
+from .Maps.MapCoachToTeam import create_coach_to_team_map
+from .Maps.MapContestToTeam import create_team_to_contest_map
+from .Maps.MapClusterToTeam import create_team_to_cluster_map
 
 from rest_framework import status
 from rest_framework.decorators import (
@@ -9,18 +14,11 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
-
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
-
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from ..serializers import TeamSerializer
-from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
-from .Maps.MapCoachToTeam import create_coach_to_team_map
-from .Maps.MapContestToTeam import create_team_to_contest_map
-from .Maps.MapClusterToTeam import create_team_to_cluster_map
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
@@ -116,7 +114,7 @@ def edit_team(request):
         new_journal_score = request.data["journal_score"]
         new_presentation_score = request.data["presentation_score"]
         new_machinedesign_score = request.data["machinedesign_score"]
-        new_score_penalties = request.data["score_penalties"]
+        new_penalties_score = request.data["penalties_score"]
         new_cluster = request.data["judge_cluster"]
         
         with transaction.atomic():
@@ -140,8 +138,8 @@ def edit_team(request):
                 team.presentation_score = new_presentation_score
             if team.machinedesign_score != new_machinedesign_score:
                 team.machinedesign_score = new_machinedesign_score
-            if team.score_penalties != new_score_penalties:
-                team.score_penalties = new_score_penalties
+            if team.penalties_score != new_penalties_score:
+                team.penalties_score = new_penalties_score
 
             team.save()
 
@@ -174,7 +172,8 @@ def make_team(data):
         "journal_score":data["journal_score"],
         "presentation_score":data["presentation_score"],
         "machinedesign_score":data["machinedesign_score"],
-        "score_penalties":data["score_penalties"]
+        "penalties_score":data["penalties_score"],
+        "total_score":data["total_score"]
     }
     team_response = make_team_instance(team_data)
     if not team_response.get('id'):

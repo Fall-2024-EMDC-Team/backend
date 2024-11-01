@@ -45,6 +45,23 @@ def edit_score_sheet(request):
     scores.field6 = request.data["field6"]
     scores.field7 = request.data["field7"]
     scores.field8 = request.data["field8"]
+    scores.field9 = request.data["field9"]
+    if scores.sheet_type == ScoresheetEnum.PENALTIES:
+      scores.field10 = request.data["field10"]
+      scores.field11 = request.data["field11"]
+      scores.field12 = request.data["field12"]
+      scores.field13 = request.data["field13"]
+      scores.field14 = request.data["field14"]
+      scores.field15 = request.data["field15"]
+      scores.field16 = request.data["field16"]
+      scores.field17 = request.data["field17"]
+      scores.field18 = request.data["field18"]
+      scores.field19 = request.data["field19"]
+      scores.field20 = request.data["field20"]
+      scores.field21 = request.data["field21"]
+      scores.field22 = request.data["field22"]
+      scores.field23 = request.data["field23"]
+      scores.field24 = request.data["field24"]
     scores.save()
     serializer = ScoresheetSerializer(instance=scores)
     return Response({"edit_score_sheets": serializer.data})
@@ -63,6 +80,22 @@ def update_scores(request):
     scores.field7 = request.data["field7"]
     scores.field8 = request.data["field8"]
     scores.field9 = request.data["field9"]
+    if scores.sheetType == ScoresheetEnum.PENALTIES:
+      scores.field10 = request.data["field10"]
+      scores.field11 = request.data["field11"]
+      scores.field12 = request.data["field12"]
+      scores.field13 = request.data["field13"]
+      scores.field14 = request.data["field14"]
+      scores.field15 = request.data["field15"]
+      scores.field16 = request.data["field16"]
+      scores.field17 = request.data["field17"]
+      scores.field18 = request.data["field18"]
+      scores.field19 = request.data["field19"]
+      scores.field20 = request.data["field20"]
+      scores.field21 = request.data["field21"]
+      scores.field22 = request.data["field22"]
+      scores.field23 = request.data["field23"]
+      scores.field24 = request.data["field24"]
     scores.save()
     serializer = ScoresheetSerializer(instance=scores)
     return Response({"updated_sheet": serializer.data})
@@ -117,7 +150,7 @@ def create_base_score_sheet(sheet_type):
         "field6": 0.0,
         "field7": 0.0,
         "field8": 0.0,
-        "field9": "",
+        "fieldText": "",
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)
@@ -136,7 +169,24 @@ def create_base_score_sheet_penalties():
         "field3": 0.0,
         "field4": 0.0,
         "field5": 0.0,
-        "field6": 0.0
+        "field6": 0.0,
+        "field7": 0.0,
+        "field8": 0.0,
+        "field9": 0.0,
+        "field10": 0.0,
+        "field11": 0.0,
+        "field12": 0.0,
+        "field13": 0.0,
+        "field14": 0.0,
+        "field15": 0.0,
+        "field16": 0.0,
+        "field17": 0.0,
+        "field18": 0.0,
+        "field19": 0.0,
+        "field20": 0.0,
+        "field21": 0.0,
+        "fieldText": ""
+
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)
