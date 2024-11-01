@@ -29,7 +29,7 @@ class MapContestToCluster(models.Model):
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    phone_number = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=20)
     contestid = models.IntegerField()
     presentation=models.BooleanField()
     mdo=models.BooleanField()
