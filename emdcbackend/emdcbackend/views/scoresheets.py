@@ -172,7 +172,7 @@ def create_base_score_sheet_penalties():
         "field6": 0.0,
         "field7": 0.0,
         "field8": 0.0,
-        "field9": 0.0,
+        "field9": "",
         "field10": 0.0,
         "field11": 0.0,
         "field12": 0.0,
@@ -185,8 +185,9 @@ def create_base_score_sheet_penalties():
         "field19": 0.0,
         "field20": 0.0,
         "field21": 0.0,
-        "fieldText": ""
-
+        "field22": 0.0,
+        "field23": 0.0,
+        "field24": 0.0,
     }
 
     serializer = ScoresheetSerializer(data=base_score_data)

@@ -121,23 +121,42 @@ class Scoresheet(models.Model):
     
     
     def clean(self):
-        # Custom validation logic
         if self.sheetType == ScoresheetEnum.PENALTIES:
-            # For PENALTIES, only field1 and field2 are required
-            if self.field1 is None:
-                raise ValidationError({'field1': 'Field 1 is required for PENALTIES.'})
-            if self.field2 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field3 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field4 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field5 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field6 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            required_fields = {
+                'field1': 'Field 1 is required for PENALTIES.',
+                'field2': 'Field 2 is required for PENALTIES.',
+                'field3': 'Field 3 is required for PENALTIES.',
+                'field4': 'Field 4 is required for PENALTIES.',
+                'field5': 'Field 5 is required for PENALTIES.',
+                'field6': 'Field 6 is required for PENALTIES.',
+                'field7': 'Field 7 is required for PENALTIES.',
+                'field8': 'Field 8 is required for PENALTIES.',
+                'field10': 'Field 10 is required for PENALTIES.',
+                'field11': 'Field 11 is required for PENALTIES.',
+                'field12': 'Field 12 is required for PENALTIES.',
+                'field13': 'Field 13 is required for PENALTIES.',
+                'field14': 'Field 14 is required for PENALTIES.',
+                'field15': 'Field 15 is required for PENALTIES.',
+                'field16': 'Field 16 is required for PENALTIES.',
+                'field17': 'Field 17 is required for PENALTIES.',
+                'field18': 'Field 18 is required for PENALTIES.',
+                'field19': 'Field 19 is required for PENALTIES.',
+                'field20': 'Field 20 is required for PENALTIES.',
+                'field21': 'Field 21 is required for PENALTIES.',
+                'field22': 'Field 22 is required for PENALTIES.',
+                'field23': 'Field 23 is required for PENALTIES.',
+                'field24': 'Field 24 is required for PENALTIES.',
+            }
+
+            errors = {}
+            for field, error_message in required_fields.items():
+                if getattr(self, field) is None:
+                    errors[field] = error_message
+
+            if errors:
+                raise ValidationError(errors)
         else:
-            # For other types (Presentation, Journal, Machine Design), all fields must be filled
+            # For other types (Presentation, Journal, Machine Design), fields 1-8 must be filled
             required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8']
             for field in required_fields:
                 if getattr(self, field) is None:

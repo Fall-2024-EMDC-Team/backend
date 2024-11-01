@@ -1,4 +1,4 @@
-from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge
+from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge, MapContestToTeam
 from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
 from .scoresheets import create_score_sheets_for_team
@@ -180,5 +180,13 @@ def make_team(data):
         raise ValidationError('Team creation failed.')
     return team_response
 
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication]) 
+@permission_classes([IsAuthenticated])
+def get_teams_by_team_rank(request):
+    mappings = MapContestToTeam.objects.filter(contestid=request.data["contestid"])
+    teams = Teams.objects.filter(id__in=mappings.values_list('teamid', flat=True)).order_by('team_rank')
+    serializer = TeamSerializer(teams, many=True)
+    return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
 
