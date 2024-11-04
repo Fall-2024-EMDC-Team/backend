@@ -13,10 +13,10 @@ from django.shortcuts import get_object_or_404
 
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
-from .Maps.MapClusterToJudge import map_cluster_to_judge, cluster_by_judge_id
-from .scoresheets import create_sheets_for_teams_in_cluster
+from .Maps.MapClusterToJudge import map_cluster_to_judge, cluster_by_judge_id, delete_cluster_judge_mapping_by_id
+from .scoresheets import create_sheets_for_teams_in_cluster, delete_score_sheet, create_base_score_sheet, get_scoresheet_id
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, JudgeClusters
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, JudgeClusters
 from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
 
 
@@ -97,23 +97,25 @@ def edit_judge(request):
         new_cluster = request.data["clusterid"]
 
         with transaction.atomic():
+            cluster = MapJudgeToCluster.objects.get(judgeid=judge.id)  # get cluster id from mapping
+            clusterid = cluster.clusterid
+
             # Update judge details
-            clusterid = JudgeClusters.objects.get(id=judge.id)  # find way to get cluster id of judge
             if new_first_name != judge.first_name:
                 judge.first_name = new_first_name
             if new_last_name != judge.last_name:
                 judge.last_name = new_last_name
 
-            if clusterid != new_cluster:
+            if clusterid != new_cluster:  # if the judge is being moved to a new cluster
                 # Check if the judge has any scoresheets
                 has_penalties, has_presentation, has_mdo, has_journal = None, None, None, None
-                if judge.penalties is not None:
+                if judge.penalties == True:
                     has_penalties = 0
-                if judge.presentation is not None:
+                if judge.presentation == True:
                     has_presentation = 0
-                if judge.mdo is not None:
+                if judge.mdo == True:
                     has_mdo = 0
-                if judge.journal is not None:
+                if judge.journal == True:
                     has_journal = 0
 
                 # delete all scoresheets and mappings for the judge
@@ -121,20 +123,52 @@ def edit_judge(request):
                 MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).delete()
                 
                 # create new blank scoresheets
-                create_sheets_for_teams_in_cluster(judge.id, new_cluster, has_penalties, 
-                                                   has_presentation, has_mdo, has_journal)  # judge may not have all scoresheets
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, has_penalties, has_presentation, has_mdo, has_journal)
 
-                judge.clusterid = new_cluster
+                # delete the old cluster-judge mapping and create a new one
+                delete_cluster_judge_mapping_by_id(cluster.id)
+                map_cluster_to_judge({
+                    "judgeid": judge.id,
+                    "clusterid": new_cluster
+                })
             
-            # Update judge details
-            if new_presentation != judge.presentation:
-                judge.presentation = new_presentation
+            # Update judge scoresheet details
+            if new_presentation != judge.presentation:  # account for if getting ride of a scoresheet or adding one
+                if judge.presentation == True:  # going from true to false
+                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
+                    scoresheetid = get_scoresheet_id(judge.id, teamid, 1)
+                    delete_score_sheet(scoresheetid)
+                    judge.presentation = new_presentation
+                else:
+                    create_base_score_sheet("presentation")
+                    judge.presentation = new_presentation
             if new_mdo != judge.mdo:
-                judge.mdo = new_mdo
+                if judge.mdo == True:  # going from true to false
+                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
+                    scoresheetid = get_scoresheet_id(judge.id, teamid, 2)
+                    delete_score_sheet(scoresheetid)
+                    judge.mdo = new_mdo
+                else:
+                    create_base_score_sheet("mdo")
+                    judge.mdo = new_mdo
             if new_journal != judge.journal:
-                judge.journal = new_journal
+                if judge.journal == True:  # going from true to false
+                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
+                    scoresheetid = get_scoresheet_id(judge.id, teamid, 3)
+                    delete_score_sheet(scoresheetid)
+                    judge.journal = new_journal
+                else:
+                    create_base_score_sheet("journal")
+                    judge.journal = new_journal
             if new_penalties != judge.penalties:
-                judge.penalties = new_penalties
+                if judge.penalties == True:  # going from true to false
+                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
+                    scoresheetid = get_scoresheet_id(judge.id, teamid, 4)
+                    delete_score_sheet(scoresheetid)
+                    judge.presentation = new_penalties
+                else:
+                    create_base_score_sheet("penalties")
+                    judge.presentation = new_penalties
 
             judge.save()
 

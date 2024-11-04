@@ -260,3 +260,12 @@ def create_score_sheets_for_team(team, judges):
             )
             created_score_sheets.append(score_sheet)
         return created_score_sheets
+
+def get_scoresheet_id(judge_id, team_id, scoresheet_type):
+    try:
+        mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team_id, sheetType=scoresheet_type)
+        scoresheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+        serializer = ScoresheetSerializer(instance=scoresheet)
+        return serializer.data
+    except MapScoresheetToTeamJudge.DoesNotExist:
+        raise ValidationError({"error": "No scoresheet found for the given team"})
