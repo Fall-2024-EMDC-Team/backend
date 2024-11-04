@@ -29,13 +29,14 @@ def create_contest_team_mapping(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_teams_by_contest_id(request,contest_id):
-  mappings = MapContestToTeam.objects.filter(contestid=contest_id)
-  team_ids = mappings.values_list('teamid',flat=True)
-  teams = Teams.objects.filter(id__in=team_ids)
-
-  # implement and change this into the serializer once the teams stuff is done
-
-  return Response("This Call is Unfinished",status=status.HTTP_404_NOT_FOUND)
+    try:
+      mappings = MapContestToTeam.objects.filter(contestid=contest_id)
+      team_ids = mappings.values_list('teamid',flat=True)
+      teams = Teams.objects.filter(id__in=team_ids).order_by('team_rank')
+      serializer = TeamSerializer(teams, many=True)
+      return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+      return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])

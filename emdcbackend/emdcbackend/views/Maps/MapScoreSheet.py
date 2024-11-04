@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from ...models import MapScoresheetToTeamJudge, Scoresheet
+from ...models import MapScoresheetToTeamJudge, Scoresheet, MapContestToJudge
 from ...serializers import MapScoreSheetToTeamJudgeSerializer, ScoresheetSerializer
 
 
@@ -105,6 +105,63 @@ def score_sheets_by_judge(request, judge_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def all_sheets_submitted_for_contests(request):
+    contests = request.data
+    results = {}
+
+    try:
+        for contest in contests:
+            contest_id = contest.get('id')
+            judges = MapContestToJudge.objects.filter(contestid=contest_id)
+            all_submitted = True
+
+            for judge in judges:
+                score_sheet_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id)
+
+                for mapping in score_sheet_mappings:
+                    score_sheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+                    serializer = ScoresheetSerializer(score_sheet).data
+
+                    if not serializer.get("isSubmitted"):
+                        all_submitted = False
+                        break
+
+                if not all_submitted:
+                    break
+
+            results[contest_id] = all_submitted
+
+        return Response(results, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def submit_all_penalty_sheets_for_judge(request):
+    try:
+        penalty_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=request.data["judge_id"], sheetType=4)
+
+        if not penalty_mappings.exists():
+            return Response({"error": "No penalty score sheets found for the provided judge."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        for mapping in penalty_mappings:
+            scoresheet = get_object_or_404(Scoresheet, id=mapping.scoresheetid)
+
+            scoresheet.isSubmitted = True
+            scoresheet.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
