@@ -13,8 +13,8 @@ from django.shortcuts import get_object_or_404
 
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
-from .Maps.MapClusterToJudge import map_cluster_to_judge, cluster_by_judge_id, delete_cluster_judge_mapping_by_id
-from .scoresheets import create_sheets_for_teams_in_cluster, delete_score_sheet, create_base_score_sheet, create_base_score_sheet_penalties, get_scoresheet_id
+from .Maps.MapClusterToJudge import map_cluster_to_judge, cluster_by_judge_id, delete_cluster_judge_mapping_by_id_nonhttp
+from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster, get_scoresheet_id
 from ..auth.views import create_user
 from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, JudgeClusters
 from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
@@ -106,29 +106,29 @@ def edit_judge(request):
             if new_last_name != judge.last_name:
                 judge.last_name = new_last_name
 
-            # if the judge is being moved to a new cluster
+            # if the judge is being moved to a new cluster (tested working)
             if clusterid != new_cluster:
                 # delete all scoresheets and mappings for the judge
                 Scoresheet.objects.filter(id__in=MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('scoresheetid', flat=True)).delete()
                 MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).delete()
                 
-                # create new blank scoresheets
-                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
-
                 # delete the old cluster-judge mapping and create a new one
-                delete_cluster_judge_mapping_by_id(cluster.id)
+                delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
                 map_cluster_to_judge({
                     "judgeid": judge.id,
                     "clusterid": new_cluster
                 })
+
+                # create new blank scoresheets
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
+
                 clusterid = new_cluster
             
             # if adding or removing scoresheets
             if new_presentation != judge.presentation:  # account for if getting ride of a scoresheet or adding one
                 if judge.presentation == True:  # going from true to false
-                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)  # account for all teams in a cluster
-                    scoresheetid = get_scoresheet_id(judge.id, teamid, 1)
-                    delete_score_sheet(scoresheetid)
+                    # account for all teams in a cluster
+                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
                     judge.presentation = False
                 else:
                     create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
@@ -136,9 +136,7 @@ def edit_judge(request):
 
             if new_mdo != judge.mdo:
                 if judge.mdo == True:  # going from true to false
-                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
-                    scoresheetid = get_scoresheet_id(judge.id, teamid, 2)
-                    delete_score_sheet(scoresheetid)
+                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
                     judge.mdo = False
                 else:
                     create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
@@ -146,9 +144,7 @@ def edit_judge(request):
 
             if new_journal != judge.journal:
                 if judge.journal == True:  # going from true to false
-                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
-                    scoresheetid = get_scoresheet_id(judge.id, teamid, 3)
-                    delete_score_sheet(scoresheetid)
+                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
                     judge.journal = False
                 else:
                     create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
@@ -156,9 +152,7 @@ def edit_judge(request):
 
             if new_penalties != judge.penalties:
                 if judge.penalties == True:  # going from true to false
-                    teamid = MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('teamid', flat=True)
-                    scoresheetid = get_scoresheet_id(judge.id, teamid, 4)
-                    delete_score_sheet(scoresheetid)
+                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
                     judge.presentation = False
                 else:
                     create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)

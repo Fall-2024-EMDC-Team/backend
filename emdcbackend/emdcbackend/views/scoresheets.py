@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-
+from .Maps.MapScoreSheet import delete_score_sheet_mapping_by_id_nonhttp
 from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
@@ -268,3 +268,56 @@ def get_scoresheet_id(judge_id, team_id, scoresheet_type):
         return scoresheet.id
     except Scoresheet.DoesNotExist:
         raise ValidationError({"error": "No scoresheet found"})
+    
+def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presentation, journal, mdo):
+    try:
+        # Fetch all mappings for the teams in the cluster
+        mappings = MapClusterToTeam.objects.filter(clusterid=cluster_id)
+
+        # Check if mappings exist
+        if not mappings.exists():
+            raise ValidationError("No teams found for the specified cluster.")  # Raise an exception here
+
+        # Extract all the team_ids from the mappings
+        team_ids = mappings.values_list('teamid', flat=True)
+
+        # Fetch all teams with the given team_ids
+        teams_in_cluster = Teams.objects.filter(id__in=team_ids)
+
+        # List to store responses
+        deleted_score_sheets = []
+
+        for team in teams_in_cluster:
+            if penalties:  # error: maapings aren't getting deleted
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 4)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=4)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+                deleted_score_sheets.append(scoresheet_id)
+            if presentation:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 1)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=1)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+                deleted_score_sheets.append(scoresheet_id)
+            if journal:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 2)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=2)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+                deleted_score_sheets.append(scoresheet_id)
+            if mdo:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 3)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=3)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+                deleted_score_sheets.append(scoresheet_id)
+
+        return deleted_score_sheets
+
+    except Exception as e:
+        raise ValidationError({"detail": str(e)})

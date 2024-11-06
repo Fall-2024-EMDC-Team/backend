@@ -104,7 +104,14 @@ def score_sheets_by_judge(request, judge_id):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_score_sheet_mapping_by_id(request, map_id):
-    map_to_delete = get_object_or_404(MapScoreSheetToTeamJudgeSerializer, id=map_id)
+    map_to_delete = get_object_or_404(MapScoresheetToTeamJudge, id=map_id)
+    map_to_delete.delete()
+    return Response({"detail": "Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+
+def delete_score_sheet_mapping_by_id_nonhttp(map_id):
+    # python can't overload functions >:(
+    map_to_delete = get_object_or_404(MapScoresheetToTeamJudge, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Mapping deleted successfully."}, status=status.HTTP_200_OK)
 
