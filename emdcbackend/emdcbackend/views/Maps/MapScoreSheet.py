@@ -123,3 +123,19 @@ def map_score_sheet(map_data):
         return serializer.data
 
     raise ValidationError(serializer.errors)
+
+
+def map_score_sheets_for_team_in_cluster(team_id, cluster_id):
+    # Fetch judges assigned to the cluster
+    mappings = MapJudgeToCluster.objects.filter(clusterid=cluster_id)
+    judge_ids = mappings.values_list('judgeid', flat=True)
+
+    # Fetch scoresheets assigned to the team
+    team_judge_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=team_id, judgeid__in=judge_ids)
+    scoresheet_ids = team_judge_mappings.values_list('scoresheetid', flat=True)
+
+    # Fetch scoresheets for the team
+    scoresheets = Scoresheet.objects.filter(id__in=scoresheet_ids)
+    serializer = ScoresheetSerializer(scoresheets, many=True)
+
+    return serializer.data

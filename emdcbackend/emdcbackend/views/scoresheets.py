@@ -284,40 +284,31 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
         # Fetch all teams with the given team_ids
         teams_in_cluster = Teams.objects.filter(id__in=team_ids)
 
-        # List to store responses
-        deleted_score_sheets = []
-
         for team in teams_in_cluster:
-            if penalties:  # error: maapings aren't getting deleted
+            if penalties:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 4)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=4)
-                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
-                scoresheet.delete()
-                deleted_score_sheets.append(scoresheet_id)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)  # Delete mapping
+                scoresheet.delete()  # Delete scoresheet
             if presentation:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 1)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=1)
                 delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
                 scoresheet.delete()
-                deleted_score_sheets.append(scoresheet_id)
             if journal:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 2)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=2)
                 delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
                 scoresheet.delete()
-                deleted_score_sheets.append(scoresheet_id)
             if mdo:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 3)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=3)
                 delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
                 scoresheet.delete()
-                deleted_score_sheets.append(scoresheet_id)
-
-        return deleted_score_sheets
 
     except Exception as e:
         raise ValidationError({"detail": str(e)})

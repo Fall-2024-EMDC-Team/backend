@@ -18,6 +18,7 @@ from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
 from .Maps.MapContestToTeam import create_team_to_contest_map
 from .Maps.MapClusterToTeam import create_team_to_cluster_map
+from .Maps.MapClusterToJudge import judges_by_cluster_id
 from .Maps.MapScoreSheet import map_score_sheet
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -189,7 +190,6 @@ def create_team_after_judge(request):
       
       try:
         user = User.objects.get(username=request.data["username"])
-        judge = Judge.objects.get(id=request.data["judgeid"])
         
         role_mapping_response = get_role_mapping(user.id)
         if role_mapping_response.get("id"):
@@ -227,11 +227,11 @@ def create_team_after_judge(request):
           "clusterid": request.data["clusterid"],
           "teamid": team_response.get("id")
         }),
-        create_score_sheets_for_team({
+        create_score_sheets_for_team({  # create score sheets for all judges in cluster
           "teamid": team_response.get("id"),
-          "judgeid": judge.id
+          "judges": JudgeClusters.objects.get(id=request.data["clusterid"]).judges.all()
         }),
-        map_score_sheet({  # get all sheet types for a specified judge
+        map_score_sheet({  # map all created score sheets to judges in the cluster
           "judgeid": judge.id,
           "teamid": team_response.get("id"),
           "sheetType": "journal"
