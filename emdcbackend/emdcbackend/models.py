@@ -9,6 +9,7 @@ class Contest(models.Model):
     date = models.DateField()
     is_open = models.BooleanField()
     is_tabulated = models.BooleanField()
+    is_champs = models.BooleanField(default=False)
 
 class MapContestToJudge(models.Model):
     contestid = models.IntegerField()
