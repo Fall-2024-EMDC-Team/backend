@@ -30,7 +30,7 @@ def create_coach_team_mapping(request):
 def teams_by_coach_id(request, coach_id):
     mappings = MapCoachToTeam.objects.filter(coachid=coach_id)
     team_ids = mappings.values_list('teamid', flat=True)
-    teams = Teams.objects.filter(id__in=team_ids)
+    teams = Teams.objects.filter(id__in=team_ids).order_by('-id')
     serializer = TeamSerializer(instance=teams, many=True)
     return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
