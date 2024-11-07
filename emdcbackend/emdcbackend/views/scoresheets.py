@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from .Maps.MapScoreSheet import delete_score_sheet_mapping_by_id_nonhttp
-from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, MapClusterToJudge, ScoresheetEnum
+from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
 @api_view(["GET"])
@@ -312,9 +312,9 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
     except Exception as e:
         raise ValidationError({"detail": str(e)})
     
-def create_score_sheets_for_team_nonhttp(team, cluster):
+def create_score_sheets_for_team_nonhttp(team, clusterid):
     created_score_sheets = []
-    judges = MapClusterToJudge.objects.filter(clusterid=cluster)
+    judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
     for judge in judges:
         # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
         if judge.presentation:

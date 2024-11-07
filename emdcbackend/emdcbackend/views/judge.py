@@ -13,11 +13,11 @@ from django.shortcuts import get_object_or_404
 
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
-from .Maps.MapClusterToJudge import map_cluster_to_judge, cluster_by_judge_id, delete_cluster_judge_mapping_by_id_nonhttp
-from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster, get_scoresheet_id
+from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping_by_id_nonhttp
+from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, JudgeClusters
-from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster
+from ..serializers import JudgeSerializer
 
 
 @api_view(["GET"])
@@ -109,52 +109,59 @@ def edit_judge(request):
             # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
                 # delete all scoresheets and mappings for the judge
-                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)
+                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)  # will only allow cluster to change once
+
+                # create new blank scoresheets
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
 
                 # delete the old cluster-judge mapping and create a new one
                 delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
-                map_cluster_to_judge({
+                map_cluster_to_judge({  # cluster mapping not being updated
                     "judgeid": judge.id,
                     "clusterid": new_cluster
                 })
 
-                # create new blank scoresheets
-                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
+                # update the boolean values
+                if judge.presentation != new_presentation:
+                    judge.presentation = new_presentation
+                if judge.mdo != new_mdo:
+                    judge.mdo = new_mdo
+                if judge.journal != new_journal:
+                    judge.journal = new_journal
+                if judge.penalties != new_penalties:
+                    judge.penalties = new_penalties
+
                 clusterid = new_cluster
+
             else:
-                # if adding or removing scoresheets
-                if new_presentation != judge.presentation:
-                    if judge.presentation == True:  # going from true to false
-                        # account for all teams in a cluster
+                # if adding or removing scoresheets (no cluster change)
+                if new_presentation != judge.presentation and new_presentation == False:
                         delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
                         judge.presentation = False
-                    else:
+                elif new_presentation != judge.presentation and new_presentation == True:
                         create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
                         judge.presentation = True
 
-                if new_mdo != judge.mdo:
-                    if judge.mdo == True:  # going from true to false
+                if new_mdo != judge.mdo and new_mdo == False:
                         delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
                         judge.mdo = False
-                    else:
+                elif new_mdo != judge.mdo and new_mdo == True:
                         create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
                         judge.mdo = True
 
-                if new_journal != judge.journal:
-                    if judge.journal == True:  # going from true to false
+                if new_journal != judge.journal and new_journal == False:
                         delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
                         judge.journal = False
-                    else:
+                elif new_journal != judge.journal and new_journal == True:
                         create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
                         judge.journal = True
 
-                if new_penalties != judge.penalties:
-                    if judge.penalties == True:  # going from true to false
+                if new_penalties != judge.penalties and new_penalties == False:
                         delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                        judge.presentation = False
-                    else:
+                        judge.penalties = False
+                elif new_penalties != judge.penalties and new_penalties == True:
                         create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                        judge.presentation = True
+                        judge.penalties = True
 
             judge.save()
 
@@ -163,7 +170,7 @@ def edit_judge(request):
     except Exception as e:
         raise ValidationError({"detail": str(e)})
     
-    return Response({"judge": serializer.data}, status=status.HTTP_200_OK)
+    return Response({"judge": serializer.data, "clusterid": clusterid}, status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
