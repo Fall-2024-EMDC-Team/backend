@@ -28,6 +28,8 @@ class MapContestToCluster(models.Model):
     clusterid = models.IntegerField()
 
 class Judge(models.Model):
+    class JudgeRoleEnum(models.IntegerChoices):
+        
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
     phone_number = models.CharField(max_length=20)
@@ -56,6 +58,7 @@ class Teams(models.Model):
     penalties_score = models.FloatField()
     total_score = models.FloatField()
     team_rank = models.IntegerField(null=True,blank=True)
+    cluster_rank = models.IntegerField(null=True,blank=True)
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):
