@@ -311,3 +311,80 @@ def create_score_sheets_for_team(team, judges):
             )
             created_score_sheets.append(score_sheet)
         return created_score_sheets
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication]) 
+@permission_classes([IsAuthenticated]) 
+def get_scoresheet_details_by_team(request):
+    scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=request.data["teamid"])
+    scoresheets = Scoresheet.objects.filter(id__in=scoresheet_mappings.values_list('scoresheetid', flat=True))
+    presentation_scoresheet_details = [[] for _ in range(9)]
+    journal_scoresheet_details = [[] for _ in range(9)]
+    machinedesign_scoresheet_details = [[] for _ in range(9)]
+    penalties_scoresheet_details = [[] for _ in range(24)]
+    for sheet in scoresheets:
+      if sheet.sheetType == 1:
+        presentation_scoresheet_details[0].append(sheet.field1)
+        presentation_scoresheet_details[1].append(sheet.field2)
+        presentation_scoresheet_details[2].append(sheet.field3)
+        presentation_scoresheet_details[3].append(sheet.field4)
+        presentation_scoresheet_details[4].append(sheet.field5)
+        presentation_scoresheet_details[5].append(sheet.field6)
+        presentation_scoresheet_details[6].append(sheet.field7)
+        presentation_scoresheet_details[7].append(sheet.field8)
+        presentation_scoresheet_details[8].append(sheet.field9)
+      elif sheet.sheetType == 2:
+        journal_scoresheet_details[0].append(sheet.field1)
+        journal_scoresheet_details[1].append(sheet.field2)
+        journal_scoresheet_details[2].append(sheet.field3)
+        journal_scoresheet_details[3].append(sheet.field4)
+        journal_scoresheet_details[4].append(sheet.field5)
+        journal_scoresheet_details[5].append(sheet.field6)
+        journal_scoresheet_details[6].append(sheet.field7)
+        journal_scoresheet_details[7].append(sheet.field8)
+        journal_scoresheet_details[8].append(sheet.field9)
+      elif sheet.sheetType == 3:
+        machinedesign_scoresheet_details[0].append(sheet.field1)
+        machinedesign_scoresheet_details[1].append(sheet.field2)
+        machinedesign_scoresheet_details[2].append(sheet.field3)
+        machinedesign_scoresheet_details[3].append(sheet.field4)
+        machinedesign_scoresheet_details[4].append(sheet.field5)
+        machinedesign_scoresheet_details[5].append(sheet.field6)
+        machinedesign_scoresheet_details[6].append(sheet.field7)
+        machinedesign_scoresheet_details[7].append(sheet.field8)
+        machinedesign_scoresheet_details[8].append(sheet.field9)
+      elif sheet.sheetType == 4:
+        penalties_scoresheet_details[0].append(sheet.field1)
+        penalties_scoresheet_details[1].append(sheet.field2)
+        penalties_scoresheet_details[2].append(sheet.field3)
+        penalties_scoresheet_details[3].append(sheet.field4)
+        penalties_scoresheet_details[4].append(sheet.field5)
+        penalties_scoresheet_details[5].append(sheet.field6)
+        penalties_scoresheet_details[6].append(sheet.field7)
+        penalties_scoresheet_details[7].append(sheet.field8)
+        penalties_scoresheet_details[8].append(sheet.field9)
+        penalties_scoresheet_details[9].append(sheet.field10)
+        penalties_scoresheet_details[10].append(sheet.field11)
+        penalties_scoresheet_details[11].append(sheet.field12)
+        penalties_scoresheet_details[12].append(sheet.field13)
+        penalties_scoresheet_details[13].append(sheet.field14)
+        penalties_scoresheet_details[14].append(sheet.field15)
+        penalties_scoresheet_details[15].append(sheet.field16)
+        penalties_scoresheet_details[16].append(sheet.field17)
+        penalties_scoresheet_details[17].append(sheet.field18)
+        penalties_scoresheet_details[18].append(sheet.field19)
+        penalties_scoresheet_details[19].append(sheet.field20)
+        penalties_scoresheet_details[20].append(sheet.field21)
+        penalties_scoresheet_details[21].append(sheet.field22)
+        penalties_scoresheet_details[22].append(sheet.field23)
+        penalties_scoresheet_details[23].append(sheet.field24)
+
+
+    return Response({
+        1: presentation_scoresheet_details,
+        2: journal_scoresheet_details,
+        3: machinedesign_scoresheet_details,
+        4: penalties_scoresheet_details
+    }, status=status.HTTP_200_OK)
+
