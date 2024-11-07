@@ -1,6 +1,6 @@
 from ..models import Teams, Scoresheet, Judge, JudgeClusters, MapScoresheetToTeamJudge
 from .coach import create_coach, create_user_and_coach, get_coach
-from .scoresheets import create_score_sheets_for_team
+from .scoresheets import create_score_sheets_for_team, create_score_sheets_for_team_nonhttp
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -18,7 +18,7 @@ from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
 from .Maps.MapContestToTeam import create_team_to_contest_map
 from .Maps.MapClusterToTeam import create_team_to_cluster_map
-from .Maps.MapClusterToJudge import judges_by_cluster_id
+from .Maps.MapClusterToJudge import judges_by_cluster_id, judges_by_cluster_id_nonhttp
 from .Maps.MapScoreSheet import map_score_sheet
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -227,15 +227,15 @@ def create_team_after_judge(request):
           "clusterid": request.data["clusterid"],
           "teamid": team_response.get("id")
         }),
-        create_score_sheets_for_team({  # create score sheets for all judges in cluster
+        create_score_sheets_for_team_nonhttp({  # create score sheets for all judges in cluster and map them
           "teamid": team_response.get("id"),
-          "judges": JudgeClusters.objects.get(id=request.data["clusterid"]).judges.all()
-        }),
-        map_score_sheet({  # map all created score sheets to judges in the cluster
-          "judgeid": judge.id,
-          "teamid": team_response.get("id"),
-          "sheetType": "journal"
+          "clusterid": request.data["clusterid"]
         })
+        # map_score_sheet({  # map all created score sheets to judges in the cluster
+        #   "judgeid": request.data["judgeid"],
+        #   "teamid": team_response.get("id"),
+        #   "sheetType": "journal"
+        # })
       ]
 
       for response in responses:
@@ -249,7 +249,6 @@ def create_team_after_judge(request):
         "team to contest map": responses[1],
         "team to cluster map": responses[2],
         "score sheets": responses[3],
-        "score sheet to judge map": responses[4]
       },status=status.HTTP_201_CREATED)
     
   except ValidationError as e:  # Catching ValidationErrors specifically

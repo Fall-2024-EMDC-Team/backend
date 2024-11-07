@@ -106,14 +106,10 @@ def edit_judge(request):
             if new_last_name != judge.last_name:
                 judge.last_name = new_last_name
 
-            # if the judge is being moved to a new cluster (tested working)
+            # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
                 # delete all scoresheets and mappings for the judge
-                Scoresheet.objects.filter(id__in=MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).values_list('scoresheetid', flat=True)).delete()
-                MapScoresheetToTeamJudge.objects.filter(judgeid=judge.id).delete()
-
-                # create new blank scoresheets
-                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
+                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)
 
                 # delete the old cluster-judge mapping and create a new one
                 delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
@@ -122,41 +118,43 @@ def edit_judge(request):
                     "clusterid": new_cluster
                 })
 
+                # create new blank scoresheets
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
                 clusterid = new_cluster
-            
-            # if adding or removing scoresheets
-            if new_presentation != judge.presentation:
-                if judge.presentation == True:  # going from true to false
-                    # account for all teams in a cluster
-                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
-                    judge.presentation = False
-                else:
-                    create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
-                    judge.presentation = True
+            else:
+                # if adding or removing scoresheets
+                if new_presentation != judge.presentation:
+                    if judge.presentation == True:  # going from true to false
+                        # account for all teams in a cluster
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        judge.presentation = False
+                    else:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        judge.presentation = True
 
-            if new_mdo != judge.mdo:
-                if judge.mdo == True:  # going from true to false
-                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
-                    judge.mdo = False
-                else:
-                    create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
-                    judge.mdo = True
+                if new_mdo != judge.mdo:
+                    if judge.mdo == True:  # going from true to false
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
+                        judge.mdo = False
+                    else:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
+                        judge.mdo = True
 
-            if new_journal != judge.journal:
-                if judge.journal == True:  # going from true to false
-                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
-                    judge.journal = False
-                else:
-                    create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
-                    judge.journal = True
+                if new_journal != judge.journal:
+                    if judge.journal == True:  # going from true to false
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        judge.journal = False
+                    else:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        judge.journal = True
 
-            if new_penalties != judge.penalties:
-                if judge.penalties == True:  # going from true to false
-                    delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                    judge.presentation = False
-                else:
-                    create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                    judge.presentation = True
+                if new_penalties != judge.penalties:
+                    if judge.penalties == True:  # going from true to false
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
+                        judge.presentation = False
+                    else:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
+                        judge.presentation = True
 
             judge.save()
 

@@ -78,3 +78,12 @@ def map_cluster_to_judge(map_data):
         return serializer.data
     else:
         raise ValidationError(serializer.errors)
+    
+def judges_by_cluster_id_nonhttp(cluster_id):
+    mappings = MapJudgeToCluster.objects.filter(clusterid=cluster_id)
+    judge_ids = mappings.values_list('judgeid', flat=True)
+    judges = Judge.objects.filter(id__in=judge_ids)
+
+    serializer = JudgeSerializer(judges, many=True)
+
+    return Response({"Judges": serializer.data}, status=status.HTTP_200_OK)
