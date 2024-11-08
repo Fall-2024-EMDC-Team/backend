@@ -312,33 +312,33 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
     except Exception as e:
         raise ValidationError({"detail": str(e)})
     
-def create_score_sheets_for_team_nonhttp(team, clusterid):
-    created_score_sheets = []
-    judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
-    for judge in judges:
-        # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
-        if judge.presentation:
-            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
-            MapScoresheetToTeamJudge.objects.create(
-                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
-            )
-            created_score_sheets.append(score_sheet)
-        if judge.journal:
-            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
-            MapScoresheetToTeamJudge.objects.create(
-                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
-            )
-            created_score_sheets.append(score_sheet)
-        if judge.mdo:
-            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
-            MapScoresheetToTeamJudge.objects.create(
-                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
-            )
-            created_score_sheets.append(score_sheet)
-        if judge.penalties:
-            score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
-            MapScoresheetToTeamJudge.objects.create(
-                teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
-            )
-            created_score_sheets.append(score_sheet)
-        return created_score_sheets
+# def create_score_sheets_for_team_nonhttp(team, clusterid):
+#     created_score_sheets = []
+#     judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
+#     for judge in judges:
+#         # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
+#         if judge.presentation:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.journal:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.mdo:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.penalties:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
+#             )
+#             created_score_sheets.append(score_sheet)
+#         return created_score_sheets

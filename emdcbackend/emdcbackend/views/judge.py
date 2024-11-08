@@ -109,14 +109,14 @@ def edit_judge(request):
             # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
                 # delete all scoresheets and mappings for the judge
-                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)  # will only allow cluster to change once
+                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)
 
                 # create new blank scoresheets
                 create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
 
                 # delete the old cluster-judge mapping and create a new one
                 delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
-                map_cluster_to_judge({  # cluster mapping not being updated
+                map_cluster_to_judge({
                     "judgeid": judge.id,
                     "clusterid": new_cluster
                 })
