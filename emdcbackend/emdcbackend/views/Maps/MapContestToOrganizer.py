@@ -61,3 +61,7 @@ def delete_contest_organizer_mapping_by_id(request, map_id):
     map_to_delete = get_object_or_404(MapContestToOrganizer, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Contest To Organizer Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+# endpoint that returns all the contests and their organizers
+# key: contestid, value: list of organizer objects
+

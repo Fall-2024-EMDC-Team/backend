@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 class Contest(models.Model):
     name = models.CharField(max_length=99)
+    date = models.DateField()
     is_open = models.BooleanField()
     is_tabulated = models.BooleanField()
 
@@ -28,6 +29,7 @@ class MapContestToCluster(models.Model):
 class Judge(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
+    phone_number = models.CharField(max_length=20)
     contestid = models.IntegerField()
     presentation=models.BooleanField()
     mdo=models.BooleanField()
@@ -50,7 +52,9 @@ class Teams(models.Model):
     journal_score = models.FloatField()
     presentation_score = models.FloatField()
     machinedesign_score = models.FloatField()
-    score_penalties = models.FloatField()
+    penalties_score = models.FloatField()
+    total_score = models.FloatField()
+    team_rank = models.IntegerField(null=True,blank=True)
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):
@@ -78,7 +82,8 @@ class MapCoachToTeam(models.Model):
 class Organizer(models.Model):
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
-    
+
+
 
 class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
@@ -98,25 +103,60 @@ class Scoresheet(models.Model):
     field7 = models.FloatField(null=True, blank=True)
     field8 = models.FloatField(null=True, blank=True)
     field9 = models.CharField(null=True, blank=True, max_length=500)
-
+    field10 = models.FloatField(null=True, blank=True)
+    field11 = models.FloatField(null=True, blank=True)
+    field12 = models.FloatField(null=True, blank=True)
+    field13 = models.FloatField(null=True, blank=True)
+    field14 = models.FloatField(null=True, blank=True)
+    field15 = models.FloatField(null=True, blank=True)
+    field16 = models.FloatField(null=True, blank=True)
+    field17 = models.FloatField(null=True, blank=True)
+    field18 = models.FloatField(null=True, blank=True)
+    field19 = models.FloatField(null=True, blank=True)
+    field20 = models.FloatField(null=True, blank=True)
+    field21 = models.FloatField(null=True, blank=True)
+    field22 = models.FloatField(null=True, blank=True)
+    field23 = models.FloatField(null=True, blank=True)
+    field24 = models.FloatField(null=True, blank=True)
+    
+    
     def clean(self):
-        # Custom validation logic
         if self.sheetType == ScoresheetEnum.PENALTIES:
-            # For PENALTIES, only field1 and field2 are required
-            if self.field1 is None:
-                raise ValidationError({'field1': 'Field 1 is required for PENALTIES.'})
-            if self.field2 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field3 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field4 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field5 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
-            if self.field6 is None:
-                raise ValidationError({'field2': 'Field 2 is required for PENALTIES.'})
+            required_fields = {
+                'field1': 'Field 1 is required for PENALTIES.',
+                'field2': 'Field 2 is required for PENALTIES.',
+                'field3': 'Field 3 is required for PENALTIES.',
+                'field4': 'Field 4 is required for PENALTIES.',
+                'field5': 'Field 5 is required for PENALTIES.',
+                'field6': 'Field 6 is required for PENALTIES.',
+                'field7': 'Field 7 is required for PENALTIES.',
+                'field8': 'Field 8 is required for PENALTIES.',
+                'field10': 'Field 10 is required for PENALTIES.',
+                'field11': 'Field 11 is required for PENALTIES.',
+                'field12': 'Field 12 is required for PENALTIES.',
+                'field13': 'Field 13 is required for PENALTIES.',
+                'field14': 'Field 14 is required for PENALTIES.',
+                'field15': 'Field 15 is required for PENALTIES.',
+                'field16': 'Field 16 is required for PENALTIES.',
+                'field17': 'Field 17 is required for PENALTIES.',
+                'field18': 'Field 18 is required for PENALTIES.',
+                'field19': 'Field 19 is required for PENALTIES.',
+                'field20': 'Field 20 is required for PENALTIES.',
+                'field21': 'Field 21 is required for PENALTIES.',
+                'field22': 'Field 22 is required for PENALTIES.',
+                'field23': 'Field 23 is required for PENALTIES.',
+                'field24': 'Field 24 is required for PENALTIES.',
+            }
+
+            errors = {}
+            for field, error_message in required_fields.items():
+                if getattr(self, field) is None:
+                    errors[field] = error_message
+
+            if errors:
+                raise ValidationError(errors)
         else:
-            # For other types (Presentation, Journal, Machine Design), all fields must be filled
+            # For other types (Presentation, Journal, Machine Design), fields 1-8 must be filled
             required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8']
             for field in required_fields:
                 if getattr(self, field) is None:
@@ -133,3 +173,5 @@ class MapScoresheetToTeamJudge(models.Model):
     scoresheetid = models.IntegerField()
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
 
+
+    

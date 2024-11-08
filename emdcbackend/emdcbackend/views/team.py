@@ -1,13 +1,18 @@
-from ..models import Teams, Scoresheet, Judge, JudgeClusters, MapScoresheetToTeamJudge
+from ..models import Teams, Scoresheet, Judge, JudgeClusters, MapScoresheetToTeamJudge, MapContestToTeam
+from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
 from .scoresheets import create_score_sheets_for_team#, create_score_sheets_for_team_nonhttp
+from ..serializers import TeamSerializer
+from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
+from .Maps.MapCoachToTeam import create_coach_to_team_map
+from .Maps.MapContestToTeam import create_team_to_contest_map
+from .Maps.MapClusterToTeam import create_team_to_cluster_map
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
     permission_classes,
 )
-
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -114,7 +119,7 @@ def edit_team(request):
         new_journal_score = request.data["journal_score"]
         new_presentation_score = request.data["presentation_score"]
         new_machinedesign_score = request.data["machinedesign_score"]
-        new_score_penalties = request.data["score_penalties"]
+        new_penalties_score = request.data["penalties_score"]
         new_cluster = request.data["judge_cluster"]
         
         with transaction.atomic():
@@ -138,8 +143,8 @@ def edit_team(request):
                 team.presentation_score = new_presentation_score
             if team.machinedesign_score != new_machinedesign_score:
                 team.machinedesign_score = new_machinedesign_score
-            if team.score_penalties != new_score_penalties:
-                team.score_penalties = new_score_penalties
+            if team.penalties_score != new_penalties_score:
+                team.penalties_score = new_penalties_score
 
             team.save()
 
@@ -172,12 +177,22 @@ def make_team(data):
         "journal_score":data["journal_score"],
         "presentation_score":data["presentation_score"],
         "machinedesign_score":data["machinedesign_score"],
-        "score_penalties":data["score_penalties"]
+        "penalties_score":data["penalties_score"],
+        "total_score":data["total_score"]
     }
     team_response = make_team_instance(team_data)
     if not team_response.get('id'):
         raise ValidationError('Team creation failed.')
     return team_response
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication]) 
+@permission_classes([IsAuthenticated])
+def get_teams_by_team_rank(request):
+    mappings = MapContestToTeam.objects.filter(contestid=request.data["contestid"])
+    teams = Teams.objects.filter(id__in=mappings.values_list('teamid', flat=True)).order_by('team_rank')
+    serializer = TeamSerializer(teams, many=True)
+    return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
 # @api_view(["POST"])
 # @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -212,47 +227,3 @@ def make_team(data):
 #             "role": 4,
 #             "relatedid": coach_response.get("id")
 #             })
-
-#       responses = [
-#         # map team to coach, map team to contest, map team to cluster, create score sheets for team
-#         create_coach_to_team_map({
-#           "teamid": team_response.get("id"),
-#           "coachid": coach_response.get("id")
-#         }),
-#         create_team_to_contest_map({
-#           "contestid": request.data["contestid"],
-#           "teamid": team_response.get("id")
-#         }),
-#         create_team_to_cluster_map({
-#           "clusterid": request.data["clusterid"],
-#           "teamid": team_response.get("id")
-#         }),
-#         create_score_sheets_for_team_nonhttp({  # create score sheets for all judges in cluster and map them
-#           "teamid": team_response.get("id"),
-#           "clusterid": request.data["clusterid"]
-#         })
-#         # map_score_sheet({  # map all created score sheets to judges in the cluster
-#         #   "judgeid": request.data["judgeid"],
-#         #   "teamid": team_response.get("id"),
-#         #   "sheetType": "journal"
-#         # })
-#       ]
-
-#       for response in responses:
-#           if isinstance(response, Response):
-#               return response
-
-#       return Response({
-#         "team":team_response,
-#         "coach":coach_response,
-#         "coach to team map": responses[0],
-#         "team to contest map": responses[1],
-#         "team to cluster map": responses[2],
-#         "score sheets": responses[3],
-#       },status=status.HTTP_201_CREATED)
-    
-#   except ValidationError as e:  # Catching ValidationErrors specifically
-#     return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
-  
-#   except Exception as e:
-#     return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
