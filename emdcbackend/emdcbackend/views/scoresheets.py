@@ -9,10 +9,9 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-
-from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, ScoresheetEnum
+from .Maps.MapScoreSheet import delete_score_sheet_mapping_by_id_nonhttp
+from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
-
 
 @api_view(["GET"])
 def scores_by_id(request, scores_id):
@@ -311,6 +310,89 @@ def create_score_sheets_for_team(team, judges):
             )
             created_score_sheets.append(score_sheet)
         return created_score_sheets
+
+def get_scoresheet_id(judge_id, team_id, scoresheet_type):
+    try:
+        mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team_id, sheetType=scoresheet_type)
+        scoresheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+        return scoresheet.id
+    except Scoresheet.DoesNotExist:
+        raise ValidationError({"error": "No scoresheet found"})
+    
+def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presentation, journal, mdo):
+    try:
+        # Fetch all mappings for the teams in the cluster
+        mappings = MapClusterToTeam.objects.filter(clusterid=cluster_id)
+
+        # Check if mappings exist
+        if not mappings.exists():
+            raise ValidationError("No teams found for the specified cluster.")  # Raise an exception here
+
+        # Extract all the team_ids from the mappings
+        team_ids = mappings.values_list('teamid', flat=True)
+
+        # Fetch all teams with the given team_ids
+        teams_in_cluster = Teams.objects.filter(id__in=team_ids)
+
+        for team in teams_in_cluster:
+            if penalties:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 4)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=4)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)  # Delete mapping
+                scoresheet.delete()  # Delete scoresheet
+            if presentation:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 1)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=1)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+            if journal:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 2)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=2)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+            if mdo:
+                scoresheet_id = get_scoresheet_id(judge_id, team.id, 3)
+                scoresheet = Scoresheet.objects.get(id=scoresheet_id)
+                mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=3)
+                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                scoresheet.delete()
+
+    except Exception as e:
+        raise ValidationError({"detail": str(e)})
+    
+# def create_score_sheets_for_team_nonhttp(team, clusterid):
+#     created_score_sheets = []
+#     judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
+#     for judge in judges:
+#         # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
+#         if judge.presentation:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.journal:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.mdo:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
+#             )
+#             created_score_sheets.append(score_sheet)
+#         if judge.penalties:
+#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
+#             MapScoresheetToTeamJudge.objects.create(
+#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
+#             )
+#             created_score_sheets.append(score_sheet)
+#         return created_score_sheets
 
 
 @api_view(["GET"])

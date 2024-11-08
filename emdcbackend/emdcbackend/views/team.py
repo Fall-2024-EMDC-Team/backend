@@ -1,13 +1,12 @@
-from ..models import Teams, Scoresheet, JudgeClusters, MapScoresheetToTeamJudge, MapContestToTeam
+from ..models import Teams, Scoresheet, Judge, JudgeClusters, MapScoresheetToTeamJudge, MapContestToTeam
 from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
-from .scoresheets import create_score_sheets_for_team
+from .scoresheets import create_score_sheets_for_team#, create_score_sheets_for_team_nonhttp
 from ..serializers import TeamSerializer
 from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
 from .Maps.MapContestToTeam import create_team_to_contest_map
 from .Maps.MapClusterToTeam import create_team_to_cluster_map
-
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -19,6 +18,13 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from ..serializers import TeamSerializer
+from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
+from .Maps.MapCoachToTeam import create_coach_to_team_map
+from .Maps.MapContestToTeam import create_team_to_contest_map
+from .Maps.MapClusterToTeam import create_team_to_cluster_map
+# from .Maps.MapClusterToJudge import judges_by_cluster_id, judges_by_cluster_id_nonhttp
+# from .Maps.MapScoreSheet import map_score_sheet
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
@@ -70,16 +76,15 @@ def create_team(request):
           "teamid": team_response.get("id"),
           "coachid": coach_response.get("id")
         }),
-        
         create_team_to_contest_map({
           "contestid": request.data["contestid"],
           "teamid": team_response.get("id")
         }),
-
         create_team_to_cluster_map({
           "clusterid": request.data["clusterid"],
           "teamid": team_response.get("id")
         })
+
       ]
 
       for response in responses:
@@ -189,4 +194,36 @@ def get_teams_by_team_rank(request):
     serializer = TeamSerializer(teams, many=True)
     return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
 
-
+# @api_view(["POST"])
+# @authentication_classes([SessionAuthentication, TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# def create_team_after_judge(request):
+#   try:
+#     with transaction.atomic():
+#       # create team object.
+#       team_response = make_team(request.data)
+      
+#       try:
+#         user = User.objects.get(username=request.data["username"])
+        
+#         role_mapping_response = get_role_mapping(user.id)
+#         if role_mapping_response.get("id"):
+#           # if we have the mapping and it matches, we get the coach from the mapping
+#           if role_mapping_response.get("role") == 4:
+#             coach_response = get_coach(role_mapping_response.get("relatedid"))
+#           else:
+#             raise ValidationError({"detail": "This user is already mapped to a role."})
+#         else:
+#           coach_response = create_coach(request.data)
+#           role_mapping_response = create_user_role_map({
+#             "uuid": user.id,
+#             "role": 4,
+#             "relatedid": coach_response.get("id")
+#             })
+#       except:
+#         user_response, coach_response = create_user_and_coach(request.data)
+#         role_mapping_response = create_user_role_map({
+#             "uuid": user_response.get("user").get("id"),
+#             "role": 4,
+#             "relatedid": coach_response.get("id")
+#             })

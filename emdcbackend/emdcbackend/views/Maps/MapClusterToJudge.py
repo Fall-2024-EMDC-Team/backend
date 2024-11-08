@@ -64,6 +64,13 @@ def delete_cluster_judge_mapping_by_id(request, map_id):
     return Response({"detail": "Cluster To Judge Mapping deleted successfully."}, status=status.HTTP_200_OK)
 
 
+def delete_cluster_judge_mapping_by_id_nonhttp(map_id):
+    # python can't overload functions >:(
+    map_to_delete = get_object_or_404(MapJudgeToCluster, id=map_id)
+    map_to_delete.delete()
+    return Response({"detail": "Cluster To Judge Mapping deleted successfully."}, status=status.HTTP_200_OK)
+
+
 def map_cluster_to_judge(map_data):
     serializer = ClusterToJudgeSerializer(data=map_data)
     if serializer.is_valid():
@@ -71,3 +78,12 @@ def map_cluster_to_judge(map_data):
         return serializer.data
     else:
         raise ValidationError(serializer.errors)
+    
+def judges_by_cluster_id_nonhttp(cluster_id):
+    mappings = MapJudgeToCluster.objects.filter(clusterid=cluster_id)
+    judge_ids = mappings.values_list('judgeid', flat=True)
+    judges = Judge.objects.filter(id__in=judge_ids)
+
+    serializer = JudgeSerializer(judges, many=True)
+
+    return Response({"Judges": serializer.data}, status=status.HTTP_200_OK)
