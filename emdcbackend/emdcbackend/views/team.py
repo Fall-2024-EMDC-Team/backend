@@ -1,7 +1,7 @@
 from ..models import Teams, Scoresheet, Judge, JudgeClusters, MapScoresheetToTeamJudge, MapContestToTeam
 from .Maps import MapScoreSheet
 from .coach import create_coach, create_user_and_coach, get_coach
-from .scoresheets import create_score_sheets_for_team, create_score_sheets_for_team_nonhttp
+from .scoresheets import create_score_sheets_for_team, make_sheets_for_team
 from ..serializers import TeamSerializer
 from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
@@ -23,7 +23,7 @@ from .Maps.MapUserToRole import get_role, get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
 from .Maps.MapContestToTeam import create_team_to_contest_map
 from .Maps.MapClusterToTeam import create_team_to_cluster_map
-from .Maps.MapClusterToJudge import judges_by_cluster_id, judges_by_cluster_id_nonhttp
+from .Maps.MapClusterToJudge import judges_by_cluster_id, judges_by_cluster
 from .Maps.MapScoreSheet import map_score_sheet
 from django.shortcuts import get_object_or_404
 from django.db import transaction

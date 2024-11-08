@@ -363,7 +363,7 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
     except Exception as e:
         raise ValidationError({"detail": str(e)})
     
-def create_score_sheets_for_team_nonhttp(team, clusterid):
+def make_sheets_for_team(team, clusterid):
     created_score_sheets = []
     judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
     for judge in judges:
