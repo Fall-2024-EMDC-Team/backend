@@ -64,7 +64,7 @@ urlpatterns = [
     # Teams
     path('api/team/get/<int:team_id>/', team_by_id, name='team_by_id'),
     path('api/team/create/', create_team, name='create_team'),
-    # path('api/team/createAfterJudge/', create_team_after_judge, name='create_team_after_judge'),
+    path('api/team/createAfterJudge/', create_team_after_judge, name='create_team_after_judge'),
     path('api/team/edit/', edit_team, name='edit_team'),
     path('api/team/delete/<int:team_id>/', delete_team_by_id, name='delete_team_by_id'),
     path('api/team/rankedteams/', get_teams_by_team_rank, name='get_teams_by_team_rank'),
