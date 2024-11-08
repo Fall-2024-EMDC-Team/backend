@@ -242,15 +242,10 @@ def create_team_after_judge(request):
           "clusterid": request.data["clusterid"],
           "teamid": team_response.get("id")
         }),
-        create_score_sheets_for_team_nonhttp({  # create score sheets for all judges in cluster and map them
-          "teamid": team_response.get("id"),
-          "clusterid": request.data["clusterid"]
-        })
-        # map_score_sheet({  # map all created score sheets to judges in the cluster
-        #   "judgeid": request.data["judgeid"],
-        #   "teamid": team_response.get("id"),
-        #   "sheetType": "journal"
-        # })
+        make_sheets_for_team(  # create score sheets for all judges in cluster and map them
+          teamid=team_response.get("id"),
+          clusterid=request.data["clusterid"]
+        )
       ]
 
       for response in responses:
