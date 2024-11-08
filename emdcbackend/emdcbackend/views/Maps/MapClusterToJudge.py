@@ -64,7 +64,7 @@ def delete_cluster_judge_mapping_by_id(request, map_id):
     return Response({"detail": "Cluster To Judge Mapping deleted successfully."}, status=status.HTTP_200_OK)
 
 
-def delete_cluster_judge_mapping_by_id_nonhttp(map_id):
+def delete_cluster_judge_mapping(map_id):
     # python can't overload functions >:(
     map_to_delete = get_object_or_404(MapJudgeToCluster, id=map_id)
     map_to_delete.delete()

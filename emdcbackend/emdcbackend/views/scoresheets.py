@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-from .Maps.MapScoreSheet import delete_score_sheet_mapping_by_id_nonhttp
+from .Maps.MapScoreSheet import delete_score_sheet_mapping
 from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
@@ -339,25 +339,25 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 4)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=4)
-                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)  # Delete mapping
+                delete_score_sheet_mapping(mapping.id)  # Delete mapping
                 scoresheet.delete()  # Delete scoresheet
             if presentation:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 1)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=1)
-                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                delete_score_sheet_mapping(mapping.id)
                 scoresheet.delete()
             if journal:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 2)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=2)
-                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                delete_score_sheet_mapping(mapping.id)
                 scoresheet.delete()
             if mdo:
                 scoresheet_id = get_scoresheet_id(judge_id, team.id, 3)
                 scoresheet = Scoresheet.objects.get(id=scoresheet_id)
                 mapping = MapScoresheetToTeamJudge.objects.get(judgeid=judge_id, teamid=team.id, sheetType=3)
-                delete_score_sheet_mapping_by_id_nonhttp(mapping.id)
+                delete_score_sheet_mapping(mapping.id)
                 scoresheet.delete()
 
     except Exception as e:
