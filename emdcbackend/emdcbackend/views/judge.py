@@ -13,11 +13,11 @@ from django.shortcuts import get_object_or_404
 
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
-from .Maps.MapClusterToJudge import map_cluster_to_judge
-from .scoresheets import create_sheets_for_teams_in_cluster
+from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping_by_id_nonhttp
+from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge
-from ..serializers import JudgeSerializer, MapScoreSheetToTeamJudgeSerializer
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster
+from ..serializers import JudgeSerializer
 
 
 @api_view(["GET"])
@@ -86,17 +86,91 @@ def create_judge(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_judge(request):
-    judge = get_object_or_404(Judge, id=request.data["id"])
-    judge.first_name = request.data["first_name"]
-    judge.last_name = request.data["last_name"]
-    judge.presentation = request.data["presentation"]
-    judge.mdo = request.data["mdo"]
-    judge.journal = request.data["journal"]
-    judge.penalties = request.data["penalties"]
-    judge.save()
+    try:
+        judge = get_object_or_404(Judge, id=request.data["id"])
+        new_first_name = request.data["first_name"]
+        new_last_name = request.data["last_name"]
+        new_presentation = request.data["presentation"]
+        new_mdo = request.data["mdo"]
+        new_journal = request.data["journal"]
+        new_penalties = request.data["penalties"]
+        new_cluster = request.data["clusterid"]
 
-    serializer = JudgeSerializer(instance=judge)
-    return Response({"judge": serializer.data}, status=status.HTTP_200_OK)
+        with transaction.atomic():
+            cluster = MapJudgeToCluster.objects.get(judgeid=judge.id)  # get cluster id from mapping
+            clusterid = cluster.clusterid
+
+            # Update judge name details
+            if new_first_name != judge.first_name:
+                judge.first_name = new_first_name
+            if new_last_name != judge.last_name:
+                judge.last_name = new_last_name
+
+            # if the judge is being moved to a new cluster
+            if clusterid != new_cluster:
+                # delete all scoresheets and mappings for the judge
+                delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)
+
+                # create new blank scoresheets
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
+
+                # delete the old cluster-judge mapping and create a new one
+                delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
+                map_cluster_to_judge({
+                    "judgeid": judge.id,
+                    "clusterid": new_cluster
+                })
+
+                # update the boolean values
+                if judge.presentation != new_presentation:
+                    judge.presentation = new_presentation
+                if judge.mdo != new_mdo:
+                    judge.mdo = new_mdo
+                if judge.journal != new_journal:
+                    judge.journal = new_journal
+                if judge.penalties != new_penalties:
+                    judge.penalties = new_penalties
+
+                clusterid = new_cluster
+
+            else:
+                # if adding or removing scoresheets (no cluster change)
+                if new_presentation != judge.presentation and new_presentation == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        judge.presentation = False
+                elif new_presentation != judge.presentation and new_presentation == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        judge.presentation = True
+
+                if new_mdo != judge.mdo and new_mdo == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
+                        judge.mdo = False
+                elif new_mdo != judge.mdo and new_mdo == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
+                        judge.mdo = True
+
+                if new_journal != judge.journal and new_journal == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        judge.journal = False
+                elif new_journal != judge.journal and new_journal == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        judge.journal = True
+
+                if new_penalties != judge.penalties and new_penalties == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
+                        judge.penalties = False
+                elif new_penalties != judge.penalties and new_penalties == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
+                        judge.penalties = True
+
+            judge.save()
+
+        serializer = JudgeSerializer(instance=judge)
+    
+    except Exception as e:
+        raise ValidationError({"detail": str(e)})
+    
+    return Response({"judge": serializer.data, "clusterid": clusterid}, status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
