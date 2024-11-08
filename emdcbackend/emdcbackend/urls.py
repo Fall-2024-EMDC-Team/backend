@@ -17,7 +17,7 @@ from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, 
 from .views.Maps.MapContestToTeam import create_contest_team_mapping, get_teams_by_contest_id, \
     get_contest_id_by_team_id, delete_contest_team_mapping_by_id, get_contests_by_team_ids
 from .views.scoresheets import create_score_sheet, edit_score_sheet, scores_by_id, delete_score_sheet, \
-    edit_score_sheet_field, update_scores
+    edit_score_sheet_field, update_scores, get_scoresheet_details_by_team
 from .views.admin import create_admin, admins_get_all, admin_by_id, delete_admin, edit_admin
 from .views.Maps.MapUserToRole import create_user_role_mapping, delete_user_role_mapping, get_user_by_role
 from .views.Maps.MapClusterToJudge import create_cluster_judge_mapping, delete_cluster_judge_mapping_by_id, cluster_by_judge_id, judges_by_cluster_id
@@ -137,6 +137,7 @@ urlpatterns = [
     path('api/scoreSheet/delete/<int:scores_id>/', delete_score_sheet, name='delete_score_sheets'),
     path('api/scoreSheet/edit/editField/', edit_score_sheet_field, name='edit_score_sheet_field'),
     path('api/scoreSheet/edit/updateScores/', update_scores, name='update_scores'),
+    path('api/scoreSheet/getdetails/', get_scoresheet_details_by_team, name='get_score_sheets_by_team_id'),
 
     # Tabulation
     path('api/tabulation/tabulateScores/',tabulate_scores, name='tabulate_scores')
