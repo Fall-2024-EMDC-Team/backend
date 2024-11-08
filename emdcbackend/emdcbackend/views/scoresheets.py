@@ -384,11 +384,6 @@ def make_sheets_for_team(teamid, clusterid):
                 })
             else:
                 raise ValidationError(map_serializer.errors)
-            # score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
-            # MapScoresheetToTeamJudge.objects.create(
-            #     teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
-            # )
-            # created_score_sheets.append(score_sheet)
         if judge.journal:
             sheet = create_base_score_sheet(2)
             map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 2}
@@ -403,11 +398,6 @@ def make_sheets_for_team(teamid, clusterid):
                 })
             else:
                 raise ValidationError(map_serializer.errors)
-            # score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
-            # MapScoresheetToTeamJudge.objects.create(
-            #     teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
-            # )
-            # created_score_sheets.append(score_sheet)
         if judge.mdo:
             sheet = create_base_score_sheet(3)
             map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 3}
@@ -422,11 +412,6 @@ def make_sheets_for_team(teamid, clusterid):
                 })
             else:
                 raise ValidationError(map_serializer.errors)
-            # score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
-            # MapScoresheetToTeamJudge.objects.create(
-            #     teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
-            # )
-            # created_score_sheets.append(score_sheet)
         if judge.penalties:
             sheet = create_base_score_sheet_penalties()
             map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 4}
@@ -441,11 +426,6 @@ def make_sheets_for_team(teamid, clusterid):
                 })
             else:
                 raise ValidationError(map_serializer.errors)
-            # score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
-            # MapScoresheetToTeamJudge.objects.create(
-            #     teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
-            # )
-            # created_score_sheets.append(score_sheet)
 
     return created_score_sheets
 
