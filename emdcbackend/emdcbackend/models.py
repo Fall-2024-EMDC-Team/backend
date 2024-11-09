@@ -9,7 +9,7 @@ class Contest(models.Model):
     date = models.DateField()
     is_open = models.BooleanField()
     is_tabulated = models.BooleanField()
-    is_champs = models.BooleanField(default=False)
+    is_prelim = models.BooleanField(default=False)
 
 class MapContestToJudge(models.Model):
     contestid = models.IntegerField()
@@ -29,16 +29,21 @@ class MapContestToCluster(models.Model):
 
 class Judge(models.Model):
     class JudgeRoleEnum(models.IntegerChoices):
-        
+        LEAD = 1
+        GENERAL = 2
+        TECHNICAL = 3
+        JOURNAL = 4
+
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
     phone_number = models.CharField(max_length=20)
+    role = models.IntegerField(choices=JudgeRoleEnum.choices, null=True, blank=True)
     contestid = models.IntegerField()
     presentation=models.BooleanField()
     mdo=models.BooleanField()
     journal=models.BooleanField()
     penalties=models.BooleanField()
-
+    
 class MapJudgeToCluster(models.Model):
     judgeid = models.IntegerField()
     clusterid = models.IntegerField()

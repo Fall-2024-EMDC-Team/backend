@@ -189,7 +189,7 @@ def create_judge_instance(judge_data):
 
 
 def create_user_and_judge(data):
-    user_data = {"username": data["username"], "password": data["password"]}
+    user_data = {"username": data["username"],"password":data["password"]}
     user_response = create_user(user_data)
     if not user_response.get('user'):
         raise ValidationError('User creation failed.')

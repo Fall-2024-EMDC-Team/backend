@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from ..models import JudgeClusters
+from ..models import JudgeClusters, MapClusterToTeam
 from ..serializers import JudgeClustersSerializer
 from .Maps.MapClusterToContest import  map_cluster_to_contest
 
@@ -101,4 +101,6 @@ def make_cluster(data):
   if not cluster_response.get('id'):
         raise ValidationError('Cluster creation failed.')
   return cluster_response
+
+
 

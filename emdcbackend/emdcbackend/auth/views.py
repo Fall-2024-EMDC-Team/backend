@@ -1,3 +1,5 @@
+import random
+import string
 from django.contrib.auth.models import User
 from django.db import transaction
 from rest_framework import status
@@ -103,15 +105,17 @@ def test_token(request):
 def create_user(user_data):
     if User.objects.filter(username=user_data["username"]).exists():
         raise ValidationError("Username already exists.")
-
+    
     serializer = UserSerializer(data=user_data)
     if serializer.is_valid():
         with transaction.atomic():
             user = serializer.save()
-            user.set_password(user_data["password"])
+            # yes we acknowledge that this isn't secure at all.
+            password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            user.set_password(password)
             user.save()
             token = Token.objects.create(user=user)
-            return {"token": token.key, "user": serializer.data}
+            return {"token": token.key, "user": serializer.data, "random generated password": password}
 
     raise ValidationError(serializer.errors)
 

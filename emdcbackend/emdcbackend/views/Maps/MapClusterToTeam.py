@@ -71,3 +71,13 @@ def create_team_to_cluster_map(map_data):
   else:
     return ValidationError(serializer.errors)
 
+def rank_cluster_and_return_winner(clusterid):
+  cluster_team_mappings = MapClusterToTeam.objects.filter(id==clusterid)
+  clusterteams = Teams.objects.filter(id__in=cluster_team_mappings.values_list('teamid', flat=True))
+  clusterteams.sort(key=lambda x: x.total_score, reverse=True)
+  for x in range(len(clusterteams)):
+    clusterteams[x].cluster_rank = x+1
+  
+  return clusterteams[x]
+
+
