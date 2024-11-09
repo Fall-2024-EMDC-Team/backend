@@ -79,7 +79,7 @@ def map_cluster_to_judge(map_data):
     else:
         raise ValidationError(serializer.errors)
     
-def judges_by_cluster_id_nonhttp(cluster_id):
+def judges_by_cluster(cluster_id):
     mappings = MapJudgeToCluster.objects.filter(clusterid=cluster_id)
     judge_ids = mappings.values_list('judgeid', flat=True)
     judges = Judge.objects.filter(id__in=judge_ids)
