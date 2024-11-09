@@ -37,10 +37,6 @@ def create_organizer(request):
                     "role": 2,
                     "relatedid": organizer_response.get("id")
                 }),
-                map_contest_to_organizer({  # maps the newly-created organizer to a contest
-                    "contestid": request.data["contestid"],
-                    "organizerid": organizer_response.get("id")
-                })
             ]
             for response in responses:
                 if isinstance(response, Response):
@@ -50,7 +46,6 @@ def create_organizer(request):
                 "user": user_response,
                 "organizer": organizer_response,
                 "user_map": responses[0],
-                "organizer to contest map": responses[1]
             }, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:  # Catching ValidationErrors specifically
