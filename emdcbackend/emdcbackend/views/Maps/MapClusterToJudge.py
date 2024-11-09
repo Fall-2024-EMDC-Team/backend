@@ -52,7 +52,7 @@ def cluster_by_judge_id(request, judge_id):
         serializer = JudgeClustersSerializer(instance=cluster)
         return Response({"Cluster": serializer.data}, status=status.HTTP_200_OK)
     except MapJudgeToCluster.DoesNotExist:
-        return Response({"error": "No cluster found for the given team"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "No cluster found for the given judge"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["DELETE"])

@@ -86,3 +86,19 @@ def map_cluster_to_contest(map_data):
         return serializer.data
     else:
         raise ValidationError(serializer.errors)
+
+def get_all_teams_cluster_id(contest_id):
+    # Try to retrieve the "All Teams" cluster for the given contest
+    try:
+        all_teams_cluster = JudgeClusters.objects.filter(
+            id__in=MapContestToCluster.objects.filter(contestid=contest_id).values_list('clusterid', flat=True),
+            cluster_name="All Teams"
+        ).first()  # Use `first()` to avoid empty list issues
+
+        if all_teams_cluster:
+            return all_teams_cluster.id
+        return None  # Return None if the "All Teams" cluster is not found
+    except Exception as e:
+        # Handle any errors gracefully and return None
+        print(f"Error retrieving All Teams cluster: {str(e)}")
+        return None
