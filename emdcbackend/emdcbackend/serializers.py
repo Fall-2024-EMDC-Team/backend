@@ -88,3 +88,8 @@ class MapScoreSheetToTeamJudgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MapScoresheetToTeamJudge
         fields = '__all__'
+
+class MapContestToClusterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapContestToCluster
+        fields = '__all__'
