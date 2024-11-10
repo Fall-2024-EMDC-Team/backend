@@ -173,6 +173,7 @@ def edit_team(request):
                 coach.last_name = request.data["last_name"]
                 coach.save()
 
+            # Update cluster and score sheets
             all_teams_cluster = get_all_teams_cluster(request.data["contestid"])
 
             new_cluster_is_all_teams = request.data["clusterid"] == get_all_teams_cluster(request.data["contestid"])
@@ -222,7 +223,7 @@ def edit_team(request):
     except Exception as e:
         return Response({"error": "An error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({"Team": serializer.data, "ScoreSheets": score_sheets_data, "Coach": coach_serializer.data,}, status=status.HTTP_200_OK)
+    return Response({"Team": serializer.data, "ScoreSheets": score_sheets_data, "Coach": coach_serializer.data}, status=status.HTTP_200_OK)
 
 # delete team
 @api_view(["DELETE"])
