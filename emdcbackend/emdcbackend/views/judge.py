@@ -90,6 +90,7 @@ def edit_judge(request):
         judge = get_object_or_404(Judge, id=request.data["id"])
         new_first_name = request.data["first_name"]
         new_last_name = request.data["last_name"]
+        new_phone_number = request.data["phone_number"]
         new_presentation = request.data["presentation"]
         new_mdo = request.data["mdo"]
         new_journal = request.data["journal"]
@@ -105,6 +106,8 @@ def edit_judge(request):
                 judge.first_name = new_first_name
             if new_last_name != judge.last_name:
                 judge.last_name = new_last_name
+            if new_phone_number != judge.phone_number:
+                judge.phone_number = new_phone_number
 
             # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
