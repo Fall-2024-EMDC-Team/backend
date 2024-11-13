@@ -138,7 +138,7 @@ urlpatterns = [
     path('api/scoreSheet/delete/<int:scores_id>/', delete_score_sheet, name='delete_score_sheets'),
     path('api/scoreSheet/edit/editField/', edit_score_sheet_field, name='edit_score_sheet_field'),
     path('api/scoreSheet/edit/updateScores/', update_scores, name='update_scores'),
-    path('api/scoreSheet/getdetails/', get_scoresheet_details_by_team, name='get_score_sheets_by_team_id'),
+    path('api/scoreSheet/getDetails/<int:team_id>/', get_scoresheet_details_by_team, name='get_score_sheets_by_team_id'),
 
     # Tabulation
     path('api/tabulation/tabulateScores/',tabulate_scores, name='tabulate_scores')

@@ -394,8 +394,8 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_scoresheet_details_by_team(request):
-    scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=request.data["teamid"])
+def get_scoresheet_details_by_team(request, team_id):
+    scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=team_id)
     scoresheets = Scoresheet.objects.filter(id__in=scoresheet_mappings.values_list('scoresheetid', flat=True))
     presentation_scoresheet_details = [[] for _ in range(9)]
     journal_scoresheet_details = [[] for _ in range(9)]

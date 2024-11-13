@@ -87,7 +87,7 @@ def edit_contest(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_contest(request,contest_id):
-  contest = get_object_or_404(Contest, contest_id)
+  contest = get_object_or_404(Contest, id=contest_id)
   contest.delete()
   return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
 
