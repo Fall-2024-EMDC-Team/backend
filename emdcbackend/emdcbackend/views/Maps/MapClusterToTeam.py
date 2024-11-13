@@ -45,13 +45,28 @@ def teams_by_cluster_id(request, cluster_id):
 @permission_classes([IsAuthenticated])
 def cluster_by_team_id(request, team_id):
     try:
-        mapping = MapClusterToTeam.objects.get(teamid=team_id)
-        cluster_id = mapping.clusterid
-        cluster = JudgeClusters.objects.get(id=cluster_id)
-        serializer = JudgeClustersSerializer(instance=cluster)
-        return Response({"Cluster": serializer.data}, status=status.HTTP_200_OK)
-    except MapClusterToTeam.DoesNotExist:
-        return Response({"error": "No cluster found for the given team"}, status=status.HTTP_404_NOT_FOUND)
+        # Get all mappings for the team
+        mappings = MapClusterToTeam.objects.filter(teamid=team_id)
+
+        # If no mappings are found, return an error
+        if not mappings.exists():
+            return Response({"error": "No clusters found for the given team"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Collect all cluster IDs from the mappings
+        cluster_ids = [mapping.clusterid for mapping in mappings]
+
+        # Get all clusters corresponding to the cluster IDs
+        clusters = JudgeClusters.objects.filter(id__in=cluster_ids)
+
+        # Serialize the clusters
+        serializer = JudgeClustersSerializer(clusters, many=True)
+
+        return Response({"Clusters": serializer.data}, status=status.HTTP_200_OK)
+
+    except JudgeClusters.DoesNotExist:
+        return Response({"error": "One or more clusters not found for the given IDs"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["DELETE"])

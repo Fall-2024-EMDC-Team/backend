@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
-from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping_by_id_nonhttp
+from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping
 from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster
 from ..auth.views import create_user
 from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster
@@ -90,6 +90,7 @@ def edit_judge(request):
         judge = get_object_or_404(Judge, id=request.data["id"])
         new_first_name = request.data["first_name"]
         new_last_name = request.data["last_name"]
+        new_phone_number = request.data["phone_number"]
         new_presentation = request.data["presentation"]
         new_mdo = request.data["mdo"]
         new_journal = request.data["journal"]
@@ -105,6 +106,8 @@ def edit_judge(request):
                 judge.first_name = new_first_name
             if new_last_name != judge.last_name:
                 judge.last_name = new_last_name
+            if new_phone_number != judge.phone_number:
+                judge.phone_number = new_phone_number
 
             # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
@@ -115,7 +118,7 @@ def edit_judge(request):
                 create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
 
                 # delete the old cluster-judge mapping and create a new one
-                delete_cluster_judge_mapping_by_id_nonhttp(cluster.id)
+                delete_cluster_judge_mapping(cluster.id)
                 map_cluster_to_judge({
                     "judgeid": judge.id,
                     "clusterid": new_cluster
