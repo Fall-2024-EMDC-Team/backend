@@ -9,8 +9,8 @@ from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, ar
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
-from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank, create_team_after_judge
-from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id, delete_coach_team_mapping_by_id, teams_by_coach_id
+from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank
+from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id, delete_coach_team_mapping_by_id, teams_by_coach_id, coaches_by_teams
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id
 from .views.Maps.MapContestToOrganizer import create_contest_organizer_mapping, get_organizers_by_contest_id, get_contests_by_organizer_id, delete_contest_organizer_mapping_by_id
@@ -75,6 +75,7 @@ urlpatterns = [
     path('api/mapping/coachToTeam/getCoachByTeam/<int:team_id>/', coach_by_team_id, name='coach_by_team_id'),
     path('api/mapping/coachToTeam/delete/<int:map_id>/', delete_coach_team_mapping_by_id, name='delete_coach_team_mapping'),
     path('api/mapping/coachToTeam/teamsByCoach/<int:coach_id>/', teams_by_coach_id, name='teams_by_coach_id'),
+    path('api/mapping/coachToTeam/coachesByTeams/', coaches_by_teams, name='coaches_by_teams'),
 
     path('api/mapping/contestToJudge/create/', create_contest_judge_mapping, name='create_contest_judge_mapping'),
     path('api/mapping/contestToJudge/getContestByJudge/<int:judge_id>/', get_contest_id_by_judge_id, name='get_contest_id_by_judge_id'),
@@ -137,7 +138,7 @@ urlpatterns = [
     path('api/scoreSheet/delete/<int:scores_id>/', delete_score_sheet, name='delete_score_sheets'),
     path('api/scoreSheet/edit/editField/', edit_score_sheet_field, name='edit_score_sheet_field'),
     path('api/scoreSheet/edit/updateScores/', update_scores, name='update_scores'),
-    path('api/scoreSheet/getdetails/', get_scoresheet_details_by_team, name='get_score_sheets_by_team_id'),
+    path('api/scoreSheet/getDetails/<int:team_id>/', get_scoresheet_details_by_team, name='get_score_sheets_by_team_id'),
 
     # Tabulation
     path('api/tabulation/tabulateScores/',tabulate_scores, name='tabulate_scores')

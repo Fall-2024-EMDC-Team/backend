@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from ...models import JudgeClusters, Contest, MapContestToCluster
 from ...serializers import JudgeClustersSerializer, ContestSerializer, ClusterToContestSerializer
 
+
 # make non http request to create mapping
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -87,18 +88,29 @@ def map_cluster_to_contest(map_data):
     else:
         raise ValidationError(serializer.errors)
 
-def get_all_teams_cluster_id(contest_id):
-    # Try to retrieve the "All Teams" cluster for the given contest
+def get_all_teams_cluster(contest_id):
     try:
-        all_teams_cluster = JudgeClusters.objects.filter(
-            id__in=MapContestToCluster.objects.filter(contestid=contest_id).values_list('clusterid', flat=True),
-            cluster_name="All Teams"
-        ).first()  # Use `first()` to avoid empty list issues
+        # Get all "All Teams" clusters IDs
+        all_teams_clusters = JudgeClusters.objects.filter(cluster_name="All Teams")
+        cluster_ids = all_teams_clusters.values_list('id', flat=True)
 
-        if all_teams_cluster:
-            return all_teams_cluster.id
-        return None  # Return None if the "All Teams" cluster is not found
+        # Get the mapping for the specified contest and any "All Teams" cluster
+        cluster_mapping = MapContestToCluster.objects.filter(
+            clusterid__in=cluster_ids, contestid=contest_id
+        ).first()  # Use `first()` since there's only one expected result
+
+        if not cluster_mapping:
+            return {"error": "No 'All Teams' cluster mapping found for this contest."}, None
+
+        # Retrieve the specific JudgeClusters object based on the cluster ID in the mapping
+        cluster = JudgeClusters.objects.get(id=cluster_mapping.clusterid)
+        serializer = JudgeClustersSerializer(cluster).data.get("id")
+
+        return serializer  # Return the cluster object
+
+    except JudgeClusters.DoesNotExist:
+        return {"error": "'All Teams' cluster not found."}, None
     except Exception as e:
-        # Handle any errors gracefully and return None
-        print(f"Error retrieving All Teams cluster: {str(e)}")
-        return None
+        print(f"Error retrieving 'All Teams' cluster: {str(e)}")
+        return {"error": str(e)}, None
+

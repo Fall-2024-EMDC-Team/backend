@@ -66,13 +66,6 @@ def create_cluster(request):
 @permission_classes([IsAuthenticated])
 def edit_cluster(request):
     cluster = get_object_or_404(JudgeClusters, id=request.data["id"])
-
-    if (JudgeClusters.objects.filter(cluster_name=request.data["cluster_name"]).exists() and
-            request.data["cluster_name"] != cluster.cluster_name):
-        return Response(
-            {"detail": "A cluster with this name already exists."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
     cluster.cluster_name = request.data["cluster_name"]
     cluster.save()
 
