@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from .Maps.MapScoreSheet import delete_score_sheet_mapping
-from ..models import Scoresheet, Teams, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
+from ..models import Scoresheet, Teams, Judge, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
 @api_view(["GET"])
@@ -358,37 +358,72 @@ def delete_sheets_for_teams_in_cluster(judge_id, cluster_id, penalties, presenta
 
     except Exception as e:
         raise ValidationError({"detail": str(e)})
+  
+def make_sheets_for_team(teamid, clusterid):
+    created_score_sheets = []
+    judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)  # get list of judge mappings
+    for judge_map in judges:
+        # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
+        judge = Judge.objects.get(id=judge_map.judgeid)  # get judge from judge mapping
 
-# def create_score_sheets_for_team_nonhttp(team, clusterid):
-#     created_score_sheets = []
-#     judges = MapJudgeToCluster.objects.filter(clusterid=clusterid)
-#     for judge in judges:
-#         # Create score sheets for each type (Presentation, Journal, Machine Design, Penalties) based on the judge's role
-#         if judge.presentation:
-#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PRESENTATION, isSubmitted=False)
-#             MapScoresheetToTeamJudge.objects.create(
-#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PRESENTATION
-#             )
-#             created_score_sheets.append(score_sheet)
-#         if judge.journal:
-#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.JOURNAL, isSubmitted=False)
-#             MapScoresheetToTeamJudge.objects.create(
-#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.JOURNAL
-#             )
-#             created_score_sheets.append(score_sheet)
-#         if judge.mdo:
-#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.MACHINEDESIGN, isSubmitted=False)
-#             MapScoresheetToTeamJudge.objects.create(
-#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.MACHINEDESIGN
-#             )
-#             created_score_sheets.append(score_sheet)
-#         if judge.penalties:
-#             score_sheet = Scoresheet.objects.create(sheetType=ScoresheetEnum.PENALTIES, isSubmitted=False)
-#             MapScoresheetToTeamJudge.objects.create(
-#                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.PENALTIES
-#             )
-#             created_score_sheets.append(score_sheet)
-#         return created_score_sheets
+        if judge.presentation:
+            sheet = create_base_score_sheet(1)
+            map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 1}
+            map_serializer = MapScoreSheetToTeamJudgeSerializer(data=map_data)
+            if map_serializer.is_valid():
+                map_serializer.save()
+                created_score_sheets.append({
+                    "team_id": teamid,
+                    "judge_id": judge.id,
+                    "scoresheet_id": sheet.get('id'),
+                    "sheetType": 1
+                })
+            else:
+                raise ValidationError(map_serializer.errors)
+        if judge.journal:
+            sheet = create_base_score_sheet(2)
+            map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 2}
+            map_serializer = MapScoreSheetToTeamJudgeSerializer(data=map_data)
+            if map_serializer.is_valid():
+                map_serializer.save()
+                created_score_sheets.append({
+                    "team_id": teamid,
+                    "judge_id": judge.id,
+                    "scoresheet_id": sheet.get('id'),
+                    "sheetType": 2
+                })
+            else:
+                raise ValidationError(map_serializer.errors)
+        if judge.mdo:
+            sheet = create_base_score_sheet(3)
+            map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 3}
+            map_serializer = MapScoreSheetToTeamJudgeSerializer(data=map_data)
+            if map_serializer.is_valid():
+                map_serializer.save()
+                created_score_sheets.append({
+                    "team_id": teamid,
+                    "judge_id": judge.id,
+                    "scoresheet_id": sheet.get('id'),
+                    "sheetType": 3
+                })
+            else:
+                raise ValidationError(map_serializer.errors)
+        if judge.penalties:
+            sheet = create_base_score_sheet_penalties()
+            map_data = {"teamid": teamid, "judgeid": judge.id, "scoresheetid": sheet.get('id'), "sheetType": 4}
+            map_serializer = MapScoreSheetToTeamJudgeSerializer(data=map_data)
+            if map_serializer.is_valid():
+                map_serializer.save()
+                created_score_sheets.append({
+                    "team_id": teamid,
+                    "judge_id": judge.id,
+                    "scoresheet_id": sheet.get('id'),
+                    "sheetType": 4
+                })
+            else:
+                raise ValidationError(map_serializer.errors)
+
+    return created_score_sheets
 
 
 @api_view(["GET"])
