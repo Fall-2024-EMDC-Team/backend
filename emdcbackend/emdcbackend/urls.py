@@ -9,7 +9,7 @@ from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, ar
 from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
-from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank
+from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank, create_team_after_judge
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id, delete_coach_team_mapping_by_id, teams_by_coach_id
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id

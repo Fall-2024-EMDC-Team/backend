@@ -494,10 +494,70 @@ def get_scoresheet_details_by_team(request):
         penalties_scoresheet_details[23].append(sheet.field24)
 
 
+    presentation_scoresheet_response = {
+      "1": presentation_scoresheet_details[0],
+      "2": presentation_scoresheet_details[1],
+      "3": presentation_scoresheet_details[2],
+      "4": presentation_scoresheet_details[3],
+      "5": presentation_scoresheet_details[4],
+      "6": presentation_scoresheet_details[5],
+      "7": presentation_scoresheet_details[6],
+      "8": presentation_scoresheet_details[7],
+      "9": presentation_scoresheet_details[8],
+    }
+    journal_scoresheet_response = {
+      "1": journal_scoresheet_details[0],
+      "2": journal_scoresheet_details[1],
+      "3": journal_scoresheet_details[2],
+      "4": journal_scoresheet_details[3],
+      "5": journal_scoresheet_details[4],
+      "6": journal_scoresheet_details[5],
+      "7": journal_scoresheet_details[6],
+      "8": journal_scoresheet_details[7],
+      "9": journal_scoresheet_details[8],
+    }
+    machinedesign_scoresheet_response = {
+      "1": machinedesign_scoresheet_details[0],
+      "2": machinedesign_scoresheet_details[1],
+      "3": machinedesign_scoresheet_details[2],
+      "4": machinedesign_scoresheet_details[3],
+      "5": machinedesign_scoresheet_details[4],
+      "6": machinedesign_scoresheet_details[5],
+      "7": machinedesign_scoresheet_details[6],
+      "8": machinedesign_scoresheet_details[7],
+      "9": machinedesign_scoresheet_details[8],
+    }
+
+    penalties_scoresheet_response = {
+      "1": penalties_scoresheet_details[0],
+      "2": penalties_scoresheet_details[1],
+      "3": penalties_scoresheet_details[2],
+      "4": penalties_scoresheet_details[3],
+      "5": penalties_scoresheet_details[4],
+      "6": penalties_scoresheet_details[5],
+      "7": penalties_scoresheet_details[6],
+      "8": penalties_scoresheet_details[7],
+      "9": penalties_scoresheet_details[8],
+      "10": penalties_scoresheet_details[9],
+      "11": penalties_scoresheet_details[10],
+      "12": penalties_scoresheet_details[11],
+      "13": penalties_scoresheet_details[12],
+      "14": penalties_scoresheet_details[13],
+      "15": penalties_scoresheet_details[14],
+      "16": penalties_scoresheet_details[15],
+      "17": penalties_scoresheet_details[16],
+      "18": penalties_scoresheet_details[17],
+      "19": penalties_scoresheet_details[18],
+      "20": penalties_scoresheet_details[19],
+      "21": penalties_scoresheet_details[20],
+      "22": penalties_scoresheet_details[21],
+      "23": penalties_scoresheet_details[22],
+      "24": penalties_scoresheet_details[23]
+    }
     return Response({
-        1: presentation_scoresheet_details,
-        2: journal_scoresheet_details,
-        3: machinedesign_scoresheet_details,
-        4: penalties_scoresheet_details
+        1: presentation_scoresheet_response,
+        2: journal_scoresheet_response,
+        3: machinedesign_scoresheet_response,
+        4: penalties_scoresheet_response
     }, status=status.HTTP_200_OK)
 
