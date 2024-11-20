@@ -55,6 +55,9 @@ class Teams(models.Model):
     penalties_score = models.FloatField()
     total_score = models.FloatField()
     team_rank = models.IntegerField(null=True,blank=True)
+    cluster_rank = models.IntegerField(null=True,blank=True)
+    judge_disqualified = models.BooleanField(default=False)
+    organizer_disqualified = models.BooleanField(default=False)
 
 class MapUserToRole(models.Model):
     class RoleEnum(models.IntegerChoices):

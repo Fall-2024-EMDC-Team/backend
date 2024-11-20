@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from ..models import Organizer
+from ..models import Organizer, Teams
 from ..serializers import OrganizerSerializer
 from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map
@@ -102,3 +102,15 @@ def organizers(request):
     organizers = Organizer.objects.all()
     serializer = OrganizerSerializer(organizers, many=True)
     return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def organizer_disqualify_team(request):
+    team = get_object_or_404(Teams, id=request.data["teamid"])
+    team.organizer_disqualified = request.data["organizer_disqualified"]
+    if team.judge_disqualified == True and team.organizer_disqualified == True:
+        team.cluster_rank = None
+        team.team_rank = None
+        team.save()
+    return Response(status=status.HTTP_200_OK)
