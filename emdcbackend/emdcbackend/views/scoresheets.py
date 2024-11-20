@@ -435,7 +435,7 @@ def get_scoresheet_details_by_team(request, team_id):
     presentation_scoresheet_details = [[] for _ in range(9)]
     journal_scoresheet_details = [[] for _ in range(9)]
     machinedesign_scoresheet_details = [[] for _ in range(9)]
-    penalties_scoresheet_details = [[] for _ in range(24)]
+    penalties_scoresheet_details = [[] for _ in range(23)]
     for sheet in scoresheets:
       if sheet.sheetType == 1:
         presentation_scoresheet_details[0].append(sheet.field1)
@@ -476,22 +476,21 @@ def get_scoresheet_details_by_team(request, team_id):
         penalties_scoresheet_details[5].append(sheet.field6)
         penalties_scoresheet_details[6].append(sheet.field7)
         penalties_scoresheet_details[7].append(sheet.field8)
-        penalties_scoresheet_details[8].append(sheet.field9)
-        penalties_scoresheet_details[9].append(sheet.field10)
-        penalties_scoresheet_details[10].append(sheet.field11)
-        penalties_scoresheet_details[11].append(sheet.field12)
-        penalties_scoresheet_details[12].append(sheet.field13)
-        penalties_scoresheet_details[13].append(sheet.field14)
-        penalties_scoresheet_details[14].append(sheet.field15)
-        penalties_scoresheet_details[15].append(sheet.field16)
-        penalties_scoresheet_details[16].append(sheet.field17)
-        penalties_scoresheet_details[17].append(sheet.field18)
-        penalties_scoresheet_details[18].append(sheet.field19)
-        penalties_scoresheet_details[19].append(sheet.field20)
-        penalties_scoresheet_details[20].append(sheet.field21)
-        penalties_scoresheet_details[21].append(sheet.field22)
-        penalties_scoresheet_details[22].append(sheet.field23)
-        penalties_scoresheet_details[23].append(sheet.field24)
+        penalties_scoresheet_details[8].append(sheet.field10)
+        penalties_scoresheet_details[9].append(sheet.field11)
+        penalties_scoresheet_details[10].append(sheet.field12)
+        penalties_scoresheet_details[11].append(sheet.field13)
+        penalties_scoresheet_details[12].append(sheet.field14)
+        penalties_scoresheet_details[13].append(sheet.field15)
+        penalties_scoresheet_details[14].append(sheet.field16)
+        penalties_scoresheet_details[15].append(sheet.field17)
+        penalties_scoresheet_details[16].append(sheet.field18)
+        penalties_scoresheet_details[17].append(sheet.field19)
+        penalties_scoresheet_details[18].append(sheet.field20)
+        penalties_scoresheet_details[19].append(sheet.field21)
+        penalties_scoresheet_details[20].append(sheet.field22)
+        penalties_scoresheet_details[21].append(sheet.field23)
+        penalties_scoresheet_details[22].append(sheet.field24)
 
 
     presentation_scoresheet_response = {
@@ -537,22 +536,21 @@ def get_scoresheet_details_by_team(request, team_id):
       "6": penalties_scoresheet_details[5],
       "7": penalties_scoresheet_details[6],
       "8": penalties_scoresheet_details[7],
-      "9": penalties_scoresheet_details[8],
-      "10": penalties_scoresheet_details[9],
-      "11": penalties_scoresheet_details[10],
-      "12": penalties_scoresheet_details[11],
-      "13": penalties_scoresheet_details[12],
-      "14": penalties_scoresheet_details[13],
-      "15": penalties_scoresheet_details[14],
-      "16": penalties_scoresheet_details[15],
-      "17": penalties_scoresheet_details[16],
-      "18": penalties_scoresheet_details[17],
-      "19": penalties_scoresheet_details[18],
-      "20": penalties_scoresheet_details[19],
-      "21": penalties_scoresheet_details[20],
-      "22": penalties_scoresheet_details[21],
-      "23": penalties_scoresheet_details[22],
-      "24": penalties_scoresheet_details[23]
+      "10": penalties_scoresheet_details[8],
+      "11": penalties_scoresheet_details[9],
+      "12": penalties_scoresheet_details[10],
+      "13": penalties_scoresheet_details[11],
+      "14": penalties_scoresheet_details[12],
+      "15": penalties_scoresheet_details[13],
+      "16": penalties_scoresheet_details[14],
+      "17": penalties_scoresheet_details[15],
+      "18": penalties_scoresheet_details[16],
+      "19": penalties_scoresheet_details[17],
+      "20": penalties_scoresheet_details[18],
+      "21": penalties_scoresheet_details[19],
+      "22": penalties_scoresheet_details[20],
+      "23": penalties_scoresheet_details[21],
+      "24": penalties_scoresheet_details[22]
     }
     return Response({
         1: presentation_scoresheet_response,
