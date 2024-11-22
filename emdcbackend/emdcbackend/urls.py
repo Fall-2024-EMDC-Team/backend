@@ -2,14 +2,14 @@ from django.urls import path
 from .auth import views
 from .views.Maps.MapClusterToContest import all_clusters_by_contest_id
 from .views.Maps.MapClusterToTeam import create_cluster_team_mapping, delete_cluster_team_mapping_by_id, \
-    teams_by_cluster_id, cluster_by_team_id
+    teams_by_cluster_id, cluster_by_team_id, get_teams_by_cluster_rank
 from .views.Maps.MapScoreSheet import create_score_sheet_mapping, score_sheet_by_judge_team, \
     delete_score_sheet_mapping_by_id, score_sheets_by_judge, submit_all_penalty_sheets_for_judge, all_sheets_submitted_for_contests
-from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, are_all_score_sheets_submitted
-from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer
+from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, are_all_score_sheets_submitted, judge_disqualify_team
+from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer, organizer_disqualify_team
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
-from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank, create_team_after_judge
+from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank, create_team_after_judge, is_team_disqualified
 from .views.Maps.MapCoachToTeam import create_coach_team_mapping, coach_by_team_id, delete_coach_team_mapping_by_id, teams_by_coach_id, coaches_by_teams
 from .views.clusters import cluster_by_id, create_cluster, clusters_get_all, delete_cluster, edit_cluster
 from .views.Maps.MapContestToJudge import create_contest_judge_mapping, get_all_judges_by_contest_id, get_contest_id_by_judge_id, delete_contest_judge_mapping_by_id
@@ -47,12 +47,14 @@ urlpatterns = [
     path('api/judge/edit/', edit_judge, name='edit_judge'),
     path('api/judge/delete/<int:judge_id>/', delete_judge, name='delete_judge'),
     path('api/judge/allScoreSheetsSubmitted/', are_all_score_sheets_submitted, name='are_all_score_sheets_submitted'),
+    path('api/judge/disqualifyTeam/', judge_disqualify_team, name='judge_disqualify_team'),
 
     # Organizers
     path('api/organizer/get/<int:organizer_id>/', organizer_by_id, name='organizer_by_id'),
     path('api/organizer/create/', create_organizer, name='create_organizer'),
     path('api/organizer/edit/', edit_organizer, name='edit_organizer'),
     path('api/organizer/delete/<int:organizer_id>/', delete_organizer, name='delete_organizer'),
+    path('api/organizer/disqualifyTeam/', organizer_disqualify_team, name='organizer_disqualify_team'),
 
     # Coaches
     path('api/coach/get/<int:coach_id>/', coach_by_id, name='coach_by_id'),
@@ -68,7 +70,8 @@ urlpatterns = [
     path('api/team/edit/', edit_team, name='edit_team'),
     path('api/team/delete/<int:team_id>/', delete_team_by_id, name='delete_team_by_id'),
     path('api/team/rankedteams/', get_teams_by_team_rank, name='get_teams_by_team_rank'),
-
+    path('api/team/isDisqualified/<int:team_id>/', is_team_disqualified, name='is_team_disqualified'),
+    
     # Maps
 
     path('api/mapping/coachToTeam/create/', create_coach_team_mapping, name='create_coach_team_mapping'),
@@ -102,6 +105,7 @@ urlpatterns = [
     path('api/mapping/clusterToTeam/delete/<int:map_id>/', delete_cluster_team_mapping_by_id, name='delete_cluster_team_mapping'),
     path('api/mapping/clusterToTeam/getAllTeamsByCluster/<int:cluster_id>/', teams_by_cluster_id, name='teams_by_cluster'),
     path('api/mapping/clusterToTeam/getClusterByTeam/<int:team_id>/', cluster_by_team_id, name='cluster_by_team'),
+    path('api/mapping/clusterToTeam/getTeamsByClusterRank/', get_teams_by_cluster_rank, name='get_teams_by_cluster_rank'),
 
     path('api/mapping/clusterToJudge/create/', create_cluster_judge_mapping, name='create_cluster_judge_mapping'),
     path('api/mapping/clusterToJudge/delete/<int:map_id>/', delete_cluster_judge_mapping_by_id, name='delete_cluster_judge_mapping'),
@@ -123,6 +127,7 @@ urlpatterns = [
     path('api/cluster/create/', create_cluster, name='create_cluster'),
     path('api/cluster/edit/', edit_cluster, name='edit_cluster'),
     path('api/cluster/delete/<int:cluster_id>/', delete_cluster, name='delete_cluster'),
+    
 
     # Contests
     path('api/contest/get/<int:contest_id>/', contest_by_id, name='contest_by_id'),
