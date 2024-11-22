@@ -76,6 +76,7 @@ def create_contest_instance(contest_data):
 def edit_contest(request):
   contest = get_object_or_404(Contest, id=request.data["id"])
   contest.name = request.data["name"]
+  contest.date = request.data["date"]
   contest.is_open = request.data["is_open"]
   contest.is_tabulated = request.data["is_tabulated"]
   contest.save()
