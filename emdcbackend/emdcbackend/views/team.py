@@ -237,8 +237,9 @@ def delete_team_by_id(request, team_id):
         scoresheet_ids = scoresheet_mappings.values_list('scoresheetid', flat=True)
         scoresheets = Scoresheet.objects.filter(id__in=scoresheet_ids)
         coach_mapping = MapCoachToTeam.objects.get(teamid=team_id)
-        judge_mappings = MapJudgeToCluster.objects.filter(clusterid__in=MapClusterToTeam.objects.filter(teamid=team_id).values_list('clusterid', flat=True))
+        judge_mappings = 
         cluster_mappings = MapClusterToTeam.objects.filter(teamid=team_id)
+        contest_mapping = MapContestToTeam.objects.get(teamid=team_id)
 
         # delete associated scoresheets
         for scoresheet in scoresheets:
@@ -248,12 +249,15 @@ def delete_team_by_id(request, team_id):
         coach_mapping.delete()
 
         # delete judge-team mappings
-        for mapping in judge_mappings:
+        for mapping in judge_mappings:  # Fix: somehow the judge-cluster mapping is also being deleted
             mapping.delete()
 
-        # delete cluster-team mapping
+        # delete cluster-team mappings (judge cluster and all teams cluster)
         for mapping in cluster_mappings:
             mapping.delete()
+
+        # delete contest-team mapping
+        contest_mapping.delete()
 
         # Delete team
         team.delete()
