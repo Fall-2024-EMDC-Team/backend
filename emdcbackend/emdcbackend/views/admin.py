@@ -106,7 +106,7 @@ def edit_admin(request):
 def delete_admin(request, admin_id):
     try:
         admin = get_object_or_404(Admin, id=admin_id)
-        admin_mapping = MapUserToRole.objects.get(adminid=admin_id)
+        admin_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ADMIN, adminid=admin_id)
         user_id = admin_mapping.userid
         admin.delete()
         admin_mapping.delete()
