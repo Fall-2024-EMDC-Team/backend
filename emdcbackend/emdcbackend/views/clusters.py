@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from ..models import JudgeClusters
+from ..models import JudgeClusters, MapContestToCluster, MapClusterToTeam, MapJudgeToCluster
 from ..serializers import JudgeClustersSerializer
 from .Maps.MapClusterToContest import  map_cluster_to_contest
 
@@ -76,9 +76,22 @@ def edit_cluster(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_cluster(request, cluster_id):
-    cluster = get_object_or_404(JudgeClusters, id=cluster_id)
-    cluster.delete()
-    return Response({"detail": "Cluster deleted successfully."}, status=status.HTTP_200_OK)
+    # deleting the cluster and all of the cluster to contest, cluster to judge, and cluster to team mappings
+    try:
+      cluster = get_object_or_404(JudgeClusters, id=cluster_id)
+      cluster_contest_mapping = MapContestToCluster.objects.get(clusterid=cluster.id)
+      cluster_judge_mappings = MapJudgeToCluster.objects.filter(clusterid=cluster.id)
+      cluster_team_mappings = MapClusterToTeam.objects.filter(clusterid=cluster.id)
+      cluster_contest_mapping.delete()
+      for mapping in cluster_judge_mappings:
+        mapping.delete()
+      for mapping in cluster_team_mappings:
+        mapping.delete()
+      cluster.delete()
+      return Response({"detail": "Cluster deleted successfully."}, status=status.HTTP_200_OK)
+    except Exception as e:
+      return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 def make_judge_cluster_instance(data):
   serializer = JudgeClustersSerializer(data=data)
