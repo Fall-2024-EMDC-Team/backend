@@ -73,7 +73,7 @@ def cluster_by_team_id(request, team_id):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_cluster_team_mapping_by_id(request, map_id):
-    map_to_delete = emdcbackend/emdcbackend/views/Maps/MapClusterToTeam.pyget_object_or_404(MapClusterToTeam, id=map_id)
+    map_to_delete = get_object_or_404(MapClusterToTeam, id=map_id)
     map_to_delete.delete()
     return Response({"detail": "Cluster To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)
 

@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from ..models import Organizer, Teams
+from ..models import Organizer, Teams, Scoresheet, MapScoresheetToTeamJudge
 from ..serializers import OrganizerSerializer
 from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map
@@ -112,5 +112,10 @@ def organizer_disqualify_team(request):
     if team.judge_disqualified == True and team.organizer_disqualified == True:
         team.cluster_rank = None
         team.team_rank = None
+        scoresheetmappings = MapScoresheetToTeamJudge.objects.filter(teamid=team.id)
+        for mapping in scoresheetmappings:
+            scoresheet = Scoresheet.objects.get(id=mapping.scoresheetid)
+            scoresheet.isSubmitted = True
+            scoresheet.save()
         team.save()
     return Response(status=status.HTTP_200_OK)
