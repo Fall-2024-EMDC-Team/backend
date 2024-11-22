@@ -16,7 +16,7 @@ from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping
 from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, Teams
 from ..serializers import JudgeSerializer
 
 
@@ -250,3 +250,12 @@ def are_all_score_sheets_submitted(request):
         results[judge_id] = all_submitted
 
     return Response(results, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def judge_disqualify_team(request):
+     team = get_object_or_404(Teams, id=request.data["teamid"])
+     team.judge_disqualified = request.data["judge_disqualified"]
+     team.save()
+     return Response(status=status.HTTP_200_OK)

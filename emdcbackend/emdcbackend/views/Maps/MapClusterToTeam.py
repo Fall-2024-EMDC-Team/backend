@@ -77,6 +77,18 @@ def delete_cluster_team_mapping_by_id(request, map_id):
     map_to_delete.delete()
     return Response({"detail": "Cluster To Team Mapping deleted successfully."}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_teams_by_cluster_rank(request):
+    mappings = MapClusterToTeam.objects.filter(clusterid=request.data["clusterid"])
+    teams = Teams.objects.filter(
+        id__in=mappings.values_list('teamid', flat=True),
+        cluster_rank__isnull=False
+    ).order_by('cluster_rank')
+    serializer = TeamSerializer(teams, many=True)
+    return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
+  
 
 def create_team_to_cluster_map(map_data):
   serializer = ClusterToTeamSerializer(data=map_data)

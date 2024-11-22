@@ -9,6 +9,7 @@ from .Maps.MapUserToRole import get_role_mapping, create_user_role_map
 from .Maps.MapCoachToTeam import create_coach_to_team_map
 from .Maps.MapContestToTeam import create_team_to_contest_map
 from .Maps.MapClusterToTeam import create_team_to_cluster_map
+
 from rest_framework import status
 from rest_framework.decorators import (
     api_view,
@@ -260,9 +261,10 @@ def make_team(data):
 @permission_classes([IsAuthenticated])
 def get_teams_by_team_rank(request):
     mappings = MapContestToTeam.objects.filter(contestid=request.data["contestid"])
-    teams = Teams.objects.filter(id__in=mappings.values_list('teamid', flat=True)).order_by('team_rank')
+    teams = Teams.objects.filter(id__in=mappings.values_list('teamid', flat=True,),team_rank__isnull=False).order_by('team_rank')
     serializer = TeamSerializer(teams, many=True)
     return Response({"Teams": serializer.data}, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -336,3 +338,10 @@ def create_team_after_judge(request):
   
   except Exception as e:
     return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def is_team_disqualified(request):
+    team = get_object_or_404(Teams, id=request.data["teamid"])
+    return Response({"is disqualified": team.organizer_disqualified}, status=status.HTTP_200_OK)
