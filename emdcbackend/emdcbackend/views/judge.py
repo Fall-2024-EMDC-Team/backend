@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping
@@ -180,9 +181,11 @@ def edit_judge(request):
 def delete_judge(request, judge_id):
     try:
         judge = get_object_or_404(Judge, id=judge_id)
-        user = MapUserToRole.objects.get(relatedid=judge_id)
-        user_mapping = MapUserToRole.objects.get(judgeid=judge_id)
-        scoresheets = Scoresheet.objects.filter(judgeid=judge_id)
+        scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+        scoresheet_ids = scoresheet_mappings.values_list('scoresheetid', flat=True)
+        scoresheets = Scoresheet.objects.filter(id__in=scoresheet_ids)
+        user_mapping = MapUserToRole.objects.get(role=3, relatedid=judge_id)
+        user = get_object_or_404(User, id=user_mapping.uuid)
         cluster_mapping = MapJudgeToCluster.objects.get(judgeid=judge_id)
         teams_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
         contest_mapping = MapContestToJudge.objects.filter(judgeid=judge_id)
