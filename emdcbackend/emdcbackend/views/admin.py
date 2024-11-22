@@ -14,6 +14,8 @@ from ..serializers import AdminSerializer
 from ..models import Admin
 from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map
+from ..models import MapUserToRole
+from ..auth.views import User, delete_user_by_id
 
 # get an admin by a certain id
 @api_view(["GET"])
@@ -102,6 +104,19 @@ def edit_admin(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_admin(request, admin_id):
-    admin = get_object_or_404(Admin, id=admin_id)
-    admin.delete()
-    return Response({"Detail": "Admin deleted successfully."}, status=status.HTTP_200_OK)
+    try:
+        admin = get_object_or_404(Admin, id=admin_id)
+        admin_mapping = MapUserToRole.objects.get(adminid=admin_id)
+        user_id = admin_mapping.userid
+        admin.delete()
+        admin_mapping.delete()
+        delete_user_by_id(request, user_id)
+        return Response({"Detail": "Admin deleted successfully."}, status=status.HTTP_200_OK)
+    except Admin.DoesNotExist:
+        return Response({"error": "Admin not found."}, status=status.HTTP_404_NOT_FOUND)
+    except MapUserToRole.DoesNotExist:
+        return Response({"error": "Admin mapping not found."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    
