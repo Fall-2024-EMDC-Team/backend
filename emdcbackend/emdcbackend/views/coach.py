@@ -14,6 +14,8 @@ from ..auth.views import create_user
 from ..models import Coach
 from ..serializers import CoachSerializer
 from rest_framework.exceptions import ValidationError
+from ..models import MapUserToRole
+from ..auth.views import User, delete_user_by_id
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -60,9 +62,20 @@ def edit_coach(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_coach(request, coach_id):
-    coach = get_object_or_404(Coach, id=coach_id)
-    coach.delete()
-    return Response({"detail": "Coach deleted successfully."}, status=status.HTTP_200_OK)
+    try:
+        coach = get_object_or_404(Coach, id=coach_id)
+        coach_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.COACH, coachid=coach_id)
+        user_id = coach_mapping.userid
+        coach.delete()
+        coach_mapping.delete()
+        delete_user_by_id(request, user_id)
+        return Response({"Detail": "Coach deleted successfully."}, status=status.HTTP_200_OK)
+    except Coach.DoesNotExist:
+        return Response({"error": "Coach not found."}, status=status.HTTP_404_NOT_FOUND)
+    except MapUserToRole.DoesNotExist:
+        return Response({"error": "Coach mapping not found."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def create_coach_instance(coach_data):
     serializer = CoachSerializer(data=coach_data)
