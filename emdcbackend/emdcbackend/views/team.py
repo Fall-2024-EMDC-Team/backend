@@ -231,9 +231,38 @@ def edit_team(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_team_by_id(request, team_id):
-    team_to_delete = get_object_or_404(Teams, id=team_id)
-    team_to_delete.delete()
-    return Response({"detail": "Team deleted successfully."}, status=status.HTTP_200_OK)
+    try:
+        team = get_object_or_404(Teams, id=team_id)
+        scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=team_id)
+        scoresheet_ids = scoresheet_mappings.values_list('scoresheetid', flat=True)
+        scoresheets = Scoresheet.objects.filter(id__in=scoresheet_ids)
+        coach_mapping = MapCoachToTeam.objects.get(teamid=team_id)
+        judge_mappings = MapJudgeToCluster.objects.filter(clusterid__in=MapClusterToTeam.objects.filter(teamid=team_id).values_list('clusterid', flat=True))
+        cluster_mapping = MapClusterToTeam.objects.get(teamid=team_id)
+
+        # delete associated scoresheets
+        for scoresheet in scoresheets:
+            scoresheet.delete()
+
+        # delete coach-team mapping
+        coach_mapping.delete()
+
+        # delete judge-team mappings
+        for mapping in judge_mappings:
+            mapping.delete()
+
+        # delete cluster-team mapping
+        cluster_mapping.delete()
+
+        # Delete team
+        team.delete()
+
+        return Response({"detail": "Team deleted successfully."}, status=status.HTTP_200_OK)
+    
+    except ValidationError as e:  # Catching ValidationErrors specifically
+        return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def make_team_instance(team_data):
     serializer = TeamSerializer(data=team_data)

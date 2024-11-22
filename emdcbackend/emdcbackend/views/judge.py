@@ -189,7 +189,6 @@ def delete_judge(request, judge_id):
         cluster_mapping = MapJudgeToCluster.objects.get(judgeid=judge_id)
         teams_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
         contest_mapping = MapContestToJudge.objects.filter(judgeid=judge_id)
-        # scoresheet_team_judge = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
 
         # delete associataed user
         user.delete()
