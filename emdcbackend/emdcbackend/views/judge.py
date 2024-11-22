@@ -10,13 +10,13 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth.models import User
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToJudge import create_contest_to_judge_map
 from .Maps.MapClusterToJudge import map_cluster_to_judge,  delete_cluster_judge_mapping
 from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_teams_in_cluster
 from ..auth.views import create_user
-from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster
+from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, Teams, MapContestToJudge, MapUserToRole
 from ..serializers import JudgeSerializer
 
 
@@ -179,9 +179,45 @@ def edit_judge(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_judge(request, judge_id):
-    judge = get_object_or_404(Judge, id=judge_id)
-    judge.delete()
-    return Response({"detail": "Judge deleted successfully."}, status=status.HTTP_200_OK)
+    try:
+        judge = get_object_or_404(Judge, id=judge_id)
+        scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+        scoresheet_ids = scoresheet_mappings.values_list('scoresheetid', flat=True)
+        scoresheets = Scoresheet.objects.filter(id__in=scoresheet_ids)
+        user_mapping = MapUserToRole.objects.get(role=3, relatedid=judge_id)
+        user = get_object_or_404(User, id=user_mapping.uuid)
+        cluster_mapping = MapJudgeToCluster.objects.get(judgeid=judge_id)
+        teams_mappings = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+        contest_mapping = MapContestToJudge.objects.filter(judgeid=judge_id)
+        # scoresheet_team_judge = MapScoresheetToTeamJudge.objects.filter(judgeid=judge_id)
+
+        # delete associataed user
+        user.delete()
+        user_mapping.delete()
+
+        # delete associated scoresheets
+        for scoresheet in scoresheets:
+            scoresheet.delete()
+
+        # delete associated judge-teams mappings
+        for mapping in teams_mappings:
+            mapping.delete()
+
+        # delete associated judge-contest mapping
+        contest_mapping.delete()
+
+        # delete associated judge-cluster mapping
+        cluster_mapping.delete()
+
+        # delete the judge
+        judge.delete()
+
+        return Response({"detail": "Judge deleted successfully."}, status=status.HTTP_200_OK)
+    
+    except ValidationError as e:  # Catching ValidationErrors specifically
+        return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def create_judge_instance(judge_data):
     serializer = JudgeSerializer(data=judge_data)
@@ -250,3 +286,12 @@ def are_all_score_sheets_submitted(request):
         results[judge_id] = all_submitted
 
     return Response(results, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def judge_disqualify_team(request):
+     team = get_object_or_404(Teams, id=request.data["teamid"])
+     team.judge_disqualified = request.data["judge_disqualified"]
+     team.save()
+     return Response(status=status.HTTP_200_OK)

@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
-from ..models import Teams, Scoresheet, MapScoresheetToTeamJudge, MapContestToTeam, ScoresheetEnum
+from ..models import Teams, Scoresheet, MapScoresheetToTeamJudge, MapContestToTeam, ScoresheetEnum, MapClusterToTeam, JudgeClusters, MapContestToCluster
 from ..serializers import TeamSerializer, ScoresheetSerializer
 
 # reference for this file's functions will be in a markdown file titled *Scoring Tabultaion Outline* in the onedrive
@@ -22,6 +22,7 @@ from ..serializers import TeamSerializer, ScoresheetSerializer
 @permission_classes([IsAuthenticated])
 def tabulate_scores(request):
   contest_team_ids = MapContestToTeam.objects.filter(contestid=request.data["contestid"])
+
   contestteams = []
   for mapping in contest_team_ids:
     tempteam = Teams.objects.get(id=mapping.teamid)
@@ -30,6 +31,14 @@ def tabulate_scores(request):
     else:
       return Response({"Error: Team Not Found"},status=status.HTTP_404_NOT_FOUND)
   
+  contest_cluster_ids = MapContestToCluster.objects.filter(contestid=request.data["contestid"])
+  clusters = []
+  for mapping in contest_cluster_ids:
+    tempcluster = JudgeClusters.objects.get(id=mapping.clusterid)
+    if tempcluster:
+      clusters.append(tempcluster)
+    else:
+      return Response({"Error: Cluster Not Found"},status=status.HTTP_404_NOT_FOUND)
   # at this point, we should have all of the teams for the contest, and we're going to go tabulate all of the total scores.
 
   for team in contestteams:
@@ -44,37 +53,45 @@ def tabulate_scores(request):
         return Response({"Error: Score Sheet Data Not Found from Mapping!"},status=status.HTTP_404_NOT_FOUND)
     
     # tabulation time!
+    # initialize a temp array to hold scores
     totalscores = [0] * 12
     for scoresheet in scoresheets:
         # We're going to keep track for each sheet type how many times we've seen the type, since for each of the sheets we're taking the average of the scores.
       if scoresheet.sheetType == ScoresheetEnum.PRESENTATION:
         totalscores[0] = totalscores[0] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[1] += 1
+
       elif scoresheet.sheetType == ScoresheetEnum.JOURNAL:
         totalscores[2] = totalscores[2] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[3] += 1
+
       elif scoresheet.sheetType == ScoresheetEnum.MACHINEDESIGN:
         totalscores[4] = totalscores[4] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
         totalscores[5] += 1
+
       elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
-        # penalties are kinda tricky, so we're commenting this one out a bit.
+        # Penalties are different from the other scoresheets, as the fields are broken up into different categories and are averaged in "buckets".
         # first thing we check for is the journal penalties and machine spec penalties. to my knowledge, these are not averaged and are calculated once, but if they were to be an average we take it.
         totalscores[6] = scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5 + scoresheet.field6 + scoresheet.field7
         totalscores[7] += 1
         # we then check for if there is penalties for run 1, and increment the counter since run penalties are taken as an average
         totalscores[8] = totalscores[8] + scoresheet.field8+ scoresheet.field10+ scoresheet.field11 + scoresheet.field12 + scoresheet.field13 + scoresheet.field14 + scoresheet.field15 + scoresheet.field16
         totalscores[9] += 1
-        # we then grab the penalties for run2 and do the calculation akin to run1
+        # we then grab the penalties for run2 and do same style of calculation that we did for run1
         totalscores[10] = totalscores[10] + scoresheet.field17+ scoresheet.field18+ scoresheet.field19 + scoresheet.field20 + scoresheet.field21 + scoresheet.field22 + scoresheet.field23 + scoresheet.field24
         totalscores[11] += 1
     # scores are compiled but not averaged yet, we're going to average the scores and then save that score as the total score. 
     team.presentation_score = totalscores[0] / totalscores[1]
     team.journal_score = totalscores[2] / totalscores[3]
     team.machinedesign_score = totalscores[4] / totalscores[5]
+
     team.penalties_score = totalscores[6] / totalscores[7] + totalscores[8]/totalscores[9] +  totalscores[10]/totalscores[11]
     team.total_score = (team.presentation_score + team.journal_score + team.machinedesign_score) - team.penalties_score
     team.save()
 
+  # this is where we set the ranks for the teams in terms of clusters and contest.
+  for cluster in clusters:
+    set_cluster_rank({"clusterid":cluster.id})
   set_team_rank({"contestid":request.data["contestid"]})
 
   return Response(status=status.HTTP_200_OK)
@@ -86,7 +103,8 @@ def set_team_rank(data):
   for mapping in contest_team_ids:
     tempteam = Teams.objects.get(id=mapping.teamid)
     if tempteam:
-      contestteams.append(tempteam)
+      if not tempteam.organizer_disqualified:
+        contestteams.append(tempteam)
     else:
       raise ValidationError('Team Cannot Be Found.')
   # next goal: sort the array of teams by their total score!
@@ -95,6 +113,23 @@ def set_team_rank(data):
     contestteams[x].team_rank = x+1
     contestteams[x].save()
   return
+
+# function to set the rank of the teams in a cluster
+def set_cluster_rank(data):
+    cluster_team_ids = MapClusterToTeam.objects.filter(clusterid=data["clusterid"])
+    clusterteams = []
+    for mapping in cluster_team_ids:
+      tempteam = Teams.objects.get(id=mapping.teamid)
+      if tempteam:
+        if not tempteam.organizer_disqualified:
+          clusterteams.append(tempteam)
+      else:
+        raise ValidationError('Team Cannot Be Found.')
+    clusterteams.sort(key=lambda x: x.total_score, reverse=True)
+    for x in range(len(clusterteams)):
+        clusterteams[x].cluster_rank = x+1
+        clusterteams[x].save()
+    return 
 
 # function to get all scoresheets that a team has submitted
 @api_view(["GET"])
@@ -105,7 +140,7 @@ def get_scoresheet_comments_by_team_id(request):
   scoresheets = Scoresheet.objects.filter(id__in=scoresheeids)
   comments = []
   for sheet in scoresheets:
-    if field9 != "":
+    if sheet.field9 != "":
       comments.append(sheet.field9),
   return Response({"Comments": comments}, status=status.HTTP_200_OK)
 

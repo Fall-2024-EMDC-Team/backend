@@ -13,7 +13,7 @@ from django.db import transaction
 from ..models import JudgeClusters
 from ..serializers import JudgeClustersSerializer
 from .Maps.MapClusterToContest import  map_cluster_to_contest
-
+from ..models import Teams, MapClusterToTeam
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -79,6 +79,7 @@ def delete_cluster(request, cluster_id):
     cluster = get_object_or_404(JudgeClusters, id=cluster_id)
     cluster.delete()
     return Response({"detail": "Cluster deleted successfully."}, status=status.HTTP_200_OK)
+
 
 def make_judge_cluster_instance(data):
   serializer = JudgeClustersSerializer(data=data)
