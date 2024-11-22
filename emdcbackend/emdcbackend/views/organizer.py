@@ -15,6 +15,8 @@ from ..serializers import OrganizerSerializer
 from ..auth.views import create_user
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToOrganizer import map_contest_to_organizer
+from ..models import MapUserToRole
+from ..auth.views import User, delete_user_by_id
 
 # get organizer by id
 @api_view(["GET"])
@@ -92,9 +94,20 @@ def edit_organizer(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_organizer(request, organizer_id):
-    organizer = get_object_or_404(Organizer, id=organizer_id)
-    organizer.delete()
-    return Response({"detail": "Organizer deleted successfully."}, status=status.HTTP_200_OK)
+    try:
+        organizer = get_object_or_404(Organizer, id=organizer_id)
+        organizer_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ORGANIZER, organizerid=organizer_id)
+        user_id = organizer_mapping.userid
+        organizer.delete()
+        organizer_mapping.delete()
+        delete_user_by_id(request, user_id)
+        return Response({"Detail": "Organizer deleted successfully."}, status=status.HTTP_200_OK)
+    except Organizer.DoesNotExist:
+        return Response({"error": "Organizer not found."}, status=status.HTTP_404_NOT_FOUND)
+    except MapUserToRole.DoesNotExist:
+        return Response({"error": "Organizer mapping not found."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # return all organizers
 @api_view(["GET"])
