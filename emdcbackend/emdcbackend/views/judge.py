@@ -18,6 +18,7 @@ from .scoresheets import create_sheets_for_teams_in_cluster, delete_sheets_for_t
 from ..auth.views import create_user
 from ..models import Judge, Scoresheet, MapScoresheetToTeamJudge, MapJudgeToCluster, Teams, MapContestToJudge, MapUserToRole
 from ..serializers import JudgeSerializer
+from ..auth.serializers import UserSerializer
 
 
 @api_view(["GET"])
@@ -96,11 +97,16 @@ def edit_judge(request):
         new_journal = request.data["journal"]
         new_penalties = request.data["penalties"]
         new_cluster = request.data["clusterid"]
-
+        new_username = request.data["username"]
         with transaction.atomic():
             cluster = MapJudgeToCluster.objects.get(judgeid=judge.id)  # get cluster id from mapping
             clusterid = cluster.clusterid
-
+            user_mapping = MapUserToRole.objects.get(role=3, relatedid=judge.id)
+            user = get_object_or_404(User, id=user_mapping.uuid)
+            if user.username != new_username:
+                user.username = new_username
+                user.save()
+            user_serializer = UserSerializer(instance=user)
             # Update judge name details
             if new_first_name != judge.first_name:
                 judge.first_name = new_first_name
@@ -173,7 +179,7 @@ def edit_judge(request):
     except Exception as e:
         raise ValidationError({"detail": str(e)})
     
-    return Response({"judge": serializer.data, "clusterid": clusterid}, status=status.HTTP_200_OK)
+    return Response({"judge": serializer.data, "clusterid": clusterid, "user": user_serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
