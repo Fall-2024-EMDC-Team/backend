@@ -41,7 +41,7 @@ class Judge(models.Model):
     mdo=models.BooleanField()
     journal=models.BooleanField()
     penalties=models.BooleanField()
-    role = models.IntegerField(choices=JudgeRoleEnum.choices)
+    role = models.IntegerField(choices=JudgeRoleEnum.choices, null=True, blank=True)
 
 class MapJudgeToCluster(models.Model):
     judgeid = models.IntegerField()
