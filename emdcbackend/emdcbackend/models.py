@@ -27,6 +27,12 @@ class MapContestToCluster(models.Model):
     clusterid = models.IntegerField()
 
 class Judge(models.Model):
+    class JudgeRoleEnum(models.IntegerChoices):
+        LEAD = 1
+        TECHNICAL = 2
+        GENERAL = 3
+        JOURNAL = 4
+    
     first_name = models.CharField(max_length=50)  # Add max_length
     last_name = models.CharField(max_length=50)   # Add max_length
     phone_number = models.CharField(max_length=20)
@@ -35,6 +41,7 @@ class Judge(models.Model):
     mdo=models.BooleanField()
     journal=models.BooleanField()
     penalties=models.BooleanField()
+    role = models.IntegerField(choices=JudgeRoleEnum.choices)
 
 class MapJudgeToCluster(models.Model):
     judgeid = models.IntegerField()
