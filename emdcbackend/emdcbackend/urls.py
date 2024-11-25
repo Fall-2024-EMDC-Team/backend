@@ -6,7 +6,8 @@ from .views.Maps.MapClusterToTeam import create_cluster_team_mapping, delete_clu
 from .views.Maps.MapScoreSheet import create_score_sheet_mapping, score_sheet_by_judge_team, \
     delete_score_sheet_mapping_by_id, score_sheets_by_judge, submit_all_penalty_sheets_for_judge, all_sheets_submitted_for_contests
 from .views.judge import create_judge, judge_by_id, edit_judge, delete_judge, are_all_score_sheets_submitted, judge_disqualify_team
-from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer, organizer_disqualify_team
+from .views.organizer import create_organizer, organizer_by_id, edit_organizer, delete_organizer, \
+    organizer_disqualify_team, get_all_organizers
 from .views.coach import create_coach, coach_by_id, edit_coach, delete_coach, coach_get_all
 from .views.contest import contest_by_id, contest_get_all, create_contest, edit_contest, delete_contest
 from .views.team import create_team, team_by_id, edit_team, delete_team_by_id, get_teams_by_team_rank, create_team_after_judge, is_team_disqualified
@@ -55,6 +56,7 @@ urlpatterns = [
     path('api/organizer/edit/', edit_organizer, name='edit_organizer'),
     path('api/organizer/delete/<int:organizer_id>/', delete_organizer, name='delete_organizer'),
     path('api/organizer/disqualifyTeam/', organizer_disqualify_team, name='organizer_disqualify_team'),
+    path('api/organizer/getAll/', get_all_organizers, name='get_all_organizers'),
 
     # Coaches
     path('api/coach/get/<int:coach_id>/', coach_by_id, name='coach_by_id'),

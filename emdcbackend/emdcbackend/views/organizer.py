@@ -111,10 +111,12 @@ def delete_organizer(request, organizer_id):
 
 # return all organizers
 @api_view(["GET"])
-def organizers(request):
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_organizers(request):
     organizers = Organizer.objects.all()
     serializer = OrganizerSerializer(organizers, many=True)
-    return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)
+    return Response({"organizers": serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
