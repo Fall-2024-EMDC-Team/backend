@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from .Maps.MapScoreSheet import delete_score_sheet_mapping
-from ..models import Scoresheet, Teams, Judge, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum
+from ..models import Scoresheet, Teams, Judge, MapClusterToTeam, MapScoresheetToTeamJudge, MapJudgeToCluster, ScoresheetEnum, Contest, MapContestToTeam
 from ..serializers import ScoresheetSerializer, MapScoreSheetToTeamJudgeSerializer
 
 @api_view(["GET"])
@@ -559,3 +559,143 @@ def get_scoresheet_details_by_team(request, team_id):
         4: penalties_scoresheet_response
     }, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_scoresheet_details_for_contest(request):
+    contest = get_object_or_404(Contest, id=request.data["contestid"])
+    team_mappings = MapContestToTeam.objects.filter(contestid=contest.id)
+    team_responses = {}
+    for mapping in team_mappings:
+        team = get_object_or_404(Teams, id=mapping.teamid)
+        scoresheet_mappings = MapScoresheetToTeamJudge.objects.filter(teamid=team.id)
+        scoresheets = Scoresheet.objects.filter(id__in=scoresheet_mappings.values_list('scoresheetid', flat=True))
+        presentation_scoresheet_details = [[] for _ in range(9)]
+        journal_scoresheet_details = [[] for _ in range(9)]
+        machinedesign_scoresheet_details = [[] for _ in range(9)]
+        penalties_scoresheet_details = [[] for _ in range(23)]
+        for sheet in scoresheets:
+            if sheet.sheetType == 1:
+                presentation_scoresheet_details[0].append(sheet.field1)
+                presentation_scoresheet_details[1].append(sheet.field2)
+                presentation_scoresheet_details[2].append(sheet.field3)
+                presentation_scoresheet_details[3].append(sheet.field4)
+                presentation_scoresheet_details[4].append(sheet.field5)
+                presentation_scoresheet_details[5].append(sheet.field6)
+                presentation_scoresheet_details[6].append(sheet.field7)
+                presentation_scoresheet_details[7].append(sheet.field8)
+                presentation_scoresheet_details[8].append(sheet.field9)
+            elif sheet.sheetType == 2:
+                journal_scoresheet_details[0].append(sheet.field1)
+                journal_scoresheet_details[1].append(sheet.field2)
+                journal_scoresheet_details[2].append(sheet.field3)
+                journal_scoresheet_details[3].append(sheet.field4)
+                journal_scoresheet_details[4].append(sheet.field5)
+                journal_scoresheet_details[5].append(sheet.field6)
+                journal_scoresheet_details[6].append(sheet.field7)
+                journal_scoresheet_details[7].append(sheet.field8)
+                journal_scoresheet_details[8].append(sheet.field9)
+            elif sheet.sheetType == 3:
+                machinedesign_scoresheet_details[0].append(sheet.field1)
+                machinedesign_scoresheet_details[1].append(sheet.field2)
+                machinedesign_scoresheet_details[2].append(sheet.field3)
+                machinedesign_scoresheet_details[3].append(sheet.field4)
+                machinedesign_scoresheet_details[4].append(sheet.field5)
+                machinedesign_scoresheet_details[5].append(sheet.field6)
+                machinedesign_scoresheet_details[6].append(sheet.field7)
+                machinedesign_scoresheet_details[7].append(sheet.field8)
+                machinedesign_scoresheet_details[8].append(sheet.field9)
+            elif sheet.sheetType == 4:
+                penalties_scoresheet_details[0].append(sheet.field1)
+                penalties_scoresheet_details[1].append(sheet.field2)
+                penalties_scoresheet_details[2].append(sheet.field3)
+                penalties_scoresheet_details[3].append(sheet.field4)
+                penalties_scoresheet_details[4].append(sheet.field5)
+                penalties_scoresheet_details[5].append(sheet.field6)
+                penalties_scoresheet_details[6].append(sheet.field7)
+                penalties_scoresheet_details[7].append(sheet.field8)
+                penalties_scoresheet_details[8].append(sheet.field10)
+                penalties_scoresheet_details[9].append(sheet.field11)
+                penalties_scoresheet_details[10].append(sheet.field12)
+                penalties_scoresheet_details[11].append(sheet.field13)
+                penalties_scoresheet_details[12].append(sheet.field14)
+                penalties_scoresheet_details[13].append(sheet.field15)
+                penalties_scoresheet_details[14].append(sheet.field16)
+                penalties_scoresheet_details[15].append(sheet.field17)
+                penalties_scoresheet_details[16].append(sheet.field18)
+                penalties_scoresheet_details[17].append(sheet.field19)
+                penalties_scoresheet_details[18].append(sheet.field20)
+                penalties_scoresheet_details[19].append(sheet.field21)
+                penalties_scoresheet_details[20].append(sheet.field22)
+                penalties_scoresheet_details[21].append(sheet.field23)
+                penalties_scoresheet_details[22].append(sheet.field24)
+
+
+        presentation_scoresheet_response = {
+          "1": presentation_scoresheet_details[0],
+          "2": presentation_scoresheet_details[1],
+          "3": presentation_scoresheet_details[2],
+          "4": presentation_scoresheet_details[3],
+          "5": presentation_scoresheet_details[4],
+          "6": presentation_scoresheet_details[5],
+          "7": presentation_scoresheet_details[6],
+          "8": presentation_scoresheet_details[7],
+          "9": presentation_scoresheet_details[8],
+        }
+        journal_scoresheet_response = {
+          "1": journal_scoresheet_details[0],
+          "2": journal_scoresheet_details[1],
+          "3": journal_scoresheet_details[2],
+          "4": journal_scoresheet_details[3],
+          "5": journal_scoresheet_details[4],
+          "6": journal_scoresheet_details[5],
+          "7": journal_scoresheet_details[6],
+          "8": journal_scoresheet_details[7],
+          "9": journal_scoresheet_details[8],
+        }
+        machinedesign_scoresheet_response = {
+          "1": machinedesign_scoresheet_details[0],
+          "2": machinedesign_scoresheet_details[1],
+          "3": machinedesign_scoresheet_details[2],
+          "4": machinedesign_scoresheet_details[3],
+          "5": machinedesign_scoresheet_details[4],
+          "6": machinedesign_scoresheet_details[5],
+          "7": machinedesign_scoresheet_details[6],
+          "8": machinedesign_scoresheet_details[7],
+          "9": machinedesign_scoresheet_details[8],
+        }
+        penalties_scoresheet_response = {
+          "1": penalties_scoresheet_details[0],
+          "2": penalties_scoresheet_details[1],
+          "3": penalties_scoresheet_details[2],
+          "4": penalties_scoresheet_details[3],
+          "5": penalties_scoresheet_details[4],
+          "6": penalties_scoresheet_details[5],
+          "7": penalties_scoresheet_details[6],
+          "8": penalties_scoresheet_details[7],
+          "10": penalties_scoresheet_details[8],
+          "11": penalties_scoresheet_details[9],
+          "12": penalties_scoresheet_details[10],
+          "13": penalties_scoresheet_details[11],
+          "14": penalties_scoresheet_details[12],
+          "15": penalties_scoresheet_details[13],
+          "16": penalties_scoresheet_details[14],
+          "17": penalties_scoresheet_details[15],
+          "18": penalties_scoresheet_details[16],
+          "19": penalties_scoresheet_details[17],
+          "20": penalties_scoresheet_details[18],
+          "21": penalties_scoresheet_details[19],
+          "22": penalties_scoresheet_details[20],
+          "23": penalties_scoresheet_details[21],
+          "24": penalties_scoresheet_details[22]
+        }
+        
+        team_responses[team.id] = {
+            "team_id": team.id,
+            "1": presentation_scoresheet_response,
+            "2": journal_scoresheet_response,
+            "3": machinedesign_scoresheet_response,
+            "4": penalties_scoresheet_response
+        }
+
+    return Response({"teams": team_responses}, status=status.HTTP_200_OK)

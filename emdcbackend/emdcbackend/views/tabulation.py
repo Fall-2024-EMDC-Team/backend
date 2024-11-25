@@ -71,8 +71,8 @@ def tabulate_scores(request):
 
       elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
         # Penalties are different from the other scoresheets, as the fields are broken up into different categories and are averaged in "buckets".
-        # first thing we check for is the journal penalties and machine spec penalties. to my knowledge, these are not averaged and are calculated once, but if they were to be an average we take it.
-        totalscores[6] = scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5 + scoresheet.field6 + scoresheet.field7
+        # first thing we check for is the journal penalties, presentation and machine spec penalties. to my knowledge, these are not averaged and are calculated once, but if they were to be an average we take it.
+        totalscores[6] = totalscores[6] +scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5 + scoresheet.field6 + scoresheet.field7
         totalscores[7] += 1
         # we then check for if there is penalties for run 1, and increment the counter since run penalties are taken as an average
         totalscores[8] = totalscores[8] + scoresheet.field8+ scoresheet.field10+ scoresheet.field11 + scoresheet.field12 + scoresheet.field13 + scoresheet.field14 + scoresheet.field15 + scoresheet.field16
@@ -81,6 +81,8 @@ def tabulate_scores(request):
         totalscores[10] = totalscores[10] + scoresheet.field17+ scoresheet.field18+ scoresheet.field19 + scoresheet.field20 + scoresheet.field21 + scoresheet.field22 + scoresheet.field23 + scoresheet.field24
         totalscores[11] += 1
     # scores are compiled but not averaged yet, we're going to average the scores and then save that score as the total score. 
+
+    # problem statement: 
     team.presentation_score = totalscores[0] / totalscores[1]
     team.journal_score = totalscores[2] / totalscores[3]
     team.machinedesign_score = totalscores[4] / totalscores[5]
