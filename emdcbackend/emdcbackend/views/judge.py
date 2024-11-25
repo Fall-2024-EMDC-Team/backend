@@ -98,6 +98,7 @@ def edit_judge(request):
         new_penalties = request.data["penalties"]
         new_cluster = request.data["clusterid"]
         new_username = request.data["username"]
+        new_role = request.data["role"]
         with transaction.atomic():
             cluster = MapJudgeToCluster.objects.get(judgeid=judge.id)  # get cluster id from mapping
             clusterid = cluster.clusterid
@@ -114,6 +115,8 @@ def edit_judge(request):
                 judge.last_name = new_last_name
             if new_phone_number != judge.phone_number:
                 judge.phone_number = new_phone_number
+            if new_role != judge.role:
+                judge.role = new_role
 
             # if the judge is being moved to a new cluster
             if clusterid != new_cluster:
