@@ -40,7 +40,8 @@ class Judge(models.Model):
     presentation=models.BooleanField()
     mdo=models.BooleanField()
     journal=models.BooleanField()
-    penalties=models.BooleanField()
+    runpenalties=models.BooleanField()
+    otherpenalties=models.BooleanField()
     role = models.IntegerField(choices=JudgeRoleEnum.choices, null=True, blank=True)
 
 class MapJudgeToCluster(models.Model):
@@ -99,7 +100,8 @@ class ScoresheetEnum(models.IntegerChoices):
     PRESENTATION = 1
     JOURNAL = 2
     MACHINEDESIGN = 3
-    PENALTIES = 4
+    RUNPENALTIES = 4
+    OTHERPENALTIES = 5
 
 class Scoresheet(models.Model):
     sheetType = models.IntegerField(choices=ScoresheetEnum.choices)
@@ -121,17 +123,11 @@ class Scoresheet(models.Model):
     field15 = models.FloatField(null=True, blank=True)
     field16 = models.FloatField(null=True, blank=True)
     field17 = models.FloatField(null=True, blank=True)
-    field18 = models.FloatField(null=True, blank=True)
-    field19 = models.FloatField(null=True, blank=True)
-    field20 = models.FloatField(null=True, blank=True)
-    field21 = models.FloatField(null=True, blank=True)
-    field22 = models.FloatField(null=True, blank=True)
-    field23 = models.FloatField(null=True, blank=True)
-    field24 = models.FloatField(null=True, blank=True)
+    
     
     
     def clean(self):
-        if self.sheetType == ScoresheetEnum.PENALTIES:
+        if self.sheetType == ScoresheetEnum.RUNPENALTIES:
             required_fields = {
                 'field1': 'Field 1 is required for PENALTIES.',
                 'field2': 'Field 2 is required for PENALTIES.',
@@ -149,13 +145,6 @@ class Scoresheet(models.Model):
                 'field15': 'Field 15 is required for PENALTIES.',
                 'field16': 'Field 16 is required for PENALTIES.',
                 'field17': 'Field 17 is required for PENALTIES.',
-                'field18': 'Field 18 is required for PENALTIES.',
-                'field19': 'Field 19 is required for PENALTIES.',
-                'field20': 'Field 20 is required for PENALTIES.',
-                'field21': 'Field 21 is required for PENALTIES.',
-                'field22': 'Field 22 is required for PENALTIES.',
-                'field23': 'Field 23 is required for PENALTIES.',
-                'field24': 'Field 24 is required for PENALTIES.',
             }
 
             errors = {}
@@ -165,6 +154,11 @@ class Scoresheet(models.Model):
 
             if errors:
                 raise ValidationError(errors)
+        elif self.sheetType == ScoresheetEnum.OTHERPENALTIES:
+            required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7']
+            for field in required_fields:
+                if getattr(self, field) is None:
+                    raise ValidationError({field: f'{field.capitalize()} is required.'})
         else:
             # For other types (Presentation, Journal, Machine Design), fields 1-8 must be filled
             required_fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7', 'field8']

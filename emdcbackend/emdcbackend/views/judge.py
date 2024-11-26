@@ -95,7 +95,8 @@ def edit_judge(request):
         new_presentation = request.data["presentation"]
         new_mdo = request.data["mdo"]
         new_journal = request.data["journal"]
-        new_penalties = request.data["penalties"]
+        new_runpenalties = request.data["runpenalties"]
+        new_otherpenalties = request.data["otherpenalties"]
         new_cluster = request.data["clusterid"]
         new_username = request.data["username"]
         new_role = request.data["role"]
@@ -124,7 +125,7 @@ def edit_judge(request):
                 delete_sheets_for_teams_in_cluster(judge.id, clusterid, judge.penalties, judge.presentation, judge.journal, judge.mdo)
 
                 # create new blank scoresheets
-                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_penalties, new_presentation, new_journal, new_mdo)
+                create_sheets_for_teams_in_cluster(judge.id, new_cluster, new_runpenalties, new_presentation, new_journal, new_mdo)
 
                 # delete the old cluster-judge mapping and create a new one
                 delete_cluster_judge_mapping(cluster.id)
@@ -140,40 +141,51 @@ def edit_judge(request):
                     judge.mdo = new_mdo
                 if judge.journal != new_journal:
                     judge.journal = new_journal
-                if judge.penalties != new_penalties:
-                    judge.penalties = new_penalties
+                if judge.runpenalties != new_runpenalties:
+                    judge.runpenalties = new_runpenalties
+                if judge.otherpenalties != new_otherpenalties:
+                    judge.otherpenalties = new_otherpenalties
 
                 clusterid = new_cluster
 
             else:
                 # if adding or removing scoresheets (no cluster change)
                 if new_presentation != judge.presentation and new_presentation == False:
-                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False, False)
                         judge.presentation = False
                 elif new_presentation != judge.presentation and new_presentation == True:
-                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False)
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False, False)
                         judge.presentation = True
 
-                if new_mdo != judge.mdo and new_mdo == False:
-                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
-                        judge.mdo = False
-                elif new_mdo != judge.mdo and new_mdo == True:
-                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True)
-                        judge.mdo = True
-
                 if new_journal != judge.journal and new_journal == False:
-                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False, False)
                         judge.journal = False
                 elif new_journal != judge.journal and new_journal == True:
-                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False)
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, True, False, False, False)
                         judge.journal = True
 
-                if new_penalties != judge.penalties and new_penalties == False:
-                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                        judge.penalties = False
-                elif new_penalties != judge.penalties and new_penalties == True:
-                        create_sheets_for_teams_in_cluster(judge.id, clusterid, True, False, False, False)
-                        judge.penalties = True
+                if new_mdo != judge.mdo and new_mdo == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False, False)
+                        judge.mdo = False
+                elif new_mdo != judge.mdo and new_mdo == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, True, False, False)
+                        judge.mdo = True
+
+                if new_runpenalties != judge.runpenalties and new_runpenalties == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True, False)
+                        judge.runpenalties = False
+                elif new_runpenalties != judge.runpenalties and new_runpenalties == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, True, False)
+                        judge.runpenalties = True
+
+                if new_otherpenalties != judge.otherpenalties and new_otherpenalties == False:
+                        delete_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, False, True)
+                        judge.otherpenalties = False
+                elif new_otherpenalties != judge.otherpenalties and new_otherpenalties == True:
+                        create_sheets_for_teams_in_cluster(judge.id, clusterid, False, False, False, False, True)
+                        judge.otherpenalties = True
+
+
 
             judge.save()
 
@@ -249,7 +261,8 @@ def create_user_and_judge(data):
         "presentation": data["presentation"],
         "mdo": data["mdo"],
         "journal": data["journal"],
-        "penalties": data["penalties"]
+        "runpenalties": data["runpenalties"],
+        "otherpenalties": data["otherpenalties"]
     }
     judge_response = create_judge_instance(judge_data)
     if not judge_response.get('id'):  # If judge creation fails, raise an exception
