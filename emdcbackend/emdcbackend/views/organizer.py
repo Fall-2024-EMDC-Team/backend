@@ -82,9 +82,12 @@ def make_organizer(organizer_data):
 @permission_classes([IsAuthenticated])
 def edit_organizer(request):
     organizer = get_object_or_404(Organizer, id=request.data["id"])
+    organizer_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ORGANIZER, relatedid=organizer.id)
+    user_id = organizer_mapping.uuid
+    user = get_object_or_404(Organizer, id=user_id)
+    user.username = request.data["username"]
     organizer.first_name = request.data["first_name"]
     organizer.last_name = request.data["last_name"]
-    organizer.region = request.data["region"]
     organizer.save()
     serializer = OrganizerSerializer(instance=organizer)
     return Response({"organizer": serializer.data}, status=status.HTTP_200_OK)
