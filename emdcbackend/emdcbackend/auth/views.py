@@ -57,8 +57,7 @@ def signup(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_user_by_id(request, user_id):
-    user_to_delete = get_object_or_404(User, id=user_id)
-    user_to_delete.delete()
+    delete_user(user_id)
     return Response({"detail": "User deleted successfully."}, status=status.HTTP_200_OK)
 
 
@@ -114,4 +113,8 @@ def create_user(user_data):
             return {"token": token.key, "user": serializer.data}
 
     raise ValidationError(serializer.errors)
+
+def delete_user(uuid):
+    user_to_delete = get_object_or_404(User, id=uuid)
+    user_to_delete.delete()
 

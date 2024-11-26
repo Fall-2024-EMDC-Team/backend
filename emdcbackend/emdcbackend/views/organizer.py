@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from ..models import Organizer, Teams, Scoresheet, MapScoresheetToTeamJudge
 from ..serializers import OrganizerSerializer
-from ..auth.views import create_user
+from ..auth.views import create_user, delete_user
 from .Maps.MapUserToRole import create_user_role_map
 from .Maps.MapContestToOrganizer import map_contest_to_organizer
 from ..models import MapUserToRole
@@ -84,8 +84,9 @@ def edit_organizer(request):
     organizer = get_object_or_404(Organizer, id=request.data["id"])
     organizer_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ORGANIZER, relatedid=organizer.id)
     user_id = organizer_mapping.uuid
-    user = get_object_or_404(Organizer, id=user_id)
+    user = get_object_or_404(User, id=user_id)
     user.username = request.data["username"]
+    user.save()
     organizer.first_name = request.data["first_name"]
     organizer.last_name = request.data["last_name"]
     organizer.save()
@@ -98,13 +99,14 @@ def edit_organizer(request):
 @permission_classes([IsAuthenticated])
 def delete_organizer(request, organizer_id):
     try:
-        organizer = get_object_or_404(Organizer, id=organizer_id)
-        organizer_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ORGANIZER, organizerid=organizer_id)
-        user_id = organizer_mapping.userid
-        organizer.delete()
-        organizer_mapping.delete()
-        delete_user_by_id(request, user_id)
-        return Response({"Detail": "Organizer deleted successfully."}, status=status.HTTP_200_OK)
+        with transaction.atomic():
+            organizer = get_object_or_404(Organizer, id=organizer_id)
+            organizer_mapping = MapUserToRole.objects.get(role=MapUserToRole.RoleEnum.ORGANIZER, relatedid=organizer_id)
+            user_id = organizer_mapping.uuid
+            organizer.delete()
+            organizer_mapping.delete()
+            delete_user(user_id)
+            return Response({"Detail": "Organizer deleted successfully."}, status=status.HTTP_200_OK)
     except Organizer.DoesNotExist:
         return Response({"error": "Organizer not found."}, status=status.HTTP_404_NOT_FOUND)
     except MapUserToRole.DoesNotExist:
