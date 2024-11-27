@@ -34,6 +34,8 @@ def create_score_sheet(request):
 @permission_classes([IsAuthenticated])
 def edit_score_sheet(request):
     scores = get_object_or_404(Scoresheet, id=request.data["id"])
+    scores.sheetType = request.data["sheetType"]
+    scores.isSubmitted = request.data["isSubmitted"]
     if scores.sheetType == ScoresheetEnum.OTHERPENALTIES:
         scores.field1 = request.data["field1"]
         scores.field2 = request.data["field2"]
@@ -329,13 +331,13 @@ def create_score_sheets_for_team(team, judges):
             )
             created_score_sheets.append(score_sheet)
         if judge.runpenalties:
-            score_sheet = create_base_score_sheet_penalties()
+            score_sheet = create_base_score_sheet_runpenalties()
             MapScoresheetToTeamJudge.objects.create(
                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.RUNPENALTIES
             )
             created_score_sheets.append(score_sheet)
         if judge.otherpenalties:
-            score_sheet = create_base_score_sheet_penalties()
+            score_sheet = create_base_score_sheet_otherpenalties()
             MapScoresheetToTeamJudge.objects.create(
                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.OTHERPENALTIES
             )
