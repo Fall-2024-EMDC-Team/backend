@@ -329,13 +329,13 @@ def create_score_sheets_for_team(team, judges):
             )
             created_score_sheets.append(score_sheet)
         if judge.runpenalties:
-            score_sheet = create_base_score_sheet_penalties()
+            score_sheet = create_base_score_sheet_runpenalties()
             MapScoresheetToTeamJudge.objects.create(
                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.RUNPENALTIES
             )
             created_score_sheets.append(score_sheet)
         if judge.otherpenalties:
-            score_sheet = create_base_score_sheet_penalties()
+            score_sheet = create_base_score_sheet_otherpenalties()
             MapScoresheetToTeamJudge.objects.create(
                 teamid=team.id, judgeid=judge.id, scoresheetid=score_sheet.id, sheetType=ScoresheetEnum.OTHERPENALTIES
             )
@@ -351,7 +351,7 @@ def get_scoresheet_id(judge_id, team_id, scoresheet_type):
         raise ValidationError({"error": "No scoresheet found"})
 
 # changed order of parameters to match judge serializer
-def delete_sheets_for_teams_in_cluster(judge_id, cluster_id,  presentation, journal, mdo, runpenalties, otherpenalties):
+def delete_sheets_for_teams_in_cluster(judge_id, cluster_id,  presentation, journal, mdo,runpenalties, otherpenalties):
     try:
         # Fetch all mappings for the teams in the cluster
         mappings = MapClusterToTeam.objects.filter(clusterid=cluster_id)

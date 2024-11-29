@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from ...models import MapScoresheetToTeamJudge, Scoresheet, MapContestToJudge
+from ...models import MapScoresheetToTeamJudge, Scoresheet, MapContestToJudge, MapJudgeToCluster
 from ...serializers import MapScoreSheetToTeamJudgeSerializer, ScoresheetSerializer
 
 
