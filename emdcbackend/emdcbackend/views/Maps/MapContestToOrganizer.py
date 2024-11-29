@@ -39,10 +39,10 @@ def map_contest_to_organizer(map_data):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_organizers_by_contest_id(request, contest_id):
-  organizer_ids = MapContestToOrganizer.objects.filter(request.data["id"])
+  organizer_ids = MapContestToOrganizer.objects.filter(contestid=contest_id)
   organizers = Organizer.objects.filter(id__in=organizer_ids)
   serializer = OrganizerSerializer(organizers, many=True)
-  return Response({"Judges": serializer.data()},status=status.HTTP_200_OK)
+  return Response({"Organizers": serializer.data},status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
