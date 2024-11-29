@@ -34,6 +34,8 @@ def create_score_sheet(request):
 @permission_classes([IsAuthenticated])
 def edit_score_sheet(request):
     scores = get_object_or_404(Scoresheet, id=request.data["id"])
+    scores.sheetType = request.data["sheetType"]
+    scores.isSubmitted = request.data["isSubmitted"]
     if scores.sheetType == ScoresheetEnum.OTHERPENALTIES:
         scores.field1 = request.data["field1"]
         scores.field2 = request.data["field2"]

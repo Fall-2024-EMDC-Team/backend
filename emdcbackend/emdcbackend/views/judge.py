@@ -55,10 +55,11 @@ def create_judge(request):
                 create_sheets_for_teams_in_cluster(
                     judge_response.get("id"),
                     request.data["clusterid"],
-                    request.data["penalties"],
                     request.data["presentation"],
                     request.data["journal"],
-                    request.data["mdo"]
+                    request.data["mdo"],
+                    request.data["runpenalties"],
+                    request.data["otherpenalties"],
                 )
             ]
 
@@ -95,8 +96,8 @@ def edit_judge(request):
         new_presentation = request.data["presentation"]
         new_mdo = request.data["mdo"]
         new_journal = request.data["journal"]
-        new_runpenalties = request.data["runpenalties"]
-        new_otherpenalties = request.data["otherpenalties"]
+        new_runpenalties = request.data["run_penalties"]
+        new_otherpenalties = request.data["other_penalties"]
         new_cluster = request.data["clusterid"]
         new_username = request.data["username"]
         new_role = request.data["role"]
