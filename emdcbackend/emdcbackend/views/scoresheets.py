@@ -635,7 +635,8 @@ def get_scoresheet_details_for_contest(request):
         presentation_scoresheet_details = [[] for _ in range(9)]
         journal_scoresheet_details = [[] for _ in range(9)]
         machinedesign_scoresheet_details = [[] for _ in range(9)]
-        penalties_scoresheet_details = [[] for _ in range(23)]
+        run_penalties_scoresheet_details = [[] for _ in range(16)]
+        other_penalties_scoresheet_details = [[] for _ in range(7)]
         for sheet in scoresheets:
             if sheet.sheetType == 1:
                 presentation_scoresheet_details[0].append(sheet.field1)
@@ -668,33 +669,31 @@ def get_scoresheet_details_for_contest(request):
                 machinedesign_scoresheet_details[7].append(sheet.field8)
                 machinedesign_scoresheet_details[8].append(sheet.field9)
             elif sheet.sheetType == 4:
-                penalties_scoresheet_details[0].append(sheet.field1)
-                penalties_scoresheet_details[1].append(sheet.field2)
-                penalties_scoresheet_details[2].append(sheet.field3)
-                penalties_scoresheet_details[3].append(sheet.field4)
-                penalties_scoresheet_details[4].append(sheet.field5)
-                penalties_scoresheet_details[5].append(sheet.field6)
-                penalties_scoresheet_details[6].append(sheet.field7)
-                penalties_scoresheet_details[7].append(sheet.field8)
-                penalties_scoresheet_details[8].append(sheet.field10)
-                penalties_scoresheet_details[9].append(sheet.field11)
-                penalties_scoresheet_details[10].append(sheet.field12)
-                penalties_scoresheet_details[11].append(sheet.field13)
-                penalties_scoresheet_details[12].append(sheet.field14)
-                penalties_scoresheet_details[13].append(sheet.field15)
-                penalties_scoresheet_details[14].append(sheet.field16)
-                penalties_scoresheet_details[15].append(sheet.field17)
-                penalties_scoresheet_details[16].append(sheet.field18)
-                penalties_scoresheet_details[17].append(sheet.field19)
+                run_penalties_scoresheet_details[0].append(sheet.field1)
+                run_penalties_scoresheet_details[1].append(sheet.field2)
+                run_penalties_scoresheet_details[2].append(sheet.field3)
+                run_penalties_scoresheet_details[3].append(sheet.field4)
+                run_penalties_scoresheet_details[4].append(sheet.field5)
+                run_penalties_scoresheet_details[5].append(sheet.field6)
+                run_penalties_scoresheet_details[6].append(sheet.field7)
+                run_penalties_scoresheet_details[7].append(sheet.field8)
+                run_penalties_scoresheet_details[8].append(sheet.field10)
+                run_penalties_scoresheet_details[9].append(sheet.field11)
+                run_penalties_scoresheet_details[10].append(sheet.field12)
+                run_penalties_scoresheet_details[11].append(sheet.field13)
+                run_penalties_scoresheet_details[12].append(sheet.field14)
+                run_penalties_scoresheet_details[13].append(sheet.field15)
+                run_penalties_scoresheet_details[14].append(sheet.field16)
+                run_penalties_scoresheet_details[15].append(sheet.field17)
             
             elif sheet.sheetType == 5:
-                penalties_scoresheet_details[0].append(sheet.field1)
-                penalties_scoresheet_details[1].append(sheet.field2)
-                penalties_scoresheet_details[2].append(sheet.field3)
-                penalties_scoresheet_details[3].append(sheet.field4)
-                penalties_scoresheet_details[4].append(sheet.field5)
-                penalties_scoresheet_details[5].append(sheet.field6)
-                penalties_scoresheet_details[6].append(sheet.field7)
+                other_penalties_scoresheet_details[0].append(sheet.field1)
+                other_penalties_scoresheet_details[1].append(sheet.field2)
+                other_penalties_scoresheet_details[2].append(sheet.field3)
+                other_penalties_scoresheet_details[3].append(sheet.field4)
+                other_penalties_scoresheet_details[4].append(sheet.field5)
+                other_penalties_scoresheet_details[5].append(sheet.field6)
+                other_penalties_scoresheet_details[6].append(sheet.field7)
 
 
         presentation_scoresheet_response = {
@@ -731,33 +730,31 @@ def get_scoresheet_details_for_contest(request):
           "9": machinedesign_scoresheet_details[8],
         }
         runpenalties_scoresheet_response = {
-          "1": penalties_scoresheet_details[0],
-          "2": penalties_scoresheet_details[1],
-          "3": penalties_scoresheet_details[2],
-          "4": penalties_scoresheet_details[3],
-          "5": penalties_scoresheet_details[4],
-          "6": penalties_scoresheet_details[5],
-          "7": penalties_scoresheet_details[6],
-          "8": penalties_scoresheet_details[7],
-          "10": penalties_scoresheet_details[8],
-          "11": penalties_scoresheet_details[9],
-          "12": penalties_scoresheet_details[10],
-          "13": penalties_scoresheet_details[11],
-          "14": penalties_scoresheet_details[12],
-          "15": penalties_scoresheet_details[13],
-          "16": penalties_scoresheet_details[14],
-          "17": penalties_scoresheet_details[15],
-          "18": penalties_scoresheet_details[16],
-          "19": penalties_scoresheet_details[17],
+          "1": run_penalties_scoresheet_details[0],
+          "2": run_penalties_scoresheet_details[1],
+          "3": run_penalties_scoresheet_details[2],
+          "4": run_penalties_scoresheet_details[3],
+          "5": run_penalties_scoresheet_details[4],
+          "6": run_penalties_scoresheet_details[5],
+          "7": run_penalties_scoresheet_details[6],
+          "8": run_penalties_scoresheet_details[7],
+          "10": run_penalties_scoresheet_details[8],
+          "11": run_penalties_scoresheet_details[9],
+          "12": run_penalties_scoresheet_details[10],
+          "13": run_penalties_scoresheet_details[11],
+          "14": run_penalties_scoresheet_details[12],
+          "15": run_penalties_scoresheet_details[13],
+          "16": run_penalties_scoresheet_details[14],
+          "17": run_penalties_scoresheet_details[15],
         }
         otherpenalties_scoresheet_response = {
-          "1": penalties_scoresheet_details[0],
-          "2": penalties_scoresheet_details[1],
-          "3": penalties_scoresheet_details[2],
-          "4": penalties_scoresheet_details[3],
-          "5": penalties_scoresheet_details[4],
-          "6": penalties_scoresheet_details[5],
-          "7": penalties_scoresheet_details[6],
+          "1": other_penalties_scoresheet_details[0],
+          "2": other_penalties_scoresheet_details[1],
+          "3": other_penalties_scoresheet_details[2],
+          "4": other_penalties_scoresheet_details[3],
+          "5": other_penalties_scoresheet_details[4],
+          "6": other_penalties_scoresheet_details[5],
+          "7": other_penalties_scoresheet_details[6],
         }
 
         team_responses[team.id] = {
