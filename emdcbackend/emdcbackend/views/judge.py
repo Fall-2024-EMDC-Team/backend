@@ -96,8 +96,8 @@ def edit_judge(request):
         new_presentation = request.data["presentation"]
         new_mdo = request.data["mdo"]
         new_journal = request.data["journal"]
-        new_runpenalties = request.data["run_penalties"]
-        new_otherpenalties = request.data["other_penalties"]
+        new_runpenalties = request.data["runpenalties"]
+        new_otherpenalties = request.data["otherpenalties"]
         new_cluster = request.data["clusterid"]
         new_username = request.data["username"]
         new_role = request.data["role"]
@@ -263,7 +263,8 @@ def create_user_and_judge(data):
         "mdo": data["mdo"],
         "journal": data["journal"],
         "runpenalties": data["runpenalties"],
-        "otherpenalties": data["otherpenalties"]
+        "otherpenalties": data["otherpenalties"],
+        "role": data["role"]
     }
     judge_response = create_judge_instance(judge_data)
     if not judge_response.get('id'):  # If judge creation fails, raise an exception
