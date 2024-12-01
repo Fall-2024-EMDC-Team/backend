@@ -93,19 +93,23 @@ def delete_contest(request, contest_id):
     cluster_ids = cluster_mappings.values_list("clusterid", flat=True)
     clusters = JudgeClusters.objects.filter(id__in=cluster_ids)
 
-    judge_mappings = MapContestToJudge.objects.filter(contestid=contest_id)
+    judge_mappings = MapContestToJudge.objects.filter(contestid=contest_id) # call delete_judge function (scoresheets)
     judges = Judge.objects.filter(contestid=contest_id)
 
     organizer_mappings = MapContestToOrganizer.objects.filter(contestid=contest_id)
     organizer_ids = organizer_mappings.values_list("organizerid", flat=True)
     organizers = Organizer.objects.filter(id__in=organizer_ids)
 
+    team_mappings = MapContestToTeam.objects.filter(contestid=contest_id)
+    team_ids = team_mappings.values_list("teamid", flat=True)
+    teams = Teams.objects.filter(id__in=team_ids)
+
     # delete contest
     contest.delete()
     return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
   
   except ValidationError as e:  # Catching ValidationErrors specifically
-    return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
   
   except Exception as e:
     return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
