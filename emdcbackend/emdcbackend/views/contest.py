@@ -10,8 +10,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-
-from ..models import Contest
+from ..models import Contest, MapContestToCluster, JudgeClusters, MapContestToJudge, Judge, MapContestToOrganizer, Organizer
 from ..serializers import ContestSerializer
 from .clusters import create_cluster, make_cluster
 from .Maps.MapClusterToContest import map_cluster_to_contest,create_cluster_contest_mapping
@@ -87,8 +86,26 @@ def edit_contest(request):
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_contest(request,contest_id):
-  contest = get_object_or_404(Contest, id=contest_id)
-  contest.delete()
-  return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
+def delete_contest(request, contest_id):
+  try:
+    contest = get_object_or_404(Contest, id=contest_id)
+    cluster_mappings = MapContestToCluster.objects.filter(contestid=contest_id)
+    cluster_ids = cluster_mappings.values_list("clusterid", flat=True)
+    clusters = JudgeClusters.objects.filter(id__in=cluster_ids)
 
+    judge_mappings = MapContestToJudge.objects.filter(contestid=contest_id)
+    judges = Judge.objects.filter(contestid=contest_id)
+
+    organizer_mappings = MapContestToOrganizer.objects.filter(contestid=contest_id)
+    organizer_ids = organizer_mappings.values_list("organizerid", flat=True)
+    organizers = Organizer.objects.filter(id__in=organizer_ids)
+
+    # delete contest
+    contest.delete()
+    return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
+  
+  except ValidationError as e:  # Catching ValidationErrors specifically
+    return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+  
+  except Exception as e:
+    return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
