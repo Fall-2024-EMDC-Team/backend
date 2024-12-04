@@ -1,196 +1,11 @@
 {
 	"info": {
-		"_postman_id": "9751af3c-c0a6-4619-af73-b0fa1570c86e",
+		"_postman_id": "cfe75a26-d182-4f01-be4d-c01748c175f1",
 		"name": "EMDC",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38179176"
+		"_exporter_id": "29766549"
 	},
 	"item": [
-		{
-			"name": "Admins",
-			"item": [
-				{
-					"name": "Get Admin",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/admin/get/{{admin_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"admin",
-								"get",
-								"{{admin_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Admins",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/admin/getAll/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"admin",
-								"getAll",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Admin",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"first_name\":\"admin\", \"last_name\":\"adminson\", \"region\":\"region1\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/admin/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"admin",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Admin",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{admin_id}}\",\"first_name\":\"name\", \"last_name\":\"lastname\", \"region\":\"region1\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/admin/edit/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"admin",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Admin",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/admin/delete/{{admin_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"admin",
-								"delete",
-								"{{admin_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
 		{
 			"name": "Authentication",
 			"item": [
@@ -210,13 +25,14 @@
 							"raw": "{\"username\":\"example@judge.com\",\"password\":\"password\"}"
 						},
 						"url": {
-							"raw": "http://localhost:7004/signup/",
+							"raw": "http://localhost:7004/api/signup/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"signup",
 								""
 							]
@@ -298,149 +114,8 @@
 			]
 		},
 		{
-			"name": "Users",
-			"item": [
-				{
-					"name": "Get User",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/user/get/{{user_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"user",
-								"get",
-								"{{user_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit User",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 203d19e8fa120b14e80b9aff8cfa510e6fbe9967",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{user_id}}\", \"username\":\"example@judge.com\", \"password\":\"password\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/user/edit/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"user",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 008a5b0f775171c6af6830a4c1afc9dcb1cb3e67",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{user_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/user/delete/{{user_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"user",
-								"delete",
-								"{{user_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Judges",
 			"item": [
-				{
-					"name": "Get Judge",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/judge/get/{{judge_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"judge",
-								"get",
-								"{{judge_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Create Judge",
 					"request": {
@@ -453,13 +128,13 @@
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"first_name\":\"examplefirstname\", \"last_name\":\"examplelastname\", \"contestid\":\"{{contest_id}}\", \"presentation\":\"false\", \"mdo\": \"false\", \"journal\": \"false\", \"penalties\": \"true\"}",
+							"raw": "{\"username\":\"judge2@judge.com\", \"password\":\"password1\", \"first_name\":\"examplefirstname\", \"last_name\":\"examplelastname\", \"phone_number\":\"1111111111\",  \"presentation\":\"false\", \"mdo\": \"false\", \"journal\": \"false\", \"penalties\": \"true\", \"contestid\":1,\"clusterid\":2}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -467,13 +142,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/judge/create/",
+							"raw": "http://localhost:7004/api/judge/create/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"judge",
 								"create",
 								""
@@ -522,42 +198,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Delete Judge",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/judge/delete/{{judge_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"judge",
-								"delete",
-								"{{judge_id}}",
-								""
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -565,319 +205,49 @@
 			"name": "Organizers",
 			"item": [
 				{
-					"name": "Get Organizer",
+					"name": "DQ Team Organizer",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": " application/json",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": " Token cbee34e8440d9852773c474d33aa2eb43f848bd1",
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"teamid\":3}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:7004/organizer/get/{{organizer_id}}/",
+							"raw": "http://localhost:7004/api/organizer/disqualifyTeam/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"organizer",
-								"get",
-								"{{organizer_id}}",
+								"disqualifyTeam",
 								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Organizer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"firstname\":\"example\", \"lastname\":\"examplelast\"}",
-							"options": {
-								"raw": {
-									"language": "json"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/organizer/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"organizer",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Organizer",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 203d19e8fa120b14e80b9aff8cfa510e6fbe9967",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{organizer_id}}\", \"username\":\"example@judge.com\", \"password\":\"password\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/organier/edit/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"organier",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User Copy",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 008a5b0f775171c6af6830a4c1afc9dcb1cb3e67",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{organizer_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/organizer/delete/{{organizer_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"organizer",
-								"delete",
-								"{{organizer_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Coaches",
-			"item": [
-				{
-					"name": "Get Coach",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/coach/get/{{coach_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"coach",
-								"get",
-								"{{coach_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Coach",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/coach/getAll/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"coach",
-								"getAll",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Coach",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"first_name\": \"examplecoachfirstname\", \"last_name\": \"examplecoachlastname\", \"school_name\": \"Clown College\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/coach/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"coach",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Coach",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\": \"{{coach_id}}\",\"first_name\": \"goose\", \"last_name\": \"examplelastname\", \"school_name\": \"Clown College\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/coach/edit/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"coach",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Coach",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{coach_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/coach/delete/{{coach_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"coach",
-								"delete",
-								"{{coach_id}}",
-								""
 							]
 						}
 					},
@@ -916,19 +286,19 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": " Token 608261021dff6f9372fb835109d472ba2e2e3db6",
+								"key": "Content-Type",
+								"value": " application/json",
 								"type": "text"
 							},
 							{
-								"key": "Content-Type",
-								"value": " application/json",
+								"key": "Authorization",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-              "raw": "{\"team_name\":\"meme machine\", \"username\":\"example@judge.com\", \"first_name\":\"testcoachfirstname\", \"last_name\":\"testcoachlastname\", \"journal_score\":0, \"presentation_score\":0, \"machinedesign_score\":0, \"score_penalties\":0, \"contestid\":1, \"clusterid\":1}",
+							"raw": "{\"team_name\":\"meme machine03\", \r\n\"username\":\"bodie@judge.com\",\r\n\"password\":\"password1\",\r\n\"first_name\":\"testcoachfirstname\",\r\n\"last_name\":\"testcoachlastname\",\r\n\"journal_score\":0, \r\n\"presentation_score\":0, \r\n\"machinedesign_score\":0, \r\n\"penalties_score\":0,\r\n\"total_score\": 0,\r\n\"contestid\":1,\r\n\"clusterid\":2\r\n }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -936,13 +306,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/team/create/",
+							"raw": "http://localhost:7004/api/team/create/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"team",
 								"create",
 								""
@@ -1033,31 +404,29 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Mapping",
-			"item": [
+				},
 				{
-					"name": "Map Coach To Team",
+					"name": "Get Teams By Cluster Rank",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": " application/json",
+								"value": "application/json",
 								"type": "text"
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"teamid\":\"{{team_id}}\", \"coachid\":\"{{coach_id}}\"}",
+							"raw": "{\"clusterid\":2}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1065,537 +434,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/mapping/coachToTeam/create/",
+							"raw": "http://localhost:7004/api/mapping/clusterToTeam/getTeamsByClusterRank/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"mapping",
-								"coachToTeam",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Coach To Team",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/coachToTeam/getCoachByTeam/{{team_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"coachToTeam",
-								"getCoachByTeam",
-								"{{team_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Coach To Team",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/mapping/coachToTeam/delete/{{map_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"coachToTeam",
-								"delete",
-								"{{map_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Map Contest To Judge",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"contestid\":\"{{contest_id}}\", \"coachid\":\"{{judge_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToJudge/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToJudge",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Contest To Judge",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToJudge/getContestByJudge/{{judge_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToJudge",
-								"getContestByJudge",
-								"{{judge_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Contest To Judge",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToJudge/delete/{{map_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToJudge",
-								"delete",
-								"{{map_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Map Contest To Team",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"contestid\":\"{{contest_id}}\", \"teamid\":\"{{team_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToTeam/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToTeam",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Contest To Team",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToTeam/getContestByTeam/{{team_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToTeam",
-								"getContestByTeam",
-								"{{team_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Contest To Team",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToTeam/delete/{{map_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToTeam",
-								"delete",
-								"{{map_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Map Contest To Organizer",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"contestid\":\"{{contest_id}}\", \"organizerid\":\"{{organizer_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToOrganizer/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToOrganizer",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Contest To Organizer",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token f4c74daaaf73ff94f77ae9d956776d8602b940cd",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToOrganizer/getByOrganizer/{{organizer_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToOrganizer",
-								"getByOrganizer",
-								"{{organizer_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Contest To Team Copy",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/mapping/contestToOrganizer/delete/{{map_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"contestToOrganizer",
-								"delete",
-								"{{map_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Judges by Contest ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/judgeToContest/getAllJudges/{{contest_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"judgeToContest",
-								"getAllJudges",
-								"{{contest_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Teams By Contest ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/teamToContest/getTeamsByContest/{{contest_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"teamToContest",
-								"getTeamsByContest",
-								"{{contest_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Organizers By Contest ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/mapping/organizerToContest/getOrganizersByContest/{{contest_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"organizerToContest",
-								"getOrganizersByContest",
-								"{{contest_id}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Map User To Role",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"role\":1, \"uuid\":1, \"relatedid\":1}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/mapping/userToRole/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"userToRole",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User To Role",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:7004/mapping/userToRole/delete/{{map_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"mapping",
-								"userToRole",
-								"delete",
-								"{{map_id}}",
+								"clusterToTeam",
+								"getTeamsByClusterRank",
 								""
 							]
 						}
@@ -1684,13 +533,13 @@
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"cluster_name\":\"cluster example\"}",
+							"raw": "{\"cluster_name\":\"cluster example\",\"contestid\":1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1698,13 +547,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/cluster/create/",
+							"raw": "http://localhost:7004/api/cluster/create/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"cluster",
 								"create",
 								""
@@ -1878,13 +728,13 @@
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"contest_name\":\"contest name\", \"is_open\":\"False\", \"is_tabulated\":\"False\"}",
+							"raw": "{\"name\":\"contest name\",\"date\":\"2025-1-1\", \"is_open\":\"False\", \"is_tabulated\":\"False\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1892,13 +742,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/contest/create/",
+							"raw": "http://localhost:7004/api/contest/create/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"contest",
 								"create",
 								""
@@ -1996,7 +847,7 @@
 			"name": "Scoresheets",
 			"item": [
 				{
-					"name": "Get Schoresheet",
+					"name": "Get Master Scoresheet Details",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -2010,46 +861,138 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Token 856397846cd22298785c44636d5ec1d5dda93ac2",
+								"value": "Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:7004/scoreSheet/get/{{scores_id}}/",
+							"raw": "http://localhost:7004/api/scoreSheet/getMasterDetails/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"scoreSheet",
-								"get",
-								"{{scores_id}}",
+								"getMasterDetails",
 								""
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Master Scoresheet Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": " application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"contestid\":1}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:7004/api/scoreSheet/getMasterDetails/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "7004",
+									"path": [
+										"api",
+										"scoreSheet",
+										"getMasterDetails",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 24 Nov 2024 22:32:23 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.20"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, origin, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "OPTIONS, GET"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1934"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"teams\": {\n        \"1\": {\n            \"1\": {\n                \"1\": [\n                    31,\n                    0\n                ],\n                \"2\": [\n                    15,\n                    0\n                ],\n                \"3\": [\n                    3,\n                    0\n                ],\n                \"4\": [\n                    6,\n                    0\n                ],\n                \"5\": [\n                    3,\n                    0\n                ],\n                \"6\": [\n                    6,\n                    0\n                ],\n                \"7\": [\n                    9,\n                    0\n                ],\n                \"8\": [\n                    7,\n                    0\n                ],\n                \"9\": [\n                    \"Sample Notes\",\n                    \"\"\n                ]\n            },\n            \"2\": {\n                \"1\": [\n                    0,\n                    0\n                ],\n                \"2\": [\n                    0,\n                    0\n                ],\n                \"3\": [\n                    0,\n                    0\n                ],\n                \"4\": [\n                    0,\n                    0\n                ],\n                \"5\": [\n                    0,\n                    0\n                ],\n                \"6\": [\n                    0,\n                    0\n                ],\n                \"7\": [\n                    0,\n                    0\n                ],\n                \"8\": [\n                    0,\n                    0\n                ],\n                \"9\": [\n                    \"\",\n                    \"\"\n                ]\n            },\n            \"3\": {\n                \"1\": [\n                    0,\n                    0\n                ],\n                \"2\": [\n                    0,\n                    0\n                ],\n                \"3\": [\n                    0,\n                    0\n                ],\n                \"4\": [\n                    0,\n                    0\n                ],\n                \"5\": [\n                    0,\n                    0\n                ],\n                \"6\": [\n                    0,\n                    0\n                ],\n                \"7\": [\n                    0,\n                    0\n                ],\n                \"8\": [\n                    0,\n                    0\n                ],\n                \"9\": [\n                    \"\",\n                    \"\"\n                ]\n            },\n            \"4\": {\n                \"1\": [\n                    0,\n                    0\n                ],\n                \"2\": [\n                    0,\n                    0\n                ],\n                \"3\": [\n                    0,\n                    0\n                ],\n                \"4\": [\n                    0,\n                    0\n                ],\n                \"5\": [\n                    0,\n                    0\n                ],\n                \"6\": [\n                    0,\n                    0\n                ],\n                \"7\": [\n                    0,\n                    0\n                ],\n                \"8\": [\n                    0,\n                    0\n                ],\n                \"10\": [\n                    0,\n                    0\n                ],\n                \"11\": [\n                    0,\n                    0\n                ],\n                \"12\": [\n                    0,\n                    0\n                ],\n                \"13\": [\n                    0,\n                    0\n                ],\n                \"14\": [\n                    0,\n                    0\n                ],\n                \"15\": [\n                    0,\n                    0\n                ],\n                \"16\": [\n                    0,\n                    0\n                ],\n                \"17\": [\n                    0,\n                    0\n                ],\n                \"18\": [\n                    0,\n                    0\n                ],\n                \"19\": [\n                    0,\n                    0\n                ],\n                \"20\": [\n                    0,\n                    0\n                ],\n                \"21\": [\n                    0,\n                    0\n                ],\n                \"22\": [\n                    0,\n                    0\n                ],\n                \"23\": [\n                    0,\n                    0\n                ],\n                \"24\": [\n                    0,\n                    0\n                ]\n            },\n            \"team_id\": 1\n        },\n        \"2\": {\n            \"1\": {\n                \"1\": [\n                    31\n                ],\n                \"2\": [\n                    15\n                ],\n                \"3\": [\n                    3\n                ],\n                \"4\": [\n                    6\n                ],\n                \"5\": [\n                    3\n                ],\n                \"6\": [\n                    6\n                ],\n                \"7\": [\n                    9\n                ],\n                \"8\": [\n                    7\n                ],\n                \"9\": [\n                    \"Sample Notes For Team 2\"\n                ]\n            },\n            \"2\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"9\": [\n                    \"\"\n                ]\n            },\n            \"3\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"9\": [\n                    \"\"\n                ]\n            },\n            \"4\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"10\": [\n                    0\n                ],\n                \"11\": [\n                    0\n                ],\n                \"12\": [\n                    0\n                ],\n                \"13\": [\n                    0\n                ],\n                \"14\": [\n                    0\n                ],\n                \"15\": [\n                    0\n                ],\n                \"16\": [\n                    0\n                ],\n                \"17\": [\n                    0\n                ],\n                \"18\": [\n                    0\n                ],\n                \"19\": [\n                    0\n                ],\n                \"20\": [\n                    0\n                ],\n                \"21\": [\n                    0\n                ],\n                \"22\": [\n                    0\n                ],\n                \"23\": [\n                    0\n                ],\n                \"24\": [\n                    0\n                ]\n            },\n            \"team_id\": 2\n        },\n        \"3\": {\n            \"1\": {\n                \"1\": [\n                    31\n                ],\n                \"2\": [\n                    15\n                ],\n                \"3\": [\n                    3\n                ],\n                \"4\": [\n                    6\n                ],\n                \"5\": [\n                    3\n                ],\n                \"6\": [\n                    6\n                ],\n                \"7\": [\n                    9\n                ],\n                \"8\": [\n                    7\n                ],\n                \"9\": [\n                    \"Sample Notes For Team 3\"\n                ]\n            },\n            \"2\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"9\": [\n                    \"\"\n                ]\n            },\n            \"3\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"9\": [\n                    \"\"\n                ]\n            },\n            \"4\": {\n                \"1\": [\n                    0\n                ],\n                \"2\": [\n                    0\n                ],\n                \"3\": [\n                    0\n                ],\n                \"4\": [\n                    0\n                ],\n                \"5\": [\n                    0\n                ],\n                \"6\": [\n                    0\n                ],\n                \"7\": [\n                    0\n                ],\n                \"8\": [\n                    0\n                ],\n                \"10\": [\n                    0\n                ],\n                \"11\": [\n                    0\n                ],\n                \"12\": [\n                    0\n                ],\n                \"13\": [\n                    0\n                ],\n                \"14\": [\n                    0\n                ],\n                \"15\": [\n                    0\n                ],\n                \"16\": [\n                    0\n                ],\n                \"17\": [\n                    0\n                ],\n                \"18\": [\n                    0\n                ],\n                \"19\": [\n                    0\n                ],\n                \"20\": [\n                    0\n                ],\n                \"21\": [\n                    0\n                ],\n                \"22\": [\n                    0\n                ],\n                \"23\": [\n                    0\n                ],\n                \"24\": [\n                    0\n                ]\n            },\n            \"team_id\": 3\n        }\n    }\n}"
+						}
+					]
 				},
 				{
-					"name": "Create Scoresheet",
+					"name": "Get Scoresheet Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": " application/json",
+								"value": "application/json",
 								"type": "text"
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 7d80fa6d59e72bdac273300786a9c74a0f4e0cff",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"sheet_type\":1, \"field1\":1, \"field2\":2, \"field3\":3, \"field4\":4, \"field5\":5, \"field6\":6, \"field7\":7, \"field8\":8}",
+							"raw": "{\"teamid\":1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2057,15 +1000,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/scoreSheet/create/",
+							"raw": "http://localhost:7004/api/scoreSheet/getDetails/1/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"scoreSheet",
-								"create",
+								"getDetails",
+								"1",
 								""
 							]
 						}
@@ -2073,24 +1018,24 @@
 					"response": []
 				},
 				{
-					"name": "Edit Scoresheet",
+					"name": "Update Scores",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": " application/json",
+								"value": "application/json",
 								"type": "text"
 							},
 							{
 								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
+								"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":{{scores_id}}, \"sheet_type\":1, \"field1\":1, \"field2\":2, \"field3\":3, \"field4\":4, \"field5\":5, \"field6\":6, \"field7\":7, \"field8\":8}",
+							"raw": "{\"id\":14,\"field1\":31,\"field2\":15,\"field3\":3,\"field4\":6,\"field5\":3,\"field6\":6,\"field7\":9,\"field8\":7,\"field9\":\"Sample Notes For Team 3\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2098,57 +1043,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:7004/scoreSheet/edit/",
+							"raw": "http://localhost:7004/api/scoreSheet/edit/updateScores/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "7004",
 							"path": [
+								"api",
 								"scoreSheet",
 								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Scoresheet",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{scores_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/scoreSheet/delete/{{scores_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"scoreSheet",
-								"delete",
-								"{{scores_id}}",
+								"updateScores",
 								""
 							]
 						}
@@ -2158,169 +1063,46 @@
 			]
 		},
 		{
-			"name": "Penalties",
-			"item": [
-				{
-					"name": "Get Schoresheet Copy",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Token 856397846cd22298785c44636d5ec1d5dda93ac2",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:7004/penalties/get/{{penalties_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"penalties",
-								"get",
-								"{{penalties_id}}",
-								""
-							]
-						}
+			"name": "Tabulate Scores",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
 					},
-					"response": []
+					{
+						"key": "Authorization",
+						"value": " Token 86bedb72160f13e1cc0ac0a622071ec5fb301a8f",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"contestid\":\"1\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
-				{
-					"name": "Create Penalties",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Token 856397846cd22298785c44636d5ec1d5dda93ac2",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"PresentationPenalties\":4, \"MachinePenalties\":3}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/penalties/create/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"penalties",
-								"create",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Penalties",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":{{penalties_id}}, \"PresentationPenalties\":4, \"MachinePenalties\":3}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/penalties/edit/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"penalties",
-								"edit",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Penalties",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": " application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": " Token 9ec8a3a2560611cc5dcddf9a4163d80d01fda9b4",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":\"{{penalties_id}}\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:7004/penalties/delete/{{penalties_id}}/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "7004",
-							"path": [
-								"penalties",
-								"delete",
-								"{{penalties_id}}",
-								""
-							]
-						}
-					},
-					"response": []
+				"url": {
+					"raw": "http://localhost:7004/api/tabulation/tabulateScores/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7004",
+					"path": [
+						"api",
+						"tabulation",
+						"tabulateScores",
+						""
+					]
 				}
-			]
+			},
+			"response": []
 		}
 	],
 	"event": [

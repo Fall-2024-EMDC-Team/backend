@@ -9,11 +9,8 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
-from django.db import transaction
 
 from ..models import Teams, Scoresheet, MapScoresheetToTeamJudge, MapContestToTeam, ScoresheetEnum, MapClusterToTeam, JudgeClusters, MapContestToCluster
-from ..serializers import TeamSerializer, ScoresheetSerializer
 
 # reference for this file's functions will be in a markdown file titled *Scoring Tabultaion Outline* in the onedrive
 
@@ -54,32 +51,32 @@ def tabulate_scores(request):
     
     # tabulation time!
     # initialize a temp array to hold scores
-    totalscores = [0] * 12
+    totalscores = [0] * 11
     for scoresheet in scoresheets:
-        # We're going to keep track for each sheet type how many times we've seen the type, since for each of the sheets we're taking the average of the scores.
-      if scoresheet.sheetType == ScoresheetEnum.PRESENTATION:
-        totalscores[0] = totalscores[0] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
-        totalscores[1] += 1
+      if scoresheet.isSubmitted:
+          # We're going to keep track for each sheet type how many times we've seen the type, since for each of the sheets we're taking the average of the scores.
+        if scoresheet.sheetType == ScoresheetEnum.PRESENTATION:
+          totalscores[0] = totalscores[0] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
+          totalscores[1] += 1
 
-      elif scoresheet.sheetType == ScoresheetEnum.JOURNAL:
-        totalscores[2] = totalscores[2] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
-        totalscores[3] += 1
+        elif scoresheet.sheetType == ScoresheetEnum.JOURNAL:
+          totalscores[2] = totalscores[2] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
+          totalscores[3] += 1
 
-      elif scoresheet.sheetType == ScoresheetEnum.MACHINEDESIGN:
-        totalscores[4] = totalscores[4] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
-        totalscores[5] += 1
+        elif scoresheet.sheetType == ScoresheetEnum.MACHINEDESIGN:
+          totalscores[4] = totalscores[4] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5+ scoresheet.field6+ scoresheet.field7+ scoresheet.field8
+          totalscores[5] += 1
 
-      elif scoresheet.sheetType == ScoresheetEnum.PENALTIES:
-        # Penalties are different from the other scoresheets, as the fields are broken up into different categories and are averaged in "buckets".
-        # first thing we check for is the journal penalties, presentation and machine spec penalties. to my knowledge, these are not averaged and are calculated once, but if they were to be an average we take it.
-        totalscores[6] = totalscores[6] +scoresheet.field1+ scoresheet.field2+ scoresheet.field3+ scoresheet.field4+ scoresheet.field5 + scoresheet.field6 + scoresheet.field7
-        totalscores[7] += 1
-        # we then check for if there is penalties for run 1, and increment the counter since run penalties are taken as an average
-        totalscores[8] = totalscores[8] + scoresheet.field8+ scoresheet.field10+ scoresheet.field11 + scoresheet.field12 + scoresheet.field13 + scoresheet.field14 + scoresheet.field15 + scoresheet.field16
-        totalscores[9] += 1
-        # we then grab the penalties for run2 and do same style of calculation that we did for run1
-        totalscores[10] = totalscores[10] + scoresheet.field17+ scoresheet.field18+ scoresheet.field19 + scoresheet.field20 + scoresheet.field21 + scoresheet.field22 + scoresheet.field23 + scoresheet.field24
-        totalscores[11] += 1
+        elif scoresheet.sheetType == ScoresheetEnum.RUNPENALTIES:
+          # we then check for if there is penalties for run 1, and increment the counter since run penalties are taken as an average
+          totalscores[7] = totalscores[8] + scoresheet.field1+ scoresheet.field2+ scoresheet.field3 + scoresheet.field4 + scoresheet.field5 + scoresheet.field6 + scoresheet.field7 + scoresheet.field8
+          totalscores[8] += 1
+          # we then grab the penalties for run2 and do same style of calculation that we did for run1
+          totalscores[9] = totalscores[10] + scoresheet.field10+ scoresheet.field11+ scoresheet.field12 + scoresheet.field13 + scoresheet.field14 + scoresheet.field15 + scoresheet.field16 + scoresheet.field17
+          totalscores[10] += 1
+
+        elif scoresheet.sheetType == ScoresheetEnum.OTHERPENALTIES:
+          totalscores[6] = + scoresheet.field1+ scoresheet.field2+ scoresheet.field3 + scoresheet.field4 + scoresheet.field5 + scoresheet.field6 + scoresheet.field7
     # scores are compiled but not averaged yet, we're going to average the scores and then save that score as the total score. 
 
     # problem statement: 
@@ -87,7 +84,7 @@ def tabulate_scores(request):
     team.journal_score = totalscores[2] / totalscores[3]
     team.machinedesign_score = totalscores[4] / totalscores[5]
 
-    team.penalties_score = totalscores[6] / totalscores[7] + totalscores[8]/totalscores[9] +  totalscores[10]/totalscores[11]
+    team.penalties_score = totalscores[6] + totalscores[7]/totalscores[8] +  totalscores[9]/totalscores[10]
     team.total_score = (team.presentation_score + team.journal_score + team.machinedesign_score) - team.penalties_score
     team.save()
 
