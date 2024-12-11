@@ -11,7 +11,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-from ..models import Contest
+from ..models import Contest, MapContestToOrganizer, MapContestToJudge, MapContestToTeam, MapContestToCluster
 from ..serializers import ContestSerializer
 from .clusters import create_cluster, make_cluster
 from .Maps.MapClusterToContest import map_cluster_to_contest,create_cluster_contest_mapping
@@ -84,11 +84,28 @@ def edit_contest(request):
   return Response({"Contest":serializer.data}, status=status.HTTP_200_OK)
 
 
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
+
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_contest(request,contest_id):
-  contest = get_object_or_404(Contest, id=contest_id)
-  contest.delete()
-  return Response({"detail": "Contest deleted successfully."}, status=status.HTTP_200_OK)
+def delete_contest(request, contest_id):
+    contest = get_object_or_404(Contest, id=contest_id)
+
+    # Delete all mappings related to the contest
+    MapContestToOrganizer.objects.filter(contestid=contest_id).delete()
+    MapContestToJudge.objects.filter(contestid=contest_id).delete()
+    MapContestToTeam.objects.filter(contestid=contest_id).delete()
+    MapContestToCluster.objects.filter(contestid=contest_id).delete()
+
+    contest.delete()
+
+    return Response({"detail": "Contest and all related mappings deleted successfully."}, status=status.HTTP_200_OK)
+
 
